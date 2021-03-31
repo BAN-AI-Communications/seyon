@@ -14,43 +14,26 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-#include "seyon.h"
 #include "SeDecl.h"
 #include "SeSig.h"
+#include "seyon.h"
 
-extern int      scriptToMainPipe[];
-extern pid_t    readProcPid;
+extern int scriptToMainPipe[];
+extern pid_t readProcPid;
 
-void
-                SendBreak(),
-                terminal_refresh(),
-                LocalShell(),
-                ToggleCapture(),
-                kill_handler(),
-                DivertFile(),
-                DoDivertFile(),
-                ExecDivertFile(),
-                RunScript(),
-                DoRunScript(),
-                ExecScript();
+void SendBreak(), terminal_refresh(), LocalShell(), ToggleCapture(),
+    kill_handler(), DivertFile(), DoDivertFile(), ExecDivertFile(), RunScript(),
+    DoRunScript(), ExecScript();
 
-char            captureFile[REG_BUF];
-Boolean         capture = False;
-FILE           *cfp;
+char captureFile[REG_BUF];
+Boolean capture = False;
+FILE *cfp;
 
-void
-TopMisc(widget)
-     Widget          widget;
+void TopMisc(widget) Widget widget;
 {
-  void            DialogDisplayFile(),
-                  DialogEditFile(),
-                  DialogRunScript();
+  void DialogDisplayFile(), DialogEditFile(), DialogRunScript();
 
-  Widget          popup,
-                  mBox,
-                  uBox,
-                  lBox,
-                  toggle;
+  Widget popup, mBox, uBox, lBox, toggle;
 
   ErrorIfBusy();
 
@@ -79,36 +62,28 @@ TopMisc(widget)
   XtPopup(popup, XtGrabNone);
 }
 
-void
-SendBreak(widget)
-     Widget          widget;
+void SendBreak(widget) Widget widget;
 {
   ErrorIfBusy();
   send_break();
   SeyonMessage("BREAK Sent to Remote Host");
 }
 
-void
-terminal_refresh(widget)
-     Widget          widget;
+void terminal_refresh(widget) Widget widget;
 {
   ErrorIfBusy();
   RestartTerminal();
   SeyonMessage("Terminal Process Refreshed");
 }
 
-void
-LocalShell(widget)
-     Widget          widget;
+void LocalShell(widget) Widget widget;
 {
   ErrorIfBusy();
   ShellCommand("");
   SeyonMessage("Terminal Suspended");
 }
 
-void
-ToggleCapture(widget)
-     Widget          widget;
+void ToggleCapture(widget) Widget widget;
 {
   ErrorIfBusy();
   DoToggleCapture();
@@ -117,20 +92,16 @@ ToggleCapture(widget)
   RestartTerminal();
 }
 
-Boolean
-DoToggleCapture()
-{
+Boolean DoToggleCapture() {
   if (capture) {
     fclose(cfp);
     capture = False;
     SeyonMessage("Capture Turned OFF");
-  }
-  else {
+  } else {
     if ((cfp = fopen(captureFile, "a")) == NULL) {
       SeyonMessagef("Unable to Open Capture File `%s'", captureFile, "", "");
       return False;
-    }
-    else {
+    } else {
       capture = True;
       SeyonMessage("Capture Turned ON");
     }
@@ -142,28 +113,20 @@ DoToggleCapture()
  * DivertFile: uploads a text file.
  */
 
-void
-DivertFile(widget)
-     Widget          widget;
+void DivertFile(widget) Widget widget;
 {
   ErrorIfBusy();
-  SePopupDialogGetStringE("divert_name", widget, DoDivertFile, NULL,
-			  NULL, True);
+  SePopupDialogGetStringE("divert_name", widget, DoDivertFile, NULL, NULL,
+                          True);
 }
 
-void
-divert_action_ok(widget)
-     Widget          widget;
-{
-  DoDivertFile(widget);
-}
+void divert_action_ok(widget) Widget widget;
+{ DoDivertFile(widget); }
 
-void
-DoDivertFile(widget)
-     Widget          widget;
+void DoDivertFile(widget) Widget widget;
 {
-  Widget          dialog = XtParent(widget);
-  String          file_name;
+  Widget dialog = XtParent(widget);
+  String file_name;
 
   file_name = XawDialogGetValueString(dialog);
   DestroyShell(dialog);
@@ -171,22 +134,21 @@ DoDivertFile(widget)
   ExecDivertFile(XtParent(GetShell(widget)), file_name);
 }
 
-void
-divert_handler(
+void divert_handler(
 #if NeedFunctionPrototypes
-		int signo,
-		XtPointer client_data
+    int signo, XtPointer client_data
 #endif
-)
-{
+) {
 #if defined(SUNOS_3) || defined(Mips)
   union wait status;
 #else
-  int             status;
+  int status;
 #endif
 
-  if (wait(&status) < 0)
-	{SePError("Divert wait failed"); return;}
+  if (wait(&status) < 0) {
+    SePError("Divert wait failed");
+    return;
+  }
   XoAppIgnoreSignal(app_con, SIGCHLD);
 
 #if defined(SUNOS_3) || defined(Mips)
@@ -206,28 +168,25 @@ divert_handler(
   PostProcessPrep();
 }
 
-void
-killdivert_handler(
+void killdivert_handler(
 #if NeedFunctionPrototypes
-		    int signo
+    int signo
 #endif
-)
-{
+) {
   signal(SIGTERM, SIG_IGN);
 
   if (readProcPid && kill(readProcPid, SIGTERM) == 0)
-	while(wait((int*)0) < 0);
+    while (wait((int *)0) < 0)
+      ;
   exit(10);
 }
 
-void
-ExecDivertFile(widget, file_name)
-     Widget          widget;
-     String          file_name;
+void ExecDivertFile(widget, file_name) Widget widget;
+String file_name;
 {
-  char            fullname[REG_BUF];
-  FILE           *fp;
-  int             c;
+  char fullname[REG_BUF];
+  FILE *fp;
+  int c;
 
   expand_fname(file_name, fullname);
   if ((fp = fopen(fullname, "r")) == NULL) {
@@ -250,11 +209,13 @@ ExecDivertFile(widget, file_name)
 
     while ((c = getc(fp)) != EOF) {
       send_tbyte(c);
-      if (c == '\r' || c == '\n') usleep(MDELAY);
+      if (c == '\r' || c == '\n')
+        usleep(MDELAY);
     }
     fclose(fp);
-	if (readProcPid && kill(readProcPid, SIGTERM) == 0)
-	  while(wait((int*)0) < 0);
+    if (readProcPid && kill(readProcPid, SIGTERM) == 0)
+      while (wait((int *)0) < 0)
+        ;
     exit(0);
   }
 }
@@ -263,24 +224,23 @@ ExecDivertFile(widget, file_name)
  * run a script
  */
 
-void
-ScriptHandler(
+void ScriptHandler(
 #if NeedFunctionPrototypes
-		int signo,
-		XtPointer client_data
+    int signo, XtPointer client_data
 #endif
-)
-{
-  int   TerminalRefreshParameters();
+) {
+  int TerminalRefreshParameters();
 
 #if defined(SUNOS_3) || defined(Mips)
   union wait status;
 #else
-  int             status;
+  int status;
 #endif
 
-  if (wait(&status) < 0)
-	{SePError("Script wait failed"); return;}
+  if (wait(&status) < 0) {
+    SePError("Script wait failed");
+    return;
+  }
   XoAppRemoveSignal(XtWidgetToApplicationContext(topLevel), SIGCHLD);
 
 #if defined(SUNOS_3) || defined(Mips)
@@ -301,31 +261,27 @@ ScriptHandler(
   }
 
   inhibit_child = False;
-  PostProcessPrep(); 
-  TerminalRefreshParameters(); 
+  PostProcessPrep();
+  TerminalRefreshParameters();
 }
 
-void
-KillScriptHandler(
+void KillScriptHandler(
 #if NeedFunctionPrototypes
-		    int signo
+    int signo
 #endif
-)
-{
-  int    PutParameters();
+) {
+  int PutParameters();
 
   signal(SIGTERM, SIG_IGN);
   PutParameters(scriptToMainPipe);
   exit(10);
 }
 
-void
-RunScript(parent, scriptName)
-     Widget          parent;	/* Not used. Can be NULL */
-     String          scriptName;
+void RunScript(parent, scriptName) Widget parent; /* Not used. Can be NULL */
+String scriptName;
 {
-  int    PutParameters();
-  int    scriptRet;
+  int PutParameters();
+  int scriptRet;
 
   ErrorIfBusy();
 
@@ -333,21 +289,19 @@ RunScript(parent, scriptName)
   SeyonMessage(FmtString("Running Script ``%s''...", scriptName, "", ""));
 
   PreProcessPrep();
-  XoAppAddSignal(XtWidgetToApplicationContext(topLevel), SIGCHLD, 
-				 ScriptHandler, NULL);
+  XoAppAddSignal(XtWidgetToApplicationContext(topLevel), SIGCHLD, ScriptHandler,
+                 NULL);
 
   if ((w_child_pid = SeFork()) == 0) {
     signal(SIGTERM, KillScriptHandler);
 
     scriptRet = (int)do_script(scriptName);
-	PutParameters(scriptToMainPipe);
-	exit(scriptRet ? 0 : 1);
+    PutParameters(scriptToMainPipe);
+    exit(scriptRet ? 0 : 1);
   }
 }
 
-void
-DialogRunScript(widget)
-     Widget          widget;
+void DialogRunScript(widget) Widget widget;
 {
   void GetValueByPopup();
 
@@ -356,7 +310,4 @@ DialogRunScript(widget)
   GetValueByPopup(widget, "dialogScriptName", RunScript);
 }
 
-void ExecExit()
-{
-  s_exit();
-}
+void ExecExit() { s_exit(); }

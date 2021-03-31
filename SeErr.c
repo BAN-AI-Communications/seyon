@@ -7,56 +7,48 @@
  */
 
 #include <X11/Intrinsic.h>
-#include <X11/StringDefs.h>
 #include <X11/Shell.h>
+#include <X11/StringDefs.h>
 #include <X11/Xaw/Dialog.h>
 
-#include "seyon.h"
 #include "SeDecl.h"
+#include "seyon.h"
 
-#define AddPopupTopLevelNoGeom(name, parent) \
+#define AddPopupTopLevelNoGeom(name, parent)                                   \
   SeAddPopupWG(name, parent, NULL, NULL, 0, 0, True, False)
-#define AddPopupCentered(name, parent, geomW) \
-  SeAddPopupWG(name, parent, geomW, geomW, SeWidgetWidth(geomW)/2, \
-			   SeWidgetHeight(geomW)/2, False, True)
+#define AddPopupCentered(name, parent, geomW)                                  \
+  SeAddPopupWG(name, parent, geomW, geomW, SeWidgetWidth(geomW) / 2,           \
+               SeWidgetHeight(geomW) / 2, False, True)
 
-extern Widget   topLevel;
+extern Widget topLevel;
 
-void
-ErrorExitCallback(widget, exitProc)
-     Widget          widget;
-     XtPointer       exitProc;
+void ErrorExitCallback(widget, exitProc) Widget widget;
+XtPointer exitProc;
 {
   /* Can you believe this? */
-  (*((int (*)())exitProc)) (1);
+  (*((int (*)())exitProc))(1);
   /* I'm just casting the variable to be a function returning int
-	 and then calling the function pointed to by the variable */
+         and then calling the function pointed to by the variable */
 }
 
-void
-PopupInitError(name, callback)
-     String          name;
-     void            (*callback) ();
+void PopupInitError(name, callback) String name;
+void (*callback)();
 {
-  Widget          popup,
-                  dialog;
+  Widget popup, dialog;
 
   popup = AddPopupTopLevelNoGeom("initError", topLevel);
   dialog = SeAddDialog(name, popup);
-  XawDialogAddButton(dialog, "exit", ErrorExitCallback, (XtPointer) callback);
+  XawDialogAddButton(dialog, "exit", ErrorExitCallback, (XtPointer)callback);
 
   PopupCenteredOnRoot(popup);
   Beep();
   XtMapWidget(popup);
 }
 
-void
-PopupFatalError(name)
-     String          name;
+void PopupFatalError(name) String name;
 {
-  Widget          popup,
-                  dialog;
-  void            cleanup_exit();
+  Widget popup, dialog;
+  void cleanup_exit();
 
   if (XtIsRealized(topLevel))
     popup = AddSimplePopup("fatalError", topLevel);
@@ -65,67 +57,57 @@ PopupFatalError(name)
 
   dialog = SeAddDialog(name, popup);
   XawDialogAddButton(dialog, "exit", ErrorExitCallback,
-		     (XtPointer) cleanup_exit);
+                     (XtPointer)cleanup_exit);
 
   Beep();
 
-  if (XtIsRealized(topLevel))
-	{PopupCentered(popup, topLevel); return;}
-	  
+  if (XtIsRealized(topLevel)) {
+    PopupCentered(popup, topLevel);
+    return;
+  }
+
   PopupCenteredOnRoot(popup);
   XtMapWidget(popup);
   XtAppMainLoop(app_con);
 }
 
-void
-PopupError(name, parent)
-     String          name;
-     Widget          parent;
+void PopupError(name, parent) String name;
+Widget parent;
 {
-  Widget          popup,
-                  dialog;
+  Widget popup, dialog;
 
-  if (!parent) parent = topLevel;
+  if (!parent)
+    parent = topLevel;
   if (XtIsRealized(parent))
-	popup = AddSimplePopup("error", parent, topLevel);
+    popup = AddSimplePopup("error", parent, topLevel);
   else
-	popup = AddPopupTopLevelNoGeom("error", parent);
+    popup = AddPopupTopLevelNoGeom("error", parent);
 
   dialog = SeAddDialog(name, popup);
-  XawDialogAddButton(dialog, "dismiss", DestroyShellCallBack, 
-					 (XtPointer)popup);
+  XawDialogAddButton(dialog, "dismiss", DestroyShellCallBack, (XtPointer)popup);
 
   Beep();
 
-  if (XtIsRealized(parent))
-	{PopupCentered(popup, parent); return;}
-	  
+  if (XtIsRealized(parent)) {
+    PopupCentered(popup, parent);
+    return;
+  }
+
   PopupCenteredOnRoot(popup);
   XtMapWidget(popup);
 }
 
 #ifdef notdef
-void
-SePopupWarningF(parent, fmt, a, b, c)
-     Widget          parent;
-     String          fmt,
-                     a,
-                     b,
-                     c;
+void SePopupWarningF(parent, fmt, a, b, c) Widget parent;
+String fmt, a, b, c;
 {
-  SePopupNoticeF(parent, 0, "Seyon Warning", DestroyParentPopup,
-		 fmt, a, b, c);
+  SePopupNoticeF(parent, 0, "Seyon Warning", DestroyParentPopup, fmt, a, b, c);
 }
 
-void
-SePopupInitWarningF(parent, fmt, a, b, c)
-     Widget          parent;
-     String          fmt,
-                     a,
-                     b,
-                     c;
+void SePopupInitWarningF(parent, fmt, a, b, c) Widget parent;
+String fmt, a, b, c;
 {
-  SePopupNoticeF(parent, 0, "Seyon Initialization Warning",
-		 DestroyParentPopup, fmt, a, b, c);
+  SePopupNoticeF(parent, 0, "Seyon Initialization Warning", DestroyParentPopup,
+                 fmt, a, b, c);
 }
 #endif

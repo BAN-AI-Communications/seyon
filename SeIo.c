@@ -4,11 +4,11 @@
  *
  * See the file COPYING (1-COPYING) or the manual page seyon(1) for a full
  * statement of rights and permissions for this program.
-*/
+ */
 
 #include "config.h"
-#include <stdio.h>
 #include <errno.h>
+#include <stdio.h>
 #include <sys/ioctl.h>
 
 #if HAVE_TERMIOS
@@ -31,24 +31,22 @@
 
 #include "SeDecl.h"
 
-int
-io_set_attr(fd, io)
-     int             fd;
+int io_set_attr(fd, io) int fd;
 
 #if HAVE_TERMIOS
-     struct termios *io;
+struct termios *io;
 {
-  int             res;
+  int res;
   res = tcsetattr(fd, TCSADRAIN, io);
 #else
 #if HAVE_TERMIO
-     struct termio  *io;
+struct termio *io;
 {
-  int             res;
+  int res;
   res = ioctl(fd, TCSETAW, io);
 #else
 #if HAVE_SGTTYB
-     struct sgttyb *io;
+struct sgttyb *io;
 {
   int res;
   res = ioctl(fd, TIOCSETP, io);
@@ -61,24 +59,22 @@ io_set_attr(fd, io)
   return res;
 }
 
-int
-io_get_attr(fd, io)
-     int             fd;
+int io_get_attr(fd, io) int fd;
 
 #if HAVE_TERMIOS
-     struct termios *io;
+struct termios *io;
 {
-  int             res;
+  int res;
   res = tcgetattr(fd, io);
 #else
 #if HAVE_TERMIO
-     struct termio  *io;
+struct termio *io;
 {
-  int             res;
+  int res;
   res = ioctl(fd, TCGETA, io);
 #else
 #if HAVE_SGTTYB
-     struct sgttyb *io;
+struct sgttyb *io;
 {
   int res;
   res = ioctl(fd, TIOCGETP, io);
@@ -91,11 +87,9 @@ io_get_attr(fd, io)
   return res;
 }
 
-int
-TtyIFlush(fd)
-     int             fd;
+int TtyIFlush(fd) int fd;
 {
-  int             res;
+  int res;
 
 #if HAVE_TERMIOS
   res = tcflush(fd, TCIFLUSH);
@@ -114,11 +108,9 @@ TtyIFlush(fd)
   return res;
 }
 
-int
-TtyOFlush(fd)
-     int             fd;
+int TtyOFlush(fd) int fd;
 {
-  int             res;
+  int res;
 
 #if HAVE_TERMIOS
   res = tcflush(fd, TCOFLUSH);
@@ -137,11 +129,9 @@ TtyOFlush(fd)
   return res;
 }
 
-int
-TtyIOFlush(fd)
-     int             fd;
+int TtyIOFlush(fd) int fd;
 {
-  int             res;
+  int res;
 
 #if HAVE_TERMIOS
   res = tcflush(fd, TCIOFLUSH);
@@ -160,11 +150,9 @@ TtyIOFlush(fd)
   return res;
 }
 
-int
-io_send_break(fd)
-     int             fd;
+int io_send_break(fd) int fd;
 {
-  int             res;
+  int res;
 
 #if HAVE_TERMIOS
   res = tcsendbreak(fd, 0);
@@ -185,26 +173,25 @@ io_send_break(fd)
   return res;
 }
 
-void
-io_set_speed(io, speed)
+void io_set_speed(io, speed)
 #if HAVE_TERMIOS
-     struct termios *io;
-     speed_t         speed;
+    struct termios *io;
+speed_t speed;
 {
   cfsetospeed(io, speed);
   cfsetispeed(io, speed);
 
 #else
 #if HAVE_TERMIO
-     struct termio  *io;
-     speed_t         speed;
+    struct termio *io;
+speed_t speed;
 {
   io->c_cflag &= ~CBAUD;
   io->c_cflag |= speed;
 #else
 #if HAVE_SGTTYB
-     struct sgttyb *io;
-     speed_t speed;
+    struct sgttyb *io;
+speed_t speed;
 {
   io->sg_ispeed = io->sg_ospeed = speed;
 #endif
@@ -212,21 +199,20 @@ io_set_speed(io, speed)
 #endif
 }
 
-speed_t
-io_get_speed(io)
+speed_t io_get_speed(io)
 #if HAVE_TERMIOS
-     struct termios *io;
+    struct termios *io;
 {
   return cfgetospeed(io);
 
 #else
 #if HAVE_TERMIO
-     struct termio  *io;
+    struct termio *io;
 {
   return io->c_cflag & CBAUD;
 #else
 #if HAVE_SGTTYB
-     struct sgttyb *io;
+    struct sgttyb *io;
 {
   return io->sg_ispeed;
 #endif
@@ -234,33 +220,31 @@ io_get_speed(io)
 #endif
 }
 
-int
-IoGetModemStat(fd)
-	 int fd;
+int IoGetModemStat(fd) int fd;
 {
 #if HAVE_MODEM_CONTROL
 #ifndef HPUX9
-  int      rawStat;
+  int rawStat;
 #else
-  mflag    rawStat;
+  mflag rawStat;
 #endif
 #endif
 
-  int      retStat, res;
+  int retStat, res;
 
   /*
-	Please note: You do NOT need modem control in order to use Seyon. This
-	feature is not essentail to Seyon and all you get from it is a nice 
-	display of modem status lines and a clock of on-line time. If your 
-	system doesn't support this feature (i.e. the code below won't compile),
-	all you have to do is this:
-	
-	     1) define HAVE_MODEM_CONTROL to be NO under your system's 
-		    entry in in config.h
-		 2) put the resource: 
-		         Seyon.ignoreModemDCD: on
-			in your ~/.Xresources file
-			*/
+        Please note: You do NOT need modem control in order to use Seyon. This
+        feature is not essentail to Seyon and all you get from it is a nice
+        display of modem status lines and a clock of on-line time. If your
+        system doesn't support this feature (i.e. the code below won't compile),
+        all you have to do is this:
+
+             1) define HAVE_MODEM_CONTROL to be NO under your system's
+                    entry in in config.h
+                 2) put the resource:
+                         Seyon.ignoreModemDCD: on
+                        in your ~/.Xresources file
+                        */
 
 #if HAVE_MODEM_CONTROL
 #ifndef HPUX
@@ -270,7 +254,7 @@ IoGetModemStat(fd)
 #endif
   if (res < 0) {
     SePError("ioctl-getmdm");
-	return -1;
+    return -1;
   }
 #endif
 
@@ -279,48 +263,60 @@ IoGetModemStat(fd)
 #if HAVE_MODEM_CONTROL
 #ifndef HPUX
 #ifdef TIOCM_CAR
-  if (rawStat & TIOCM_CAR) retStat |= MDM_DCD;
+  if (rawStat & TIOCM_CAR)
+    retStat |= MDM_DCD;
 #endif
 #ifdef TIOCM_DTR
-  if (rawStat & TIOCM_DTR) retStat |= MDM_DTR;
+  if (rawStat & TIOCM_DTR)
+    retStat |= MDM_DTR;
 #endif
 #ifdef TIOCM_DSR
-  if (rawStat & TIOCM_DSR) retStat |= MDM_DSR;
+  if (rawStat & TIOCM_DSR)
+    retStat |= MDM_DSR;
 #endif
 #ifdef TIOCM_RTS
-  if (rawStat & TIOCM_RTS) retStat |= MDM_RTS;
+  if (rawStat & TIOCM_RTS)
+    retStat |= MDM_RTS;
 #endif
 #ifdef TIOCM_CTS
-  if (rawStat & TIOCM_CTS) retStat |= MDM_CTS;
+  if (rawStat & TIOCM_CTS)
+    retStat |= MDM_CTS;
 #endif
 #ifdef TIOCM_RNG
-  if (rawStat & TIOCM_RNG) retStat |= MDM_RNG;
+  if (rawStat & TIOCM_RNG)
+    retStat |= MDM_RNG;
 #endif
 #else /* HPUX */
-  /* Note: I'm note sure about the symbol names of HPUX. I used the same 
+  /* Note: I'm note sure about the symbol names of HPUX. I used the same
      symbols as those used by kermit, but even there there is a comment
-	 that the author is not sure about the symbol names. Someone who has
-	 HPUX please let me know */
+         that the author is not sure about the symbol names. Someone who has
+         HPUX please let me know */
 #ifdef MDCD
-  if (rawStat & MDCD) retStat |= MDM_DCD;
+  if (rawStat & MDCD)
+    retStat |= MDM_DCD;
 #endif
 #ifdef MDTR
-  if (rawStat & MDTR) retStat |= MDM_DTR;
+  if (rawStat & MDTR)
+    retStat |= MDM_DTR;
 #endif
 #ifdef MDSR
-  if (rawStat & MDSR) retStat |= MDM_DSR;
+  if (rawStat & MDSR)
+    retStat |= MDM_DSR;
 #endif
 #ifdef MRTS
-  if (rawStat & MRTS) retStat |= MDM_RTS;
+  if (rawStat & MRTS)
+    retStat |= MDM_RTS;
 #endif
 #ifdef MCTS
-  if (rawStat & MCTS) retStat |= MDM_CTS;
+  if (rawStat & MCTS)
+    retStat |= MDM_CTS;
 #endif
 #ifdef MRI
-  if (rawStat & MRI) retStat |= MDM_RNG;
+  if (rawStat & MRI)
+    retStat |= MDM_RNG;
 #endif
 #endif /* HPUX */
 #endif /* HAVE_MODEM_CONTROL */
-  
+
   return retStat;
 }

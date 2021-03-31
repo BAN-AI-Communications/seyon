@@ -228,10 +228,10 @@ Version 2.06:
       better, and can click Go instead of double-clicking if you like.
     * Action RunScript will now pop up a dialog box if no script-name
       is specified.
-	* Quick release to fix some bugs in the new actions.
-	* No more garbage character at end of modem reponses.
-	* Action OpenDialDir now de-iconifies the dialing directory if in
-	  an iconic state. 
+        * Quick release to fix some bugs in the new actions.
+        * No more garbage character at end of modem reponses.
+        * Action OpenDialDir now de-iconifies the dialing directory if in
+          an iconic state. 
 
 Version 2.01:
     * Fixed a bug that caused a segmentation fault when using both

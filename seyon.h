@@ -4,15 +4,15 @@
  *
  * See the file COPYING (1-COPYING) or the manual page seyon(1) for a full
  * statement of rights and permissions for this program.
-*/
+ */
 
 #include "config.h"
 
 /* globals */
 
 #include <ctype.h>
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
 #ifndef NOSTDHDRS
 #include <stdlib.h>
 #endif
@@ -20,15 +20,15 @@
 #include <setjmp.h>
 #endif
 #include <errno.h>
-#include <unistd.h>
 #include <sys/types.h>
+#include <unistd.h>
 
-struct kw {			/* Used by command parsing routines */
-  char           *keyword;
-  void            (*rtn) ();
+struct kw { /* Used by command parsing routines */
+  char *keyword;
+  void (*rtn)();
 };
 
 struct command {
-  char           *name;
-  void            (*call_back) ();
+  char *name;
+  void (*call_back)();
 };

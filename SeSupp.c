@@ -4,34 +4,32 @@
  *
  * See the file COPYING (1-COPYING) or the manual page seyon(1) for a full
  * statement of rights and permissions for this program.
-*/
+ */
 
 /*
     Revisions:
 
-    2.2		lg	Now uses /dev/tty instead of stdin/stdout
-    2.2		lg	Added command parser
+    2.2         lg      Now uses /dev/tty instead of stdin/stdout
+    2.2         lg      Added command parser
 */
 
 #include <signal.h>
 
 #include <X11/Intrinsic.h>
 
-#include "seyon.h"
 #include "SeDecl.h"
+#include "seyon.h"
 
-extern FILE    *tfp;		/* Local terminal */
-extern int      tfd;		/* Local terminal */
+extern FILE *tfp; /* Local terminal */
+extern int tfd;   /* Local terminal */
 
-char            line[WBSIZE];	/* Input line */
-char            word[WBSIZE];	/* Parsed word */
-char           *wptr,
-               *lptr;		/* Word and line pointers */
-int             eof_flag = 0;	/* Indicates EOF during seyon_getline() processing */
+char line[WBSIZE]; /* Input line */
+char word[WBSIZE]; /* Parsed word */
+char *wptr, *lptr; /* Word and line pointers */
+int eof_flag = 0;  /* Indicates EOF during seyon_getline() processing */
 
-void
-sendstr(p)			/* send a string to the port */
-     register char  *p;
+void sendstr(p) /* send a string to the port */
+    register char *p;
 {
   while (*p)
     sendbyte(*p++);
@@ -40,9 +38,7 @@ sendstr(p)			/* send a string to the port */
 /* Convert uppercase characters to lowercase, (without
  * mangling non-uppercase characters), in a portable manner.
  */
-int
-mklow(c)
-     int             c;
+int mklow(c) int c;
 {
   if (isupper(c))
     return (tolower(c));
@@ -53,14 +49,10 @@ mklow(c)
  * parse the "line" array for a word
  */
 
-void
-getword()
-{
-  char           *ptr,
-                  quote;
-  int             bflag = 0,
-                  qflag = 0;
-  int             nflag = 0;
+void getword() {
+  char *ptr, quote;
+  int bflag = 0, qflag = 0;
+  int nflag = 0;
 
   ptr = word;
 
@@ -84,15 +76,14 @@ getword()
   for (; *lptr != '\0'; lptr++) {
     if (quote) {
       if (*lptr == '\0') {
-		word[0] = '\0';
-		fprintf(tfp, "Unmatched quote: %s\r\n", line);
-		eof_flag = 1;
-		return;
+        word[0] = '\0';
+        fprintf(tfp, "Unmatched quote: %s\r\n", line);
+        eof_flag = 1;
+        return;
       }
       if (*lptr == quote)
-		break;
-    }
-    else if (!qflag && isspace(*lptr))
+        break;
+    } else if (!qflag && isspace(*lptr))
       break;
 
     if (bflag)
@@ -117,18 +108,15 @@ getword()
   }
 
   if (*lptr)
-	lptr++;
+    lptr++;
   *ptr = '\0';
 }
 
-void
-GetWord(lin, wrd)
-     char           *lin,
-                    *wrd;
+void GetWord(lin, wrd) char *lin, *wrd;
 {
-  char           *ptr;
-  int             cc = 0xff;
-  int             quote = 0;
+  char *ptr;
+  int cc = 0xff;
+  int quote = 0;
 
   ptr = wrd;
   lptr = lin;
@@ -151,11 +139,11 @@ GetWord(lin, wrd)
   }
 
   while (*lptr && (quote || !isspace(*lptr)) && (!quote || *lptr != '\"')) {
-	
+
     if (*lptr == '^' && *(lptr + 1) && (!quote || *(lptr + 1) != '\"')) {
       lptr++;
       if (*lptr != '^')
-		cc = 0x1f;
+        cc = 0x1f;
     }
     *ptr++ = *lptr & cc;
     lptr++;
@@ -163,17 +151,17 @@ GetWord(lin, wrd)
   }
 
   if (*lptr)
-    lptr++;;
+    lptr++;
+  ;
   *ptr = '\0';
 }
 
-char*
-NextWord(newLinePtr)
-	 char *newLinePtr;
+char *NextWord(newLinePtr) char *newLinePtr;
 {
   static char nextWord[LRG_BUF], *linePtr;
 
-  if (newLinePtr) linePtr = newLinePtr;
+  if (newLinePtr)
+    linePtr = newLinePtr;
   GetWord(linePtr, nextWord);
   linePtr = lptr;
   return nextWord;
@@ -183,9 +171,7 @@ NextWord(newLinePtr)
  * make the specified word all lower case
  */
 
-void
-lc_word(ptr)
-     char           *ptr;
+void lc_word(ptr) char *ptr;
 {
   while (*ptr) {
     *ptr = mklow(*ptr);
@@ -197,11 +183,9 @@ lc_word(ptr)
  * input a line from the specified file
  */
 
-void
-seyon_getline(fp)
-     FILE           *fp;
+void seyon_getline(fp) FILE *fp;
 {
-  int             l;
+  int l;
 
   memset(line, 0, WBSIZE);
 
@@ -210,22 +194,13 @@ seyon_getline(fp)
     line[0] = '\0';
   }
 
-  l = strlen(line);	       /* Purge newline if found */
+  l = strlen(line); /* Purge newline if found */
   if (l--) {
     if (line[l] == '\n')
       line[l] = '\0';
   }
 }
 
-void
-set_tty_mode()
-{
-  io_set_attr(tfd, &newmode);
-}
+void set_tty_mode() { io_set_attr(tfd, &newmode); }
 
-void
-restore_orig_mode()
-{
-  io_set_attr(tfd, &oldmode);
-}
-
+void restore_orig_mode() { io_set_attr(tfd, &oldmode); }

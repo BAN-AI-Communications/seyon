@@ -24,7 +24,7 @@
   OS       :  Ultrix 4.2
   GUI      :  X11R5, X11R4 & X11R3
   REP. BY  :  atae@spva.dnet.nasa.gov
-			  pa@tekla.fi (Harri Pasanen)
+                          pa@tekla.fi (Harri Pasanen)
   NOTES    :
 
   HARDWARE :  Sun SPARC IPX, Sun SPARC (various), ?, Sun SPARC 1+, ?
@@ -35,7 +35,7 @@
               tony@sundc.East.Sun.COM (Tony Vincent-Sun-Vienna)
               lj@fox.vet.purdue.edu (Lance Jones)
               Michael Salmon <Michael.Salmon@eos.ericsson.se>
-			  walter@sbart.tynet.sub.org (Walter Obermiller)
+                          walter@sbart.tynet.sub.org (Walter Obermiller)
 
   HARDWARE :  Sun SparClassic
   OS       :  Solaris 2.1
@@ -70,7 +70,7 @@
   OS       :  HP-UX 8.0
   GUI      :  X11R4, ?
   REP. BY  :  rob@cad4.lbl.gov (Robert J. McNamara)
-			  dlemoin@xobu.nswc.navy.mil (Donald J. Lemoine)
+                          dlemoin@xobu.nswc.navy.mil (Donald J. Lemoine)
   NOTES    :  DJL plans to convert Xaw to Motif
 
   HARDWARE :  i383

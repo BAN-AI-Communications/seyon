@@ -11,140 +11,111 @@
 #include <X11/Intrinsic.h>
 #include <X11/StringDefs.h>
 
-#include "seyon.h"
 #include "SeDecl.h"
+#include "seyon.h"
 
 #ifdef SUNOS_3
 #include <setjmp.h>
 #endif
 
-#define	MAX_PATH	256
-#define	MAX_LINE	128
+#define MAX_PATH 256
+#define MAX_LINE 128
 
-extern int      MdmTimedReadChar();
+extern int MdmTimedReadChar();
 
-extern FILE    *tfp;
-extern char     scriptDirectory[REG_BUF];
+extern FILE *tfp;
+extern char scriptDirectory[REG_BUF];
 
-static FILE    *cf;
-int             waitfor_time = 0,
-                if_flag = 0,
-                waitflag = 0;
-Boolean         tty_flag = True,
-                echo_flag = False,
-                captflag = True;
-jmp_buf         here;
+static FILE *cf;
+int waitfor_time = 0, if_flag = 0, waitflag = 0;
+Boolean tty_flag = True, echo_flag = False, captflag = True;
+jmp_buf here;
 
-void            k_debug(),
-                k_echo(),
-                k_flush(),
-                k_hangup(),
-                k_purge(),
-                k_send_break(),
-                k_shell(),
-                k_waitfor(),
-                k_when(),
-                k_transmit(),
-                k_pause(),
-                k_exit(),
-                k_quit(),
-                k_if(),
-                k_goto(),
-                k_else(),
-                k_endif(),
-                k_redial(),
-                k_dial(),
-                s_set(),
-                k_tty(),
-                k_capture();
+void k_debug(), k_echo(), k_flush(), k_hangup(), k_purge(), k_send_break(),
+    k_shell(), k_waitfor(), k_when(), k_transmit(), k_pause(), k_exit(),
+    k_quit(), k_if(), k_goto(), k_else(), k_endif(), k_redial(), k_dial(),
+    s_set(), k_tty(), k_capture();
 
 /* globals */
 
-int             linkflag = 0;
+int linkflag = 0;
 
-static struct kw kw[] =
+static struct kw kw[] = {{"debug", k_debug},
+                         {"echo", k_echo},
+                         {"flush", k_flush},
+                         {"hangup", k_hangup},
+                         {"purge", k_purge},
+                         {"send_break", k_send_break},
+                         {"shell", k_shell},
+                         {"waitfor", k_waitfor},
+                         {"when", k_when},
+                         {"transmit", k_transmit},
+                         {"pause", k_pause},
+                         {"exit", k_exit},
+                         {"if", k_if},
+                         {"else", k_else},
+                         {"endif", k_endif},
+                         {"goto", k_goto},
+                         {"dial", k_dial},
+                         {"redial", k_redial},
+                         {"quit", k_quit},
+                         {"set", s_set},
+                         {"capture", k_capture},
+                         {"tty", k_tty},
+                         {NULL, NULL}};
+
+Boolean do_script(scriptFileName) String scriptFileName;
 {
-  {"debug", k_debug},
-  {"echo", k_echo},
-  {"flush", k_flush},
-  {"hangup", k_hangup},
-  {"purge", k_purge},
-  {"send_break", k_send_break},
-  {"shell", k_shell},
-  {"waitfor", k_waitfor},
-  {"when", k_when},
-  {"transmit", k_transmit},
-  {"pause", k_pause},
-  {"exit", k_exit},
-  {"if", k_if},
-  {"else", k_else},
-  {"endif", k_endif},
-  {"goto", k_goto},
-  {"dial", k_dial},
-  {"redial", k_redial},
-  {"quit", k_quit},
-  {"set", s_set},
-  {"capture", k_capture},
-  {"tty", k_tty},
-  {NULL, NULL}};
+  char *scriptDir, buf[REG_BUF];
+  FILE *scriptFP;
 
-Boolean
-do_script(scriptFileName)
-     String         scriptFileName;
-{
-  char           *scriptDir,
-                  buf[REG_BUF];
-  FILE           *scriptFP;
+  if (qres.scriptDirectory)
+    scriptDir = qres.scriptDirectory;
+  else
+    scriptDir = qres.defaultDirectory;
 
-  if (qres.scriptDirectory) scriptDir = qres.scriptDirectory;
-  else scriptDir = qres.defaultDirectory;
-  
   strncpy(buf, scriptFileName, REG_BUF);
   if ((scriptFP = open_file(buf, REG_BUF, scriptDir)) == NULL)
     return False;
-  
+
   exec_close_script(scriptFP);
   return True;
 }
 
-void
-exec_close_script(script_fp)
-    FILE           *script_fp;
+void exec_close_script(script_fp) FILE *script_fp;
 {
-    if_flag = 0;
-    echo_flag = False;
-    captflag = False;
-    tty_flag = True;
-    eof_flag = 0;
+  if_flag = 0;
+  echo_flag = False;
+  captflag = False;
+  tty_flag = True;
+  eof_flag = 0;
 
-    if (linkflag == 2)
-        linkflag = 0;
-
-    while (!eof_flag)
-        get_line(script_fp);
-
-    fclose(script_fp);
-    if (captflag)
-        fclose(cf);
-
-    eof_flag = 0;
-    /* No buffer length problem here! */
-    /* But why do this??? */
-    lptr = strcpy(line, "");
-    k_when();
-
+  if (linkflag == 2)
     linkflag = 0;
 
-    return;
+  while (!eof_flag)
+    get_line(script_fp);
+
+  fclose(script_fp);
+  if (captflag)
+    fclose(cf);
+
+  eof_flag = 0;
+  /* No buffer length problem here! */
+  /* But why do this??? */
+  lptr = strcpy(line, "");
+  k_when();
+
+  linkflag = 0;
+
+  return;
 }
 
-static char     wf[MAX_LINE];
+static char wf[MAX_LINE];
 
-void
-get_line(script_fp)
-     FILE           *script_fp;
+void get_line(script_fp) FILE *script_fp;
 {
-  int             i;
+  int i;
 
   seyon_getline(script_fp);
 
@@ -160,12 +131,12 @@ get_line(script_fp)
       show("TRANSMIT...");
   }
 
-  if (word[0] == '\0')	       /* Ignore blank lines */
+  if (word[0] == '\0') /* Ignore blank lines */
     return;
-  if (word[0] == '#')	       /* Ignore comments */
+  if (word[0] == '#') /* Ignore comments */
     return;
 
-  if (word[strlen(word) - 1] == ':')	/* Ignore labels */
+  if (word[strlen(word) - 1] == ':') /* Ignore labels */
     return;
 
   if (if_flag == -1) {
@@ -175,7 +146,7 @@ get_line(script_fp)
 
   for (i = 0; kw[i].keyword != NULL; i++)
     if (strcmp(kw[i].keyword, word) == 0) {
-      (*kw[i].rtn) (script_fp);
+      (*kw[i].rtn)(script_fp);
       return;
     }
 
@@ -185,22 +156,17 @@ get_line(script_fp)
 }
 
 struct _when {
-  String          expect;
-  String          send;
-  String          ptr;
+  String expect;
+  String send;
+  String ptr;
 };
 
-struct _when    when[MAX_ENT] =
-{
-  {NULL, NULL, NULL}};
+struct _when when[MAX_ENT] = {{NULL, NULL, NULL}};
 
-void
-k_waitfor()
-{
-  long            t;
-  char           *ptr = wf, c;
-  struct _when   *whenPtr;
-
+void k_waitfor() {
+  long t;
+  char *ptr = wf, c;
+  struct _when *whenPtr;
 
   GETTEST_ARG("waitfor");
   strncpy(wf, word, MAX_LINE);
@@ -236,20 +202,17 @@ k_waitfor()
 
     for (whenPtr = when; whenPtr->expect; whenPtr++) {
       if ((char)c != *(whenPtr->ptr))
-		whenPtr->ptr = whenPtr->expect;
+        whenPtr->ptr = whenPtr->expect;
       else if (*++(whenPtr->ptr) == '\0')
-		MdmPutString(whenPtr->send);
+        MdmPutString(whenPtr->send);
     }
-
   }
 
   waitflag = 0;
 }
 
-void
-k_when()
-{
-  struct _when   *whenPtr;
+void k_when() {
+  struct _when *whenPtr;
 
   GET_ARG();
   if (word[0] == '\0') {
@@ -261,7 +224,8 @@ k_when()
     return;
   }
 
-  for (whenPtr = when; whenPtr->expect; whenPtr++);
+  for (whenPtr = when; whenPtr->expect; whenPtr++)
+    ;
   whenPtr->expect = XtNewString(word);
   (whenPtr + 1)->expect = NULL;
 
@@ -269,9 +233,7 @@ k_when()
   whenPtr->send = XtNewString(word);
 }
 
-void
-k_transmit()
-{
+void k_transmit() {
 
   getword();
   if (eof_flag)
@@ -286,10 +248,8 @@ k_transmit()
   MdmPutString(word);
 }
 
-void
-k_pause()
-{
-  int             pause_time;
+void k_pause() {
+  int pause_time;
 
   getword();
   if (eof_flag)
@@ -303,27 +263,18 @@ k_pause()
   sleep(pause_time);
 }
 
-void
-k_quit()
-{
+void k_quit() {
   write_child_info(child_pipe, EXIT_PROGRAM, "");
   k_exit();
 }
 
-void
-k_exit()
-{
-  eof_flag = 1;
-}
+void k_exit() { eof_flag = 1; }
 
-static char     label[WBSIZE];
+static char label[WBSIZE];
 
-void
-k_goto(script_fp)
-     FILE           *script_fp;
+void k_goto(script_fp) FILE *script_fp;
 {
-  int             found = 0,
-                  i;
+  int found = 0, i;
 
   getword();
   if (word[0] == '\0') {
@@ -358,14 +309,12 @@ k_goto(script_fp)
     return;
   }
 
-  if_flag = 0;		       /* reset IF flag */
+  if_flag = 0; /* reset IF flag */
 }
 
-static  int        if_negate = 0;
+static int if_negate = 0;
 
-static int
-if_test(cond)
-     int             cond;
+static int if_test(cond) int cond;
 {
   if (if_negate)
     cond = !cond;
@@ -376,10 +325,8 @@ if_test(cond)
     return -1;
 }
 
-void
-k_if()
-{
-  char           *ptr;
+void k_if() {
+  char *ptr;
 
   if (if_flag) {
     fprintf(tfp, "Nested IF statements not allowed\r\n");
@@ -408,8 +355,7 @@ k_if()
   if (word[0] == '!') {
     if_negate = 1;
     ptr = word + 1;
-  }
-  else
+  } else
     ptr = word;
 
   if (strcmp(ptr, "waitfor") == 0) {
@@ -427,9 +373,7 @@ k_if()
   return;
 }
 
-void
-k_else()
-{
+void k_else() {
   if (!if_flag) {
     fprintf(tfp, "ELSE not within IF\r\n");
     eof_flag++;
@@ -439,9 +383,7 @@ k_else()
   if_flag = -if_flag;
 }
 
-void
-k_endif()
-{
+void k_endif() {
   if (!if_flag) {
     fprintf(tfp, "ENDIF not wihtin IF\r\n");
     eof_flag++;
@@ -451,9 +393,7 @@ k_endif()
   if_flag = 0;
 }
 
-void
-k_dial()
-{
+void k_dial() {
   getword();
 
   if (word[0] == '\0') {
@@ -465,64 +405,38 @@ k_dial()
   dial(word);
 }
 
-void
-k_redial()
-{
+void k_redial() {
   if (redial(NULL)) {
     eof_flag++;
     return;
   }
 }
 
-void
-k_debug()
-{
+void k_debug() {
   set_onoff(&echo_flag);
   return;
 }
 
-void
-k_echo()
-{
+void k_echo() {
   GET_ARG();
   show(word);
 }
 
-void
-k_flush()
-{
-  MdmIFlush();
-}
+void k_flush() { MdmIFlush(); }
 
-void
-k_hangup()
-{
-  MdmHangup();
-}
+void k_hangup() { MdmHangup(); }
 
-void
-k_purge()
-{
-  MdmPurge();
-}
+void k_purge() { MdmPurge(); }
 
-void
-k_send_break()
-{
-  send_break();
-}
+void k_send_break() { send_break(); }
 
-void
-k_shell()
-{
+void k_shell() {
   GETTEST_ARG("shell");
   ExecShellCommand(word, 0);
 }
 
-void
-k_capture()
-{
-  Boolean         val = captflag;
+void k_capture() {
+  Boolean val = captflag;
 
   set_onoff(&captflag);
   if (eof_flag)
@@ -542,9 +456,7 @@ k_capture()
   }
 }
 
-void
-k_tty()
-{
+void k_tty() {
   set_onoff(&tty_flag);
   return;
 }
@@ -553,11 +465,9 @@ k_tty()
  * Dial a phone number, using proper format and delay.
  */
 
-static char    *last_nbr = NULL;
+static char *last_nbr = NULL;
 
-void
-dial(s)
-     char           *s;
+void dial(s) char *s;
 {
   if (last_nbr)
     XtFree(last_nbr);
@@ -567,11 +477,9 @@ dial(s)
   mprintf("\r%s %s%s", qres.dialPrefix, s, qres.dialSuffix);
 }
 
-int
-redial(last_nbr)
-     char           *last_nbr;
+int redial(last_nbr) char *last_nbr;
 {
-  char           *s;
+  char *s;
 
   if (last_nbr == NULL) {
     show("REDIAL FAILURE");

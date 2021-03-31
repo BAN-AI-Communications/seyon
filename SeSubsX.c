@@ -6,7 +6,7 @@
  * statement of rights and permissions for this program.
  */
 
-/*                               -*- Mode: C -*- 
+/*                               -*- Mode: C -*-
  * SeSubsX.c --- Various X-based routines
  * Author          : Muhammad M. Saggaf
  * Created On      : sometime in 1992
@@ -20,71 +20,66 @@
 #include <X11/StringDefs.h>
 #include <time.h>
 
-#include "seyon.h"
 #include "SeDecl.h"
+#include "seyon.h"
 #include "version.h"
 
-extern char    *strsqtok();
-extern int      GetModemStat();
+extern char *strsqtok();
+extern int GetModemStat();
 
-int             seyon_message_up = 0;
+int seyon_message_up = 0;
 
-void
-Beep()
-{
-  if (!qres.neverBeep) FancyBell(topLevel);
+void Beep() {
+  if (!qres.neverBeep)
+    FancyBell(topLevel);
 }
 
-void
-UpdateStatusBox(clientData)
-     XtPointer       clientData;
+void UpdateStatusBox(clientData) XtPointer clientData;
 {
   static Widget *statusWidget;
   /* All members of oldState are guaranteed to be initialized to False
-	 since the array is declared static, similarly for online */
+         since the array is declared static, similarly for online */
   static Boolean online, oldState[NUM_MDM_STAT];
   Boolean newState;
   char buf[10];
-  static int stat[NUM_MDM_STAT] = {MDM_DCD, MDM_DTR, MDM_DSR, MDM_RTS, 
-									 MDM_CTS, MDM_RNG};
+  static int stat[NUM_MDM_STAT] = {MDM_DCD, MDM_DTR, MDM_DSR,
+                                   MDM_RTS, MDM_CTS, MDM_RNG};
   int modemStat, i;
   static time_t startTime, oldOnlineTime = 0;
   time_t onlineTime = 0;
 
   if (clientData)
-	statusWidget = (Widget*)clientData;
+    statusWidget = (Widget *)clientData;
 
   if ((modemStat = GetModemStat(0)) >= 0)
-	for (i = 0; i < 6; i++)
-	  if ((newState = (Boolean)((modemStat & stat[i]) ? True : False)) != 
-		  oldState[i])
-		SeSetUnsetToggle(statusWidget[i], (oldState[i] = newState));
-  
+    for (i = 0; i < 6; i++)
+      if ((newState = (Boolean)((modemStat & stat[i]) ? True : False)) !=
+          oldState[i])
+        SeSetUnsetToggle(statusWidget[i], (oldState[i] = newState));
+
   if (online == False) {
-	onlineTime = 0;
-	startTime = time((time_t*)0);
+    onlineTime = 0;
+    startTime = time((time_t *)0);
   }
   if ((online = oldState[0]))
-	onlineTime = (time((time_t*)0) - startTime) / 60;
+    onlineTime = (time((time_t *)0) - startTime) / 60;
 
   if (onlineTime != oldOnlineTime) {
-	oldOnlineTime = onlineTime;
-	/* Buffer is easily big enough */
-	sprintf(buf, "%02ld:%02ld", onlineTime / 60, onlineTime % 60);
-	SeSetLabel(statusWidget[0], buf);
+    oldOnlineTime = onlineTime;
+    /* Buffer is easily big enough */
+    sprintf(buf, "%02ld:%02ld", onlineTime / 60, onlineTime % 60);
+    SeSetLabel(statusWidget[0], buf);
   }
 
   if (clientData)
-	XtAppAddTimeOut(app_con, qres.modemStatusInterval * 1000, 
-					UpdateStatusBox, clientData);
+    XtAppAddTimeOut(app_con, qres.modemStatusInterval * 1000, UpdateStatusBox,
+                    clientData);
 }
 
-void
-FunMessage()
-{
-  static int      msg_index = 0;
-  String          msg;
-  char            vermsg[SM_BUF];
+void FunMessage() {
+  static int msg_index = 0;
+  String msg;
+  char vermsg[SM_BUF];
 
   if (seyon_message_up <= 0) {
 
@@ -102,21 +97,18 @@ FunMessage()
   seyon_message_up--;
 
   XtAppAddTimeOut(XtWidgetToApplicationContext(topLevel),
-				  qres.funMessagesInterval * 1000, FunMessage, NULL);
+                  qres.funMessagesInterval * 1000, FunMessage, NULL);
 }
 
 struct _procRequest {
-  int             action;
-  char            msg[80];
-  char            arg[90];
+  int action;
+  char msg[80];
+  char arg[90];
 };
 
-void
-ExecProcRequest(client_data)
-     XtPointer       client_data;
+void ExecProcRequest(client_data) XtPointer client_data;
 {
-  void                DispatchActions(),
-                      RunScript();
+  void DispatchActions(), RunScript();
   struct _procRequest procRequest;
 
   read_pipe_data(child_pipe, &procRequest, sizeof(procRequest));
@@ -132,28 +124,30 @@ ExecProcRequest(client_data)
     StartTerminal();
     break;
   case SUSPEND_TERM:
-	SuspContTerminal(0);
+    SuspContTerminal(0);
     break;
   case CONTINUE_TERM:
-	SuspContTerminal(1);
+    SuspContTerminal(1);
     break;
   case DISPATCH_ACTION:
-	DispatchActions(ACTION_DISPATCH, procRequest.arg, genericWidget);
+    DispatchActions(ACTION_DISPATCH, procRequest.arg, genericWidget);
     break;
   case EXEC_SCRIPT:
-	RunScript(NULL, procRequest.arg);
-	break;
+    RunScript(NULL, procRequest.arg);
+    break;
   case TOP_DIAL_START:
-	qres.dialAutoStart = True;
+    qres.dialAutoStart = True;
   case TOP_DIAL:
-	if ((procRequest.arg)[0]) TopDial(dialWidget, procRequest.arg);
-	else TopDial(dialWidget, NULL);
-	break;
+    if ((procRequest.arg)[0])
+      TopDial(dialWidget, procRequest.arg);
+    else
+      TopDial(dialWidget, NULL);
+    break;
   case POPUP_ERROR:
-	PopupError(procRequest.arg, NULL);
-	break;
+    PopupError(procRequest.arg, NULL);
+    break;
   case EXIT_PROGRAM:
-	s_exit();
+    s_exit();
     break;
   case SET_MESSAGE:
     break;
@@ -162,28 +156,24 @@ ExecProcRequest(client_data)
   }
 }
 
-void
-write_child_info(pd, action, msg)
-     int            *pd;
-     int             action;
-     char           *msg;
+void write_child_info(pd, action, msg) int *pd;
+int action;
+char *msg;
 {
   struct _procRequest procRequest;
 
   procRequest.action = action;
 
-  if (msg) 
-      strncpy(procRequest.msg, msg, 80);
-  else *procRequest.msg = '\0';
+  if (msg)
+    strncpy(procRequest.msg, msg, 80);
+  else
+    *procRequest.msg = '\0';
 
   write_pipe_data(pd, &procRequest, sizeof(procRequest));
 }
 
-void
-ProcRequest(action, msg, arg)
-     int             action;
-     char           *msg,
-                    *arg;
+void ProcRequest(action, msg, arg) int action;
+char *msg, *arg;
 {
   struct _procRequest procRequest;
 
@@ -194,42 +184,23 @@ ProcRequest(action, msg, arg)
   write_pipe_data(child_pipe, &procRequest, sizeof(procRequest));
 }
 
-void
-writef_child_info(pd, action, fmt, a, b, c)
-     int            *pd;
-     int             action;
-     char           *fmt,
-                    *a,
-                    *b,
-                    *c;
-{
-  write_child_info(pd, action, FmtString(fmt,a,b,c));
-}
+void writef_child_info(pd, action, fmt, a, b, c) int *pd;
+int action;
+char *fmt, *a, *b, *c;
+{ write_child_info(pd, action, FmtString(fmt, a, b, c)); }
 
-void
-SeyonMessage(msg)
-     String          msg;
+void SeyonMessage(msg) String msg;
 {
   seyon_message_up = 300 / qres.funMessagesInterval;
   SetStatusMessagef("- %s -", msg, "", "");
 }
 
-void
-SeyonMessagef(fmt, a, b, c)
-     String          fmt,
-                     a,
-                     b,
-                     c;
-{
-  SeyonMessage(FmtString(fmt,a,b,c));
-}
+void SeyonMessagef(fmt, a, b, c) String fmt, a, b, c;
+{ SeyonMessage(FmtString(fmt, a, b, c)); }
 
-Boolean
-read_seyon_file(name, line)
-     char           *name,
-                    *line[];
+Boolean read_seyon_file(name, line) char *name, *line[];
 {
-  FILE           *fp;
+  FILE *fp;
 
   if ((fp = open_file(name, qres.defaultDirectory)) == NULL)
     return False;
@@ -240,52 +211,48 @@ read_seyon_file(name, line)
   return True;
 }
 
-#define done(value, type) \
-{ \
-  if (toVal->addr != NULL) { \
-	if (toVal->size < sizeof(type)) { \
-	  toVal->size = sizeof(type); \
-	  return False; \
-	} \
-	*(type*)(toVal->addr) = (value); \
-  } \
-  else { \
-    static type static_val; \
-    static_val = (value); \
-    toVal->addr = (XtPointer)&static_val; \
-  } \
-  toVal->size = sizeof(type); \
-  return True; \
-}
+#define done(value, type)                                                      \
+  {                                                                            \
+    if (toVal->addr != NULL) {                                                 \
+      if (toVal->size < sizeof(type)) {                                        \
+        toVal->size = sizeof(type);                                            \
+        return False;                                                          \
+      }                                                                        \
+      *(type *)(toVal->addr) = (value);                                        \
+    } else {                                                                   \
+      static type static_val;                                                  \
+      static_val = (value);                                                    \
+      toVal->addr = (XtPointer)&static_val;                                    \
+    }                                                                          \
+    toVal->size = sizeof(type);                                                \
+    return True;                                                               \
+  }
 
-Boolean
-CvtStringToStringArray(display, args, num_args, fromVal, toVal,
-		       converter_data)
-     Display        *display;
-     XrmValue       *args;
-     Cardinal       *num_args;
-     XrmValue       *fromVal;
-     XrmValue       *toVal;
-     XtPointer      *converter_data;
+Boolean CvtStringToStringArray(display, args, num_args, fromVal, toVal,
+                               converter_data) Display *display;
+XrmValue *args;
+Cardinal *num_args;
+XrmValue *fromVal;
+XrmValue *toVal;
+XtPointer *converter_data;
 {
-  String          fromStr,
-                  buf;
-  static String   strArr[REG_BUF];
-  int             n;
+  String fromStr, buf;
+  static String strArr[REG_BUF];
+  int n;
 
   if (*num_args != 0)
     XtAppWarningMsg(app_con, "wrongParameters", "cvtStringToStringArray",
-		    "XtToolkitError",
-		"String to StringArray conversion needs no extra arguments",
-		    (String *) NULL, (Cardinal *) NULL);
+                    "XtToolkitError",
+                    "String to StringArray conversion needs no extra arguments",
+                    (String *)NULL, (Cardinal *)NULL);
 
-  fromStr = (String) fromVal->addr;
-/*  buf = XtMalloc((strlen(fromStr)+1) * sizeof(char));
-  strcpy(buf, fromStr);*/
+  fromStr = (String)fromVal->addr;
+  /*  buf = XtMalloc((strlen(fromStr)+1) * sizeof(char));
+    strcpy(buf, fromStr);*/
   buf = fromStr;
 
   if ((strArr[0] = strsqtok(buf)) == NULL) {
-/*	XtFree(buf);*/
+    /*      XtFree(buf);*/
     done(NULL, String *);
   }
 
@@ -293,10 +260,10 @@ CvtStringToStringArray(display, args, num_args, fromVal, toVal,
     if ((strArr[n] = strsqtok(NULL)) == NULL)
       done(strArr, String *);
 
-  XtAppWarningMsg(app_con, "tooManyStrings", "cvtStringToStringArray",
-		  "XtToolkitError",
-	   "Too many strings specified for String to StringArray converter",
-		  (String *) NULL, (Cardinal *) NULL);
+  XtAppWarningMsg(
+      app_con, "tooManyStrings", "cvtStringToStringArray", "XtToolkitError",
+      "Too many strings specified for String to StringArray converter",
+      (String *)NULL, (Cardinal *)NULL);
   strArr[--n] = NULL;
   done(strArr, String *);
 }

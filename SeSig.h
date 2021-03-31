@@ -8,18 +8,18 @@
 
 /*
  * sighandler.h -
- *	Defines the interface to signalling handling in an Xt safe way
+ *      Defines the interface to signalling handling in an Xt safe way
  * $Id: sighandler.h,v 1.1 92/12/10 08:50:54 ware Exp $
- * $Log:	sighandler.h,v $
+ * $Log:        sighandler.h,v $
  * Revision 1.1  92/12/10  08:50:54  ware
  * Initial revision [Modfied by me --M.S.]
  *
  */
 
-typedef void    (*XoSignalCallbackProc) (
+typedef void (*XoSignalCallbackProc)(
 #if NeedFunctionPrototypes
-					  int signo,	/* the signal number */
-					  XtPointer client_data	/* closure */
+    int signo,            /* the signal number */
+    XtPointer client_data /* closure */
 #endif
 );
 
@@ -29,29 +29,29 @@ typedef void    (*XoSignalCallbackProc) (
  */
 
 typedef struct _xo_signal_data_ {
-  XoSignalCallbackProc handler;	/* function to execute */
-  XtPointer       client_data;	/* data to pass */
+  XoSignalCallbackProc handler; /* function to execute */
+  XtPointer client_data;        /* data to pass */
 } _XoSignalData;
 
 extern XoSignalCallbackProc XoAppAddSignal(
 #if NeedFunctionPrototypes
-				XtAppContext context,	/* application context */
-				int sig,	/* which signal */
-				XoSignalCallbackProc handler,	/* the handler */
-				XtPointer client_data	/* private data */
+    XtAppContext context,         /* application context */
+    int sig,                      /* which signal */
+    XoSignalCallbackProc handler, /* the handler */
+    XtPointer client_data         /* private data */
 #endif
 );
 
-extern void     XoAppRemoveSignal(
+extern void XoAppRemoveSignal(
 #if NeedFunctionPrototypes
-				   XtAppContext context,	/* application context */
-				   int sig	/* which signal */
+    XtAppContext context, /* application context */
+    int sig               /* which signal */
 #endif
 );
 
-extern void     XoAppIgnoreSignal(
+extern void XoAppIgnoreSignal(
 #if NeedFunctionPrototypes
-				   XtAppContext context,	/* application context */
-				   int sig	/* which signal */
+    XtAppContext context, /* application context */
+    int sig               /* which signal */
 #endif
 );

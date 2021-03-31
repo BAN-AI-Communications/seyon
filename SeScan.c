@@ -1,28 +1,27 @@
 /*---------------------------------------------------------------------------+
 | Free form input scanner
 +---------------------------------------------------------------------------*/
-#include <stdio.h>
-#include <assert.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <string.h>
 #include "SeParse.h"
 #include "y.tab.h"
+#include <assert.h>
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /*---------------------------------------------------------------------------+
 | parse buffer - stores the string to be parsed (logical line)
 +---------------------------------------------------------------------------*/
 static unsigned parseBufLen;
 static unsigned parseBufNextCh;
-static char* 	parseBuf;
+static char *parseBuf;
 
-void scSetInputBuffer(line)
-	 char *line ;
+void scSetInputBuffer(line) char *line;
 {
   assert(line != 0);
-  parseBufNextCh 	= 0;
-  parseBufLen      	= strlen(line);
-  parseBuf		= line;
+  parseBufNextCh = 0;
+  parseBufLen = strlen(line);
+  parseBuf = line;
 }
 
 int scGetChar() {
@@ -31,13 +30,11 @@ int scGetChar() {
     printf("Reading char %c\n", parseBuf[parseBufNextCh]);
 #endif
     return parseBuf[parseBufNextCh++];
-  }
-  else
+  } else
     return EOF;
 }
 
-void scUngetChar(c)
-	 int c;
+void scUngetChar(c) int c;
 {
   if (parseBufNextCh > 0)
     parseBuf[--parseBufNextCh] = c;
@@ -58,8 +55,7 @@ static char *strBuf = 0;
 static unsigned strBufSize = 0;
 static unsigned strBufNextCh = 0;
 
-static void _growBuf(size)
-	 unsigned size;
+static void _growBuf(size) unsigned size;
 {
   if (strBuf == 0)
     strBuf = (char *)malloc(strBufSize = size + GROW_SIZE);
@@ -69,19 +65,17 @@ static void _growBuf(size)
   }
 }
 
-static void _startWord() {
-  strBufNextCh = 0;
-}
+static void _startWord() { strBufNextCh = 0; }
 
-static void _addCh(ch)
-	 int ch;
+static void _addCh(ch) int ch;
 {
   _growBuf(1);
   strBuf[strBufNextCh++] = ch;
 }
 
-static char* _getWd() {
-  if (strBuf != 0) strBuf[strBufNextCh] = 0;
+static char *_getWd() {
+  if (strBuf != 0)
+    strBuf[strBufNextCh] = 0;
   strBufNextCh = 0;
   return strBuf;
 }
@@ -96,14 +90,13 @@ enum SC_STATE {
 };
 
 static int ScanState = SC_OUTSIDE;
-static int ScanDelim = 0;	/* Current string delimiter */
+static int ScanDelim = 0; /* Current string delimiter */
 
-void NEW_STATE(st)
-	 int st;
+void NEW_STATE(st) int st;
 {
 
 #ifdef TEST
-  static char* state_names[] = { "InWord", "InStr", "Out", "NONE" };
+  static char *state_names[] = {"InWord", "InStr", "Out", "NONE"};
   printf("**Entering state %s\n", state_names[st]);
 #endif
 
@@ -115,15 +108,24 @@ void NEW_STATE(st)
 #define C_SEP ';'
 #define C_STR '"'
 
-int cType(c)
-	 int c;
+int cType(c) int c;
 {
-  if (isspace(c)) return C_SPACE;
+  if (isspace(c))
+    return C_SPACE;
   switch (c) {
-  case CTRL_CHAR: case BACK_CHAR: return C_ESC;
-  case ';' : case ',' : case '(' : case ')' : return C_SEP;
-  case '"' : case '\'' : return C_STR;
-  default : return c;
+  case CTRL_CHAR:
+  case BACK_CHAR:
+    return C_ESC;
+  case ';':
+  case ',':
+  case '(':
+  case ')':
+    return C_SEP;
+  case '"':
+  case '\'':
+    return C_STR;
+  default:
+    return c;
   }
 }
 
@@ -133,14 +135,13 @@ int doEsc();
 | scNextWord breaks lines into sequences of words
 |
 | Args: recognize_seps - 1 == recognize and return "();,"
-|			 0 == ignore those and put them into words
-|	wd - pointer to last recognized word, = 0 if at end of line
+|                        0 == ignore those and put them into words
+|       wd - pointer to last recognized word, = 0 if at end of line
 |
 | Returns: input token type (usually a representative char)
 +---------------------------------------------------------------------------*/
-int scNextWord(recognize_seps, wd)
-	 int recognize_seps; 
-	 char **wd;
+int scNextWord(recognize_seps, wd) int recognize_seps;
+char **wd;
 {
   int c;
 
@@ -148,121 +149,178 @@ int scNextWord(recognize_seps, wd)
     switch (ScanState) {
     case SC_OUTSIDE:
       switch (cType(c)) {
-      case C_ESC: NEW_STATE(SC_IN_WORD); _startWord(); _addCh(doEsc(c)); break;
-      case C_SPACE: 							break;
-      case C_SEP: if (recognize_seps) return c; 
-		  else {
-		    NEW_STATE(SC_IN_WORD); _startWord(); _addCh(c);
-		  }							break;
-      case C_STR: NEW_STATE(SC_IN_STR);  _startWord(); ScanDelim = c; 	break;
-      default:    NEW_STATE(SC_IN_WORD); _startWord(); _addCh(c);	break;
+      case C_ESC:
+        NEW_STATE(SC_IN_WORD);
+        _startWord();
+        _addCh(doEsc(c));
+        break;
+      case C_SPACE:
+        break;
+      case C_SEP:
+        if (recognize_seps)
+          return c;
+        else {
+          NEW_STATE(SC_IN_WORD);
+          _startWord();
+          _addCh(c);
+        }
+        break;
+      case C_STR:
+        NEW_STATE(SC_IN_STR);
+        _startWord();
+        ScanDelim = c;
+        break;
+      default:
+        NEW_STATE(SC_IN_WORD);
+        _startWord();
+        _addCh(c);
+        break;
       }
       break;
 
     case SC_IN_STR:
       switch (cType(c)) {
-      case C_STR: 
-	if (ScanDelim == c) { NEW_STATE(SC_OUTSIDE); *wd = _getWd(); 
-			      return WORD;
-			    }
-	else  _addCh(c);						break;
-      case C_ESC: _addCh(doEsc(c)); 					break;
-      default:	  _addCh(c); 						break;
+      case C_STR:
+        if (ScanDelim == c) {
+          NEW_STATE(SC_OUTSIDE);
+          *wd = _getWd();
+          return WORD;
+        } else
+          _addCh(c);
+        break;
+      case C_ESC:
+        _addCh(doEsc(c));
+        break;
+      default:
+        _addCh(c);
+        break;
       }
       break;
 
     case SC_IN_WORD:
       switch (cType(c)) {
-      case C_ESC: _addCh(doEsc(c)); 					break;
-      case C_STR: NEW_STATE(SC_IN_STR); ScanDelim = c; 			break;
-      case C_SEP: 
-	if (recognize_seps) {
-	  ScanState = SC_OUTSIDE; *wd = _getWd(); scUngetChar(c); 
-	  return WORD;
-	}
-	else	  _addCh(c);						break;
-      case C_SPACE: NEW_STATE(SC_OUTSIDE); *wd = _getWd(); return WORD;break;
-      default: _addCh(c);						break;
+      case C_ESC:
+        _addCh(doEsc(c));
+        break;
+      case C_STR:
+        NEW_STATE(SC_IN_STR);
+        ScanDelim = c;
+        break;
+      case C_SEP:
+        if (recognize_seps) {
+          ScanState = SC_OUTSIDE;
+          *wd = _getWd();
+          scUngetChar(c);
+          return WORD;
+        } else
+          _addCh(c);
+        break;
+      case C_SPACE:
+        NEW_STATE(SC_OUTSIDE);
+        *wd = _getWd();
+        return WORD;
+        break;
+      default:
+        _addCh(c);
+        break;
       }
       break;
 
-    default: perror("Unknown state"); abort();
+    default:
+      perror("Unknown state");
+      abort();
       break;
     }
   }
 
-  switch(ScanState) {
-  case SC_IN_WORD: *wd = _getWd(); NEW_STATE(SC_OUTSIDE); return WORD; 
-  case SC_IN_STR:  *wd = _getWd(); NEW_STATE(SC_OUTSIDE); return WORD; 
-  case SC_OUTSIDE: return 0;
-  default:  perror("Unknown state"); abort();
+  switch (ScanState) {
+  case SC_IN_WORD:
+    *wd = _getWd();
+    NEW_STATE(SC_OUTSIDE);
+    return WORD;
+  case SC_IN_STR:
+    *wd = _getWd();
+    NEW_STATE(SC_OUTSIDE);
+    return WORD;
+  case SC_OUTSIDE:
+    return 0;
+  default:
+    perror("Unknown state");
+    abort();
   }
 }
 
 /*---------------------------------------------------------------------------+
 | getOct - read an octal number with up to 3 digits
 +---------------------------------------------------------------------------*/
-int getOct()
-{
-  char intstr[4]; int next = 0;
+int getOct() {
+  char intstr[4];
+  int next = 0;
   int ch;
 
-  while ((ch = scGetChar()) != EOF && next <= 3) 
+  while ((ch = scGetChar()) != EOF && next <= 3)
     if (isdigit(ch))
       intstr[next++] = ch;
-    else if (ch != EOF) { 
-      scUngetChar(ch); 
+    else if (ch != EOF) {
+      scUngetChar(ch);
       break;
     }
-  
-  intstr[next]=0;
-  return strtol(intstr, NULL,  8);
+
+  intstr[next] = 0;
+  return strtol(intstr, NULL, 8);
 }
-    
+
 /*---------------------------------------------------------------------------+
 | Mapping table for the \[a-z] sequences: we let the C compiler initialize
 | them for us... Of course we can change the value of a particular char if
 | we feel like it.
 +---------------------------------------------------------------------------*/
-static char special[26] = 
-{ '\a', '\b', 'c', 'd', 'e', '\f', 'g', 'h', 'i', 'j', 'k', 'l', 
-  'm', '\n', 'o', 'p', 'q', '\r', 's', '\t', 'u', '\v', 'w', 'x',
-  'y', 'z'
-};
+static char special[26] = {'\a', '\b', 'c', 'd',  'e',  '\f', 'g', 'h', 'i',
+                           'j',  'k',  'l', 'm',  '\n', 'o',  'p', 'q', '\r',
+                           's',  '\t', 'u', '\v', 'w',  'x',  'y', 'z'};
 
 /*---------------------------------------------------------------------------+
 | doEsc - process esc (\) and control (^) sequences
 +---------------------------------------------------------------------------*/
-int doEsc(escChar)
-	 int escChar;
+int doEsc(escChar) int escChar;
 {
 
-  int     c = scGetChar();
+  int c = scGetChar();
 
   switch (escChar) {
   case BACK_CHAR:
-    	 if (c == EOF) return escChar;
-    else if (isdigit(c)) { scUngetChar(c); return getOct(); }
-    else if (islower(c)) return special[c - 'a'];
-    else return c;
+    if (c == EOF)
+      return escChar;
+    else if (isdigit(c)) {
+      scUngetChar(c);
+      return getOct();
+    } else if (islower(c))
+      return special[c - 'a'];
+    else
+      return c;
     break;
 
-  case CTRL_CHAR: 
-    if	    (islower(c)) return c - 'a' + 1;
-    else if (isupper(c)) return c - 'A' + 1;
-    else   { scUngetChar(c);  return escChar;  }
+  case CTRL_CHAR:
+    if (islower(c))
+      return c - 'a' + 1;
+    else if (isupper(c))
+      return c - 'A' + 1;
+    else {
+      scUngetChar(c);
+      return escChar;
+    }
     break;
 
   default:
-    perror("Unknown escape sequence"); abort();
+    perror("Unknown escape sequence");
+    abort();
   }
 }
 
 /*---------------------------------------------------------------------------+
 | yylex - interface with yacc parser generator
 +---------------------------------------------------------------------------*/
-int yylex() 
-{
+int yylex() {
   int state = scNextWord(1, &yylval.sval);
   return state;
 }
@@ -270,30 +328,28 @@ int yylex()
 /*---------------------------------------------------------------------------+
 | GetWord - return successive words in input line, 0 when finished
 +---------------------------------------------------------------------------*/
-char*
-GetNextWord() 
-{
+char *GetNextWord() {
   char *word;
 
-  if (scNextWord(0, &word) == 0) return "";
+  if (scNextWord(0, &word) == 0)
+    return "";
   return word;
 }
 
-char*
-GetFirstWord(line) 
-	 char *line;
+char *GetFirstWord(line) char *line;
 {
   scSetInputBuffer(line);
   return GetNextWord();
 }
 
 #ifdef TEST
-main()
-{
-  scSetInputBuf("Just to see if we'\\'re \\n\\033 able to distinguish' words and strings\n\
+main() {
+  scSetInputBuf(
+      "Just to see if we'\\'re \\n\\033 able to distinguish' words and strings\n\
 \"Also 'quotes' inside strings\" and 'strs \"inside quotes\"'\n\
 Not to forget ^S and ^q control ^ chars");
 
-  while (lGetWord() != 0);
+  while (lGetWord() != 0)
+    ;
 }
 #endif

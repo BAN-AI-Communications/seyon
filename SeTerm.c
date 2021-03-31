@@ -14,40 +14,36 @@
  * (which should be sent by the grand parent), it kills the child and exits.
  */
 
-#include <stdio.h>
-#include <unistd.h>
 #include <signal.h>
+#include <stdio.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <unistd.h>
 
 #include <X11/Intrinsic.h>
 
-#include "seyon.h"
 #include "SeDecl.h"
+#include "seyon.h"
 
-extern char     TtyReadChar();
-extern int      MdmReadStr();
+extern char TtyReadChar();
+extern int MdmReadStr();
 
-extern FILE    *tfp,            /* terminal pointer */
-               *cfp;            /* capture file pointer */
-extern Boolean  capture;        /* are we capturing or not ? */
-extern int      tfd,            /* terminal descriptor */
-                mainToTermPipe[];
-extern pid_t    mainPid;
+extern FILE *tfp,       /* terminal pointer */
+    *cfp;               /* capture file pointer */
+extern Boolean capture; /* are we capturing or not ? */
+extern int tfd,         /* terminal descriptor */
+    mainToTermPipe[];
+extern pid_t mainPid;
 
-void            send_tbyte(),
-                toggle(),
-                cleanup();
+void send_tbyte(), toggle(), cleanup();
 
-pid_t           readProcPid = 0; /* pid of child process */
+pid_t readProcPid = 0; /* pid of child process */
 
 /*---------------------------------------------------------------------------+
 | DoNothingHandler - handler for doing nothing.
 +---------------------------------------------------------------------------*/
 
-void
-DoNothingHandler(sigNum)
-     int       sigNum;
+void DoNothingHandler(sigNum) int sigNum;
 {
 #ifdef DEBUG
   showf(">>> in DoNothingHandler, pid = %d, sig = %d", getpid(), sigNum);
@@ -61,18 +57,17 @@ DoNothingHandler(sigNum)
 | TerminalKillHandler - handler for the terminal kill (SIGTERM).
 +---------------------------------------------------------------------------*/
 
-void
-TerminalKillHandler(dummy)
-     int             dummy;
+void TerminalKillHandler(dummy) int dummy;
 {
   signal(SIGTERM, SIG_IGN);
 
-  /* Kill the child process and wait for it to die, sounds vicious, 
+  /* Kill the child process and wait for it to die, sounds vicious,
      doesn't it? The child process is the read process from the port */
 
-  if (readProcPid && kill(readProcPid, SIGTERM) == 0) 
-    while(wait((int*)0) < 0);
-  
+  if (readProcPid && kill(readProcPid, SIGTERM) == 0)
+    while (wait((int *)0) < 0)
+      ;
+
   fflush(tfp);
   exit(0);
 }
@@ -81,15 +76,14 @@ TerminalKillHandler(dummy)
 | TerminalSuspendHandler - handler for the terminal suspension (SIGUSR1).
 +---------------------------------------------------------------------------*/
 
-void
-TerminalSuspendHandler(sigNum)
-     int             sigNum;
+void TerminalSuspendHandler(sigNum) int sigNum;
 {
   /* Don't deliver or stack (as pending) any more instances of the signal
      until we've woken up (below) */
   signal(sigNum, SIG_IGN);
 
-  if (readProcPid) kill(readProcPid, sigNum);
+  if (readProcPid)
+    kill(readProcPid, sigNum);
 
   pause();
 
@@ -99,23 +93,22 @@ TerminalSuspendHandler(sigNum)
 
   /* After waking up */
 
-  if (readProcPid) kill(readProcPid, SIGCONT);
+  if (readProcPid)
+    kill(readProcPid, SIGCONT);
 
   /* Reinstall the signal handler */
   signal(sigNum, TerminalSuspendHandler);
 }
 
 /*---------------------------------------------------------------------------+
-| TerminalRefreshParametersHandler - handler for the terminal to get the 
+| TerminalRefreshParametersHandler - handler for the terminal to get the
 |                                    current session parameters (SIGUSR2).
 +---------------------------------------------------------------------------*/
 
-void
-TerminalRefreshParametersHandler(sigNum)
-     int       sigNum;
+void TerminalRefreshParametersHandler(sigNum) int sigNum;
 {
-  int        PutParameters();
-  void       GetParameters();
+  int PutParameters();
+  void GetParameters();
 
   /* Don't deliver or stack (as pending) any more instances of the signal
      until we're finished with the work at hand */
@@ -123,8 +116,8 @@ TerminalRefreshParametersHandler(sigNum)
 
   GetParameters(NULL, mainToTermPipe);
 
-  if (readProcPid && (PutParameters(mainToTermPipe) < 0 || 
-                      kill(readProcPid, sigNum) != 0))
+  if (readProcPid &&
+      (PutParameters(mainToTermPipe) < 0 || kill(readProcPid, sigNum) != 0))
     SePError("Could not pipe parameters");
 
   /* Reinstall the signal handler */
@@ -132,14 +125,12 @@ TerminalRefreshParametersHandler(sigNum)
 }
 
 /*
- * Terminal: main routine. Has two processes, one to read from terminal 
+ * Terminal: main routine. Has two processes, one to read from terminal
  *           and send to the port and the other to do the oppsite.
  */
 
-void
-Terminal()
-{
-  char            c;
+void Terminal() {
+  char c;
 
   /* Tell the program where to go when signals are received */
   signal(SIGTERM, TerminalKillHandler);
@@ -157,11 +148,13 @@ Terminal()
   /* Parent, write proc: read from tty and write to port */
 
   while (1)
-    if (TtyReadChar(tfd, &c) >= 0) send_tbyte(c);
+    if (TtyReadChar(tfd, &c) >= 0)
+      send_tbyte(c);
     else {
       SeError("TTY read error. Terminal process exiting");
-      if (readProcPid && kill(readProcPid, SIGTERM) == 0) 
-        while(wait((int*)0) < 0);
+      if (readProcPid && kill(readProcPid, SIGTERM) == 0)
+        while (wait((int *)0) < 0)
+          ;
       ProcRequest(POPUP_ERROR, "TTY Read Error", "errReadError");
       exit(1);
     }
@@ -172,13 +165,11 @@ Terminal()
  * Read from the port and write to the tty
  */
 
-void
-PortToTty()
-{
-  static char           zmSig[] = "**\030B00";
-  static char          *zmSigPtr = zmSig;
-  char                  buf[BUFSIZ], c;
-  int                   n, i;
+void PortToTty() {
+  static char zmSig[] = "**\030B00";
+  static char *zmSigPtr = zmSig;
+  char buf[BUFSIZ], c;
+  int n, i;
 
   signal(SIGTERM, TerminalKillHandler);
 
@@ -198,24 +189,25 @@ PortToTty()
     }
 
     /* Write incoming characters to the tty */
-    fwrite(buf, sizeof(char), n, tfp); 
+    fwrite(buf, sizeof(char), n, tfp);
     fflush(tfp);
 
-    for(i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) {
       c = buf[i];
-      
+
       /* Write to capture file if capture is enabled */
-      if (capture) fputc(c, cfp);
+      if (capture)
+        fputc(c, cfp);
 
       /* Look for Zmodem signature */
       if (c != *zmSigPtr)
         zmSigPtr = zmSig;
-      else if (*++zmSigPtr == '\0' && qres.autoZmodem) 
-        ProcRequest(DISPATCH_ACTION, "Zmodem Auto-Download", 
-					qres.autoZmodemAction);
+      else if (*++zmSigPtr == '\0' && qres.autoZmodem)
+        ProcRequest(DISPATCH_ACTION, "Zmodem Auto-Download",
+                    qres.autoZmodemAction);
 
     } /* for... */
-  } /* while(1)... */
+  }   /* while(1)... */
   /*NOT REACHED*/
 }
 
@@ -223,9 +215,7 @@ PortToTty()
  * send a translated character to the modem
  */
 
-void
-send_tbyte(c)
-     int             c;
+void send_tbyte(c) int c;
 {
   switch (c) {
 
@@ -266,41 +256,43 @@ send_tbyte(c)
 }
 
 /*---------------------------------------------------------------------------+
-| Routines to manipulate the terminal process. 
+| Routines to manipulate the terminal process.
 +---------------------------------------------------------------------------*/
 
-pid_t           termProcPid = 0; /* pid of the terminal process */
+pid_t termProcPid = 0; /* pid of the terminal process */
 
 /*---------------------------------------------------------------------------+
 | StartTerminal - starts the terminal process.
 +---------------------------------------------------------------------------*/
 
-void
-StartTerminal()
-{
+void StartTerminal() {
   /* Child Process */
-  if ((termProcPid = SeFork()) == 0) 
-	{Terminal(); exit(1);}
+  if ((termProcPid = SeFork()) == 0) {
+    Terminal();
+    exit(1);
+  }
 }
 
 /*---------------------------------------------------------------------------+
 | KillTerminal - kills the terminal process.
 +---------------------------------------------------------------------------*/
 
-void
-KillTerminal()
-{
-  void     (*oldSigHandler)();
+void KillTerminal() {
+  void (*oldSigHandler)();
 
-  if (termProcPid == 0) return;
+  if (termProcPid == 0)
+    return;
   /* Make sure it's not suspended so that it can react to SIGTERM */
-/*  if (SuspContTerminal(TERM_CONTINUE) == 0) return;*/
+  /*  if (SuspContTerminal(TERM_CONTINUE) == 0) return;*/
 
   oldSigHandler = signal(SIGCHLD, SIG_DFL);
 
   /* Kill the child and wait for it to die */
-  if (termProcPid && kill(termProcPid, SIGTERM) == 0) 
-    {while(wait((int*)0) < 0); termProcPid = 0;}
+  if (termProcPid && kill(termProcPid, SIGTERM) == 0) {
+    while (wait((int *)0) < 0)
+      ;
+    termProcPid = 0;
+  }
 
   signal(SIGCHLD, oldSigHandler);
 }
@@ -309,38 +301,38 @@ KillTerminal()
 | SuspContTerminal - suspends or resumes the terminal process.
 +---------------------------------------------------------------------------*/
 
-int
-SuspContTerminal(state)
-     int state;
+int SuspContTerminal(state) int state;
 {
-  /* This variable keeps track of whether 
+  /* This variable keeps track of whether
      the terminal is active or suspended */
   static int termSuspended = 0;
-  
-  if (termProcPid == 0) return 0;
+
+  if (termProcPid == 0)
+    return 0;
 
   if (state == TERM_CONTINUE) {
-    if (termProcPid && kill(termProcPid, SIGCONT) == 0) 
+    if (termProcPid && kill(termProcPid, SIGCONT) == 0)
       termSuspended = 0;
     return 1;
   }
 
-  if (termSuspended) return 0;
-  if (termProcPid && kill(termProcPid, SIGUSR1) == 0) 
-    {termSuspended = 1; return 1;}
-  else
+  if (termSuspended)
+    return 0;
+  if (termProcPid && kill(termProcPid, SIGUSR1) == 0) {
+    termSuspended = 1;
+    return 1;
+  } else
     return 0;
 }
 
-int
-TerminalRefreshParameters()
-{
-  int    PutParameters();
+int TerminalRefreshParameters() {
+  int PutParameters();
 
-  if (termProcPid && (PutParameters(mainToTermPipe) < 0 || 
-                      kill(termProcPid, SIGUSR2) != 0))
+  if (termProcPid &&
+      (PutParameters(mainToTermPipe) < 0 || kill(termProcPid, SIGUSR2) != 0))
     return -1;
-  else return 0;
+  else
+    return 0;
 }
 
 /*
@@ -348,9 +340,7 @@ TerminalRefreshParameters()
  * one
  */
 
-void
-RestartTerminal()
-{
+void RestartTerminal() {
   KillTerminal();
   StartTerminal();
 }

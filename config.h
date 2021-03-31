@@ -8,7 +8,7 @@
  *
  */
 
-/*                               -*- Mode: C -*- 
+/*                               -*- Mode: C -*-
  * config.h --- Configuration header file
  * Author          : Muhammad M. Saggaf
  * Created On      : sometime in 1992
@@ -38,16 +38,16 @@
  * entry for your system.
  */
 
-/* #define linux */               /* No need, predefined */
-/* #define SVR4 */                /* No need, predefined */
+/* #define linux */ /* No need, predefined */
+/* #define SVR4 */  /* No need, predefined */
 /* #define _SVR3 */
 /* #define BSD386 */
-/* #define __386BSD__ */          /* No need, predefined */
-/* #define ultrix */              /* No need, predefined */
-/* #define sun */                 /* No need, predefined */
-/* #define SUNOS_3 */		      /* SunOS 3.x */
-/* #define HPUX */                /* HP-UX 8.0 */
-/* #define HPUX9 */               /* HP-UX 9.0 */
+/* #define __386BSD__ */ /* No need, predefined */
+/* #define ultrix */     /* No need, predefined */
+/* #define sun */        /* No need, predefined */
+/* #define SUNOS_3 */    /* SunOS 3.x */
+/* #define HPUX */       /* HP-UX 8.0 */
+/* #define HPUX9 */      /* HP-UX 9.0 */
 /* #define AIXV3 */
 /* #define SGI */
 
@@ -60,149 +60,149 @@
 #if defined(sun) && !defined(SUNOS_3) && !defined(SVR4)
 #ifndef SUNOS_4
 #define SUNOS_4
-#endif			
+#endif
 #endif
 
-#if (defined(hpux) || defined (HPUX9)) && !defined(HPUX)
+#if (defined(hpux) || defined(HPUX9)) && !defined(HPUX)
 #define HPUX
 #endif
 
 /* Leave these alone */
 
-#define YES  1
-#define Yes  YES
-#define yes  YES
-#define NO   0
-#define No   NO
-#define no   NO
+#define YES 1
+#define Yes YES
+#define yes YES
+#define NO 0
+#define No NO
+#define no NO
 
 /*
  * ----------------------------------------
- *   Check those out: 
+ *   Check those out:
  * ----------------------------------------
  */
 
 #if defined(linux) || defined(_SVR3) || defined(BSD386) || defined(__386BSD__)
-#define HAVE_TERMIOS        YES
-#define HAVE_MODEM_CONTROL  YES
-#define HAVE_DUP2           YES
-#define HAVE_STRSTR         YES
-#define HAVE_STRERROR       YES
-#define HAVE_USLEEP         YES
+#define HAVE_TERMIOS YES
+#define HAVE_MODEM_CONTROL YES
+#define HAVE_DUP2 YES
+#define HAVE_STRSTR YES
+#define HAVE_STRERROR YES
+#define HAVE_USLEEP YES
 #endif
 
 #ifdef SVR4
-#define HAVE_TERMIOS        YES
-#define HAVE_MODEM_CONTROL  YES
-#define HAVE_DUP2           YES
-#define HAVE_STRSTR         YES
-#define HAVE_STRERROR       YES
-#define HAVE_USLEEP			NO	/* usleep is broken in SVR4 */
-#define HAVE_SELECT         YES
-#define LF_USE_ASCII_PID    YES
-#define LF_USE_DEV_NUMBERS  YES
-#define LF_PATH             "/usr/spool/locks"
-#define LF_PREFIX           "LK."
+#define HAVE_TERMIOS YES
+#define HAVE_MODEM_CONTROL YES
+#define HAVE_DUP2 YES
+#define HAVE_STRSTR YES
+#define HAVE_STRERROR YES
+#define HAVE_USLEEP NO /* usleep is broken in SVR4 */
+#define HAVE_SELECT YES
+#define LF_USE_ASCII_PID YES
+#define LF_USE_DEV_NUMBERS YES
+#define LF_PATH "/usr/spool/locks"
+#define LF_PREFIX "LK."
 #endif
 
 #ifdef ultrix
-#define HAVE_TERMIOS        YES
-#define HAVE_MODEM_CONTROL  YES
-#define HAVE_DUP2           YES
-#define HAVE_STRSTR         YES
-#define HAVE_STRERROR       YES
-#define HAVE_USLEEP			NO
-#define HAVE_SELECT         YES
+#define HAVE_TERMIOS YES
+#define HAVE_MODEM_CONTROL YES
+#define HAVE_DUP2 YES
+#define HAVE_STRSTR YES
+#define HAVE_STRERROR YES
+#define HAVE_USLEEP NO
+#define HAVE_SELECT YES
 #endif
 
 #ifdef SUNOS_4
-#define HAVE_TERMIOS        YES
-#define HAVE_MODEM_CONTROL  YES
-#define HAVE_DUP2           YES
-#define HAVE_STRSTR         YES
-#define HAVE_STRERROR       NO
-#define HAVE_USLEEP			YES
-#define LF_USE_ASCII_PID    YES
-#define LF_USE_DEV_NUMBERS  NO
-#define LF_PATH             "/var/spool/locks"
-#define LF_PREFIX           "LCK.."
+#define HAVE_TERMIOS YES
+#define HAVE_MODEM_CONTROL YES
+#define HAVE_DUP2 YES
+#define HAVE_STRSTR YES
+#define HAVE_STRERROR NO
+#define HAVE_USLEEP YES
+#define LF_USE_ASCII_PID YES
+#define LF_USE_DEV_NUMBERS NO
+#define LF_PATH "/var/spool/locks"
+#define LF_PREFIX "LCK.."
 #endif
 
 #ifdef SUNOS_3
-#define HAVE_TERMIOS        NO
-#define HAVE_TERMIO         NO
-#define HAVE_SGTTYB         YES
-#define HAVE_MODEM_CONTROL  YES
-#define HAVE_DUP2           YES
-#define HAVE_STRSTR         NO
-#define HAVE_STRERROR       NO
-#define HAVE_USLEEP			YES
+#define HAVE_TERMIOS NO
+#define HAVE_TERMIO NO
+#define HAVE_SGTTYB YES
+#define HAVE_MODEM_CONTROL YES
+#define HAVE_DUP2 YES
+#define HAVE_STRSTR NO
+#define HAVE_STRERROR NO
+#define HAVE_USLEEP YES
 typedef int pid_t;
 typedef int speed_t;
-#define LF_USE_ASCII_PID    YES
-#define LF_USE_DEV_NUMBERS  NO
-#define LF_PATH             "/var/spool/locks"
-#define LF_PREFIX           "LCK.."
+#define LF_USE_ASCII_PID YES
+#define LF_USE_DEV_NUMBERS NO
+#define LF_PATH "/var/spool/locks"
+#define LF_PREFIX "LCK.."
 #endif
 
 #ifdef HPUX
 #ifndef HPUX9
-#define HAVE_TERMIOS        NO
-#define HAVE_TERMIO         YES
+#define HAVE_TERMIOS NO
+#define HAVE_TERMIO YES
 #else
-#define HAVE_TERMIOS        YES
+#define HAVE_TERMIOS YES
 #endif
-#define HAVE_MODEM_CONTROL  YES
-#define HAVE_DUP2           YES
-#define HAVE_STRSTR         YES
-#define HAVE_STRERROR       YES
-#define HAVE_USLEEP			NO
-#define HAVE_SELECT         YES
+#define HAVE_MODEM_CONTROL YES
+#define HAVE_DUP2 YES
+#define HAVE_STRSTR YES
+#define HAVE_STRERROR YES
+#define HAVE_USLEEP NO
+#define HAVE_SELECT YES
 #endif
 
 #ifdef AIXV3
-#define HAVE_TERMIOS        YES
-#define HAVE_MODEM_CONTROL  YES
-#define HAVE_DUP2           YES
-#define HAVE_STRSTR         YES
-#define HAVE_STRERROR       YES
-#define HAVE_USLEEP         YES
-#define LF_USE_ASCII_PID    YES
-#define LF_USE_DEV_NUMBERS  NO
-#define LF_PATH             "/etc/locks"
-#define LF_PREFIX           "LCK.."
+#define HAVE_TERMIOS YES
+#define HAVE_MODEM_CONTROL YES
+#define HAVE_DUP2 YES
+#define HAVE_STRSTR YES
+#define HAVE_STRERROR YES
+#define HAVE_USLEEP YES
+#define LF_USE_ASCII_PID YES
+#define LF_USE_DEV_NUMBERS NO
+#define LF_PATH "/etc/locks"
+#define LF_PREFIX "LCK.."
 #endif
 
 #ifdef SGI
-#define HAVE_TERMIOS        YES
-#define HAVE_MODEM_CONTROL  YES
-#define HAVE_DUP2           YES
-#define HAVE_STRSTR         YES
-#define HAVE_STRERROR       YES
-#define HAVE_USLEEP			NO
-#define HAVE_SELECT         YES
-#define LF_USE_ASCII_PID    NO
-#define LF_USE_DEV_NUMBERS  NO
-#define LF_PATH             "/usr/spool/locks"
-#define LF_PREFIX           "LCK.."
+#define HAVE_TERMIOS YES
+#define HAVE_MODEM_CONTROL YES
+#define HAVE_DUP2 YES
+#define HAVE_STRSTR YES
+#define HAVE_STRERROR YES
+#define HAVE_USLEEP NO
+#define HAVE_SELECT YES
+#define LF_USE_ASCII_PID NO
+#define LF_USE_DEV_NUMBERS NO
+#define LF_PATH "/usr/spool/locks"
+#define LF_PREFIX "LCK.."
 #endif
 
 #ifdef Mips
-#define HAVE_TERMIOS        NO
-#define HAVE_TERMIO         NO
-#define HAVE_SGTTYB         YES
-#define HAVE_MODEM_CONTROL  YES
-#define HAVE_DUP2           YES
-#define HAVE_STRSTR         NO
-#define HAVE_STRERROR       NO
-#define HAVE_USLEEP         YES
-#define HAVE_SELECT         YES
-#define LF_USE_ASCII_PID    NO
-#define LF_USE_DEV_NUMBERS  NO
-#define LF_PATH             "/usr/spool/locks"
-#define LF_PREFIX           "LCK.."
-#define B19200              16
-#define B38400              17
+#define HAVE_TERMIOS NO
+#define HAVE_TERMIO NO
+#define HAVE_SGTTYB YES
+#define HAVE_MODEM_CONTROL YES
+#define HAVE_DUP2 YES
+#define HAVE_STRSTR NO
+#define HAVE_STRERROR NO
+#define HAVE_USLEEP YES
+#define HAVE_SELECT YES
+#define LF_USE_ASCII_PID NO
+#define LF_USE_DEV_NUMBERS NO
+#define LF_PATH "/usr/spool/locks"
+#define LF_PREFIX "LCK.."
+#define B19200 16
+#define B38400 17
 
 typedef int pid_t;
 typedef unsigned short speed_t;
@@ -221,49 +221,49 @@ extern char *getenv();
 
 /* Wether you have POSIX termios */
 #ifndef HAVE_TERMIOS
-#define HAVE_TERMIOS        YES
+#define HAVE_TERMIOS YES
 #endif
 
 /* Wether you have SYSV termio */
 #ifndef HAVE_TERMIO
-#define HAVE_TERMIO         NO
+#define HAVE_TERMIO NO
 #endif
 
 /* Wether you have SGTTYB */
 #ifndef HAVE_SGTTYB
-#define HAVE_SGTTYB         NO
+#define HAVE_SGTTYB NO
 #endif
 
 /* Wether you have modem line control. Almost all Unix systems have it. */
 #ifndef HAVE_MODEM_CONTROL
-#define HAVE_MODEM_CONTROL  YES
+#define HAVE_MODEM_CONTROL YES
 #endif
 
 /* Wether you have dup2 */
 #ifndef HAVE_DUP2
-#define HAVE_DUP2           YES
+#define HAVE_DUP2 YES
 #endif
 
 /* Wether you have strstr */
 #ifndef HAVE_STRSTR
-#define HAVE_STRSTR         YES
+#define HAVE_STRSTR YES
 #endif
 
 /* Wether you have strerror */
 #ifndef HAVE_STRERROR
-#define HAVE_STRERROR       YES
+#define HAVE_STRERROR YES
 #endif
 
 /* Wether you have usleep */
 #ifndef HAVE_USLEEP
-#define HAVE_USLEEP         YES
+#define HAVE_USLEEP YES
 #endif
 
 /* Wether your system has select. If not (highly unlikely), your
    system is not worth calling unix and usleep will be implemented by
    busy waiting. This is only needed if you don't have usleep. */
 #ifndef HAVE_SELECT
-#define HAVE_SELECT         YES
+#define HAVE_SELECT YES
 #endif
 
 /* Uncomment if pids are defined as int in your system */
@@ -273,7 +273,7 @@ extern char *getenv();
 /* typedef int speed_t; */
 
 /* Uncomment if you don't have strchr and strrchr */
-/* 
+/*
 #define strchr  index
 #define strrchr rindex
 */
@@ -302,34 +302,34 @@ extern char *getenv();
  * HDB uucp does) rather than in binary form as other uucp prgrams do
  */
 #ifndef LF_USE_ASCII_PID
-#define LF_USE_ASCII_PID    YES
+#define LF_USE_ASCII_PID YES
 #endif
 
-/* 
+/*
  * Wether you want lock files to be in the form LK.inode.major.minor
  * (e.g. LK.035.064.008) rather than the more common LCK..base_name
  * (e.g. LCK..ttys0). This is mostly how SVR4 does things.
  */
 #ifndef LF_USE_DEV_NUMBERS
-#define LF_USE_DEV_NUMBERS  NO
+#define LF_USE_DEV_NUMBERS NO
 #endif
 
-/* 
+/*
  * Define the location of your locks.
  */
 
 #ifndef LF_PATH
-#define LF_PATH             "/var/lock"
+#define LF_PATH "/var/lock"
 #endif
 
-/* 
+/*
  * Normally, you don't have to touch this
  */
 #ifndef LF_PREFIX
 #if !LF_USE_DEV_NUMBERS
-#define LF_PREFIX           "LCK.."
+#define LF_PREFIX "LCK.."
 #else
-#define LF_PREFIX           "LK."
+#define LF_PREFIX "LK."
 #endif
 #endif /* LF_PREFIX */
 
@@ -340,7 +340,7 @@ extern char *getenv();
  */
 #ifdef linux
 #ifndef USE_NONSTD_BAUD
-#define USE_NONSTD_BAUD     NO
+#define USE_NONSTD_BAUD NO
 #endif
 #endif /* linux */
 
@@ -350,24 +350,24 @@ extern char *getenv();
  * ----------------------------------------
  */
 
-/* 
+/*
  * Don't touch this
  */
 
 #if HAVE_TERMIOS || HAVE_TERMIO
-#define HAVE_SGTTYB         NO
+#define HAVE_SGTTYB NO
 #endif
 
 #if !defined(SIGCHLD) && defined(SIGCLD)
 #define SIGCHLD SIGCLD
 #endif
 
-#define NMSIZE  256		/* file name buffer size */
-#define WBSIZE  256		/* input and working buffer size */
+#define NMSIZE 256 /* file name buffer size */
+#define WBSIZE 256 /* input and working buffer size */
 /*
  * max number of entries in the dialing directory and protocols file
  */
 #define MAX_ENT 256
-#define MAX_SEQUICKKEYS 30		/* Maximum number of SeQuickKeys */
+#define MAX_SEQUICKKEYS 30 /* Maximum number of SeQuickKeys */
 
 #endif

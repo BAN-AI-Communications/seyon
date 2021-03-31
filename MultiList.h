@@ -1,31 +1,31 @@
 /****************************************************************************
 
-	MultiList.h
+        MultiList.h
 
-	This file is the public header file for the MultiList widget, an
-	extension to the Athena List widget.
+        This file is the public header file for the MultiList widget, an
+        extension to the Athena List widget.
 
-	This code is loosely based on the Athena List source which
-	is why the MIT copyright notice appears below.
+        This code is loosely based on the Athena List source which
+        is why the MIT copyright notice appears below.
 
-	The code was changed substantially in V3.4 to change the
-	action/callback interface which was unnecessarily ugly.  Code
-	using some features of the old interface may need to be changed.
-	Hope the changes don't make people's lives too miserable.
+        The code was changed substantially in V3.4 to change the
+        action/callback interface which was unnecessarily ugly.  Code
+        using some features of the old interface may need to be changed.
+        Hope the changes don't make people's lives too miserable.
 
  ****************************************************************************/
 
 /*
  * Author:
- * 	Brian Totty
- * 	Department of Computer Science
- * 	University Of Illinois at Urbana-Champaign
- *	1304 West Springfield Avenue
- * 	Urbana, IL 61801
- * 
- * 	totty@cs.uiuc.edu
- * 	
- */ 
+ *      Brian Totty
+ *      Department of Computer Science
+ *      University Of Illinois at Urbana-Champaign
+ *      1304 West Springfield Avenue
+ *      Urbana, IL 61801
+ *
+ *      totty@cs.uiuc.edu
+ *
+ */
 
 /*
  * Copyright 1989 Massachusetts Institute of Technology
@@ -44,7 +44,7 @@
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL M.I.T.
  * BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
- * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN 
+ * OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
  * CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  *
  * Original Athena Author:  Chris D. Peterson, MIT X Consortium
@@ -63,39 +63,39 @@
 
 /*
 
- Name		     Class		RepType		Default Value
- ----		     -----		-------		-------------
- background	     Background		Pixel		XtDefaultBackground
- border		     BorderColor	Pixel		XtDefaultForeground
- borderWidth	     BorderWidth	Dimension	1
+ Name                Class              RepType         Default Value
+ ----                -----              -------         -------------
+ background          Background         Pixel           XtDefaultBackground
+ border              BorderColor        Pixel           XtDefaultForeground
+ borderWidth         BorderWidth        Dimension       1
  callback            Callback           XtCallbackList  NULL                *1
  columnWidth         Width              Dimension       0                   *9
  columnSpacing       Spacing            Dimension       8
- cursor		     Cursor		Cursor		left_ptr
+ cursor              Cursor             Cursor          left_ptr
  defaultColumns      Columns            int             1                   *2
- destroyCallback     Callback		Pointer		NULL 
- font		     Font		XFontStruct*	XtDefaultFont
+ destroyCallback     Callback           Pointer         NULL
+ font                Font               XFontStruct*    XtDefaultFont
  forceColumns        Columns            Boolean         False               *2
- foreground	     Foreground		Pixel		XtDefaultForeground
- height		     Height		Dimension	0                   *3
- highlightBackground HBackground	Pixel		XtDefaultForeground *4
- highlightForeground HForeground	Pixel		XtDefaultBackground *4
- insensitiveBorder   Insensitive	Pixmap		Gray
+ foreground          Foreground         Pixel           XtDefaultForeground
+ height              Height             Dimension       0                   *3
+ highlightBackground HBackground        Pixel           XtDefaultForeground *4
+ highlightForeground HForeground        Pixel           XtDefaultBackground *4
+ insensitiveBorder   Insensitive        Pixmap          Gray
  list                List               String *        NULL                *5
  longest             Longest            int             0                   *6
- mappedWhenManaged   MappedWhenManaged	Boolean		True
+ mappedWhenManaged   MappedWhenManaged  Boolean         True
  maxSelectable       Value              int             1                   *7
  numberStrings       NumberStrings      int             0                   *5
  pasteBuffer         Boolean            Boolean         False
  rowHeight           Height             Dimension       0                   *9
  rowSpacing          Spacing            Dimension       2
- sensitive	     Sensitive		Boolean		True
+ sensitive           Sensitive          Boolean         True
  sensitiveArray      List               Boolean *       NULL                *8
- shadeSurplus	     Boolean		Boolean		True		    *10
+ shadeSurplus        Boolean            Boolean         True                *10
  verticalList        Boolean            Boolean         False
- width		     Width		Dimension	0
- x		     Position		Position	0
- y		     Position		Position	0
+ width               Width              Dimension       0
+ x                   Position           Position        0
+ y                   Position           Position        0
 
  *1 -  The callback functions are called whenever a highlight or unhighlight
        takes place.  More precisely, a callback occurs whenever the Notify()
@@ -160,7 +160,7 @@
  *10 - If the list height is made larger than the sum of the list entry
        heights, the surplus space is shaded in the background color if
        shadeSurplus is False, or in a gray stipple pattern if shadeSurplus
-       is True.       
+       is True.
 
 */
 
@@ -171,75 +171,74 @@
  *---------------------------------------------------------------------------*/
 
 #ifndef XtCList
-#define XtCList			"List"
+#define XtCList "List"
 #endif
 
 #ifndef XtCSpacing
-#define XtCSpacing		"Spacing"
+#define XtCSpacing "Spacing"
 #endif
 
 #ifndef XtCColumns
-#define XtCColumns		"Columns"
+#define XtCColumns "Columns"
 #endif
 
 #ifndef XtCLongest
-#define XtCLongest		"Longest"
+#define XtCLongest "Longest"
 #endif
 
-#define XtCNumberStrings	"NumberStrings"
-#define	XtCHForeground		"HForeground"
-#define	XtCHBackground		"HBackground"
+#define XtCNumberStrings "NumberStrings"
+#define XtCHForeground "HForeground"
+#define XtCHBackground "HBackground"
 
 #ifndef XtNcursor
-#define XtNcursor		"cursor"
+#define XtNcursor "cursor"
 #endif
 
-#define	XtNhighlightForeground	"highlightForeground"
-#define	XtNhighlightBackground	"highlightBackground"
-#define XtNcolumnSpacing	"columnSpacing"
-
+#define XtNhighlightForeground "highlightForeground"
+#define XtNhighlightBackground "highlightBackground"
+#define XtNcolumnSpacing "columnSpacing"
 
 #ifndef XtNrowSpacing
-#define XtNrowSpacing		"rowSpacing"
+#define XtNrowSpacing "rowSpacing"
 #endif
 
-#define XtNdefaultColumns	"defaultColumns"
+#define XtNdefaultColumns "defaultColumns"
 
 #ifndef XtNforceColumns
-#define XtNforceColumns		"forceColumns"
+#define XtNforceColumns "forceColumns"
 #endif
 
 #ifndef XtNpasteBuffer
-#define XtNpasteBuffer		"pasteBuffer"
+#define XtNpasteBuffer "pasteBuffer"
 #endif
 
 #ifndef XtNverticalList
-#define XtNverticalList		"verticalList"
+#define XtNverticalList "verticalList"
 #endif
 
 #ifndef XtNlongest
-#define XtNlongest		"longest"
+#define XtNlongest "longest"
 #endif
 
-#define XtNnumberStrings	"numberStrings"
+#define XtNnumberStrings "numberStrings"
 
 #ifndef XtNlist
-#define XtNlist			"list"
+#define XtNlist "list"
 #endif
 
-#define	XtNsensitiveArray	"sensitiveArray"
-#define	XtNmaxSelectable	"maxSelectable"
-#define	XtNshadeSurplus		"shadeSurplus"
+#define XtNsensitiveArray "sensitiveArray"
+#define XtNmaxSelectable "maxSelectable"
+#define XtNshadeSurplus "shadeSurplus"
 
-#define	XtNrowHeight		"rowHeight"
-#define	XtNcolumnWidth		"columnWidth"
- 
-	/* Class Record Constants */
+#define XtNrowHeight "rowHeight"
+#define XtNcolumnWidth "columnWidth"
+
+/* Class Record Constants */
 
 extern WidgetClass xfwfMultiListWidgetClass;
 
 typedef struct _XfwfMultiListClassRec *XfwfMultiListWidgetClass;
-typedef struct _XfwfMultiListRec      *XfwfMultiListWidget;
+typedef struct _XfwfMultiListRec *XfwfMultiListWidget;
 
 /*---------------------------------------------------------------------------*
 
@@ -247,19 +246,18 @@ typedef struct _XfwfMultiListRec      *XfwfMultiListWidget;
 
  *---------------------------------------------------------------------------*/
 
-#define	XfwfMultiListActionNothing		0
-#define	XfwfMultiListActionHighlight		1
-#define	XfwfMultiListActionUnhighlight		2
-#define	XfwfMultiListActionStatus		3
+#define XfwfMultiListActionNothing 0
+#define XfwfMultiListActionHighlight 1
+#define XfwfMultiListActionUnhighlight 2
+#define XfwfMultiListActionStatus 3
 
-typedef struct _XfwfMultiListReturnStruct
-{
-	int num_selected;		/* Number Of Items Now Selected */
-	int *selected_items;		/* Indexes Of Selected Items */
+typedef struct _XfwfMultiListReturnStruct {
+  int num_selected;    /* Number Of Items Now Selected */
+  int *selected_items; /* Indexes Of Selected Items */
 
-	int action;			/* Last Action Performed */
-	int item;			/* Last Item Index Modified */
-	String string;			/* String Of Last Index Modified */
+  int action;    /* Last Action Performed */
+  int item;      /* Last Item Index Modified */
+  String string; /* String Of Last Index Modified */
 } XfwfMultiListReturnStruct;
 
 /*---------------------------------------------------------------------------*
@@ -270,37 +268,35 @@ typedef struct _XfwfMultiListReturnStruct
 
 #if (!NeedFunctionPrototypes)
 
-extern Boolean		XfwfMultiListHighlightItem();
-extern void		XfwfMultiListHighlightAll();
-extern void		XfwfMultiListUnhighlightItem();
-extern void		XfwfMultiListUnhighlightAll();
-extern int		XfwfMultiListToggleItem();
-extern XfwfMultiListReturnStruct *
-			XfwfMultiListGetHighlighted();
-extern Boolean		XfwfMultiListIsHighlighted();
-extern Boolean		XfwfMultiListGetItemInfo();
-extern void		XfwfMultiListSetNewData();
+extern Boolean XfwfMultiListHighlightItem();
+extern void XfwfMultiListHighlightAll();
+extern void XfwfMultiListUnhighlightItem();
+extern void XfwfMultiListUnhighlightAll();
+extern int XfwfMultiListToggleItem();
+extern XfwfMultiListReturnStruct *XfwfMultiListGetHighlighted();
+extern Boolean XfwfMultiListIsHighlighted();
+extern Boolean XfwfMultiListGetItemInfo();
+extern void XfwfMultiListSetNewData();
 
 #else
 
-extern Boolean		XfwfMultiListHighlightItem(XfwfMultiListWidget mlw,
-				int item_index);
-extern void		XfwfMultiListHighlightAll(XfwfMultiListWidget mlw);
-extern void		XfwfMultiListUnhighlightItem(XfwfMultiListWidget mlw,
-				int item_index);
-extern void		XfwfMultiListUnhighlightAll(XfwfMultiListWidget mlw);
-extern int		XfwfMultiListToggleItem(XfwfMultiListWidget mlw,
-				int item_index);
+extern Boolean XfwfMultiListHighlightItem(XfwfMultiListWidget mlw,
+                                          int item_index);
+extern void XfwfMultiListHighlightAll(XfwfMultiListWidget mlw);
+extern void XfwfMultiListUnhighlightItem(XfwfMultiListWidget mlw,
+                                         int item_index);
+extern void XfwfMultiListUnhighlightAll(XfwfMultiListWidget mlw);
+extern int XfwfMultiListToggleItem(XfwfMultiListWidget mlw, int item_index);
 extern XfwfMultiListReturnStruct *
-			XfwfMultiListGetHighlighted(XfwfMultiListWidget mlw);
-extern Boolean		XfwfMultiListIsHighlighted(XfwfMultiListWidget mlw,
-				int item_index);
-extern Boolean		XfwfMultiListGetItemInfo(XfwfMultiListWidget mlw,
-				int item_index, String *str_ptr,
-				Boolean *h_ptr, Boolean *s_ptr);
-extern void		XfwfMultiListSetNewData(XfwfMultiListWidget mlw,
-				String *list, int nitems, int longest,
-				int resize, Boolean *sensitivity_array);
+XfwfMultiListGetHighlighted(XfwfMultiListWidget mlw);
+extern Boolean XfwfMultiListIsHighlighted(XfwfMultiListWidget mlw,
+                                          int item_index);
+extern Boolean XfwfMultiListGetItemInfo(XfwfMultiListWidget mlw, int item_index,
+                                        String *str_ptr, Boolean *h_ptr,
+                                        Boolean *s_ptr);
+extern void XfwfMultiListSetNewData(XfwfMultiListWidget mlw, String *list,
+                                    int nitems, int longest, int resize,
+                                    Boolean *sensitivity_array);
 
 #endif
 #endif

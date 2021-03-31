@@ -8,45 +8,38 @@
 
 #include <ctype.h>
 
-#include "config.h"
 #include "SeDecl.h"
+#include "config.h"
 
-char           *str_strip_lead_end_space(),
-               *str_strip_lead_space(),
-               *str_strip_end_space();
+char *str_strip_lead_end_space(), *str_strip_lead_space(),
+    *str_strip_end_space();
 
 /*
  * string routines
  */
 
-char
-itoa(num)
-    int             num;
+char itoa(num) int num;
 {
-    char            buf[TIN_BUF];
+  char buf[TIN_BUF];
 
-    /* Buffer is safely big enough */
-    sprintf(buf, "%d", num);
-    return buf[0];
+  /* Buffer is safely big enough */
+  sprintf(buf, "%d", num);
+  return buf[0];
 }
 
 /*
  * replace unwanted characters with something else
  */
 
-char           *
-str_filter(str, unwanted, replacement)
-     char           *str,
-                    *unwanted;
-     char            replacement;
+char *str_filter(str, unwanted, replacement) char *str, *unwanted;
+char replacement;
 {
-  int             i,
-                  j;
+  int i, j;
 
   for (i = 0; str[i]; i++)
     for (j = 0; unwanted[j]; j++)
       if (str[i] == unwanted[j])
-	str[i] = replacement;
+        str[i] = replacement;
 
   return str;
 }
@@ -55,24 +48,19 @@ str_filter(str, unwanted, replacement)
  * strip spaces from both ends of a string
  */
 
-char           *
-str_strip_lead_end_space(str)
-     char           *str;
-{
-  return str_strip_lead_space(str_strip_end_space(str));
-}
+char *str_strip_lead_end_space(str) char *str;
+{ return str_strip_lead_space(str_strip_end_space(str)); }
 
 /*
  * strip spaces from the beginning a string
  */
 
-char           *
-str_strip_lead_space(str)
-     char           *str;
+char *str_strip_lead_space(str) char *str;
 {
-  int             i;
+  int i;
 
-  for (i = 0; isspace(str[i]); i++);
+  for (i = 0; isspace(str[i]); i++)
+    ;
   return str + i;
 }
 
@@ -80,30 +68,25 @@ str_strip_lead_space(str)
  * strip spaces from the end a string
  */
 
-char           *
-str_strip_end_space(str)
-     char           *str;
+char *str_strip_end_space(str) char *str;
 {
-  int             i;
+  int i;
 
-  for (i = strlen(str) - 1; isspace(str[i]) && i; i--);
+  for (i = strlen(str) - 1; isspace(str[i]) && i; i--)
+    ;
   str[++i] = '\0';
 
   return str;
 }
 
-char           *
-str_stripspc_copy(dest, source)
-     char           *dest,
-                    *source;
+char *str_stripspc_copy(dest, source) char *dest, *source;
 {
-  char            buffer[REG_BUF],
-                 *bufptr;
+  char buffer[REG_BUF], *bufptr;
 
   strncpy(buffer, source, REG_BUF);
 
   /* Null-terminate, as expected by str_strip_lead_end_space(). */
-  buffer[REG_BUF-1] = '\0';
+  buffer[REG_BUF - 1] = '\0';
 
   bufptr = str_strip_lead_end_space(buffer);
 
@@ -112,12 +95,9 @@ str_stripspc_copy(dest, source)
   return strcpy(dest, bufptr);
 }
 
-
-char           *
-str_strip_end_char(str)
-     char           *str;
+char *str_strip_end_char(str) char *str;
 {
-  int             length;
+  int length;
 
   length = strlen(str);
   str[length - 1] = '\0';
@@ -125,12 +105,10 @@ str_strip_end_char(str)
   return str;
 }
 
-char*
-StripSpace(str)
-	 char *str;
+char *StripSpace(str) char *str;
 {
   static char strBuf[LRG_BUF];
-  
+
   str_stripspc_copy(strBuf, str);
   return strBuf;
 }
@@ -139,66 +117,58 @@ StripSpace(str)
    is invalidated on subsequent calls, and that the function is not
    re-entrant.  Take care that the pointer returned is not held for
    use across calls. */
-char*
-FmtString(fmt, a, b, c)
-    char *fmt, *a, *b, *c;
+char *FmtString(fmt, a, b, c) char *fmt, *a, *b, *c;
 {
-    static char     strBuf[LRG_BUF];
-    static FILE    *devnull=NULL;
-    int             length = 0;
+  static char strBuf[LRG_BUF];
+  static FILE *devnull = NULL;
+  int length = 0;
 
-    /* Clear the buffer as it highlights errors elsewhere, such as
-       simultaneous use of the static string or re-entry into this
-       function. */
-    memset(strBuf, 0, LRG_BUF);
+  /* Clear the buffer as it highlights errors elsewhere, such as
+     simultaneous use of the static string or re-entry into this
+     function. */
+  memset(strBuf, 0, LRG_BUF);
 
-    /* Ick... This is horrible - using a user-provided format string
-       means we have no easy way of limiting string length. HACK HACK
-       HACK Use fprintf to output to /dev/null and count the number of
-       bytes... It would be nice if we could rely on having snprintf() */
+  /* Ick... This is horrible - using a user-provided format string
+     means we have no easy way of limiting string length. HACK HACK
+     HACK Use fprintf to output to /dev/null and count the number of
+     bytes... It would be nice if we could rely on having snprintf() */
 
-    if(NULL == devnull)
-    {
-        devnull = fopen("/dev/null", "r+");
-        if(NULL == devnull)
-        {
-	  printf("Open /dev/null failed!?!\n");
-	  return strBuf;
-        }
-        length = fprintf(devnull, fmt, a, b, c);
+  if (NULL == devnull) {
+    devnull = fopen("/dev/null", "r+");
+    if (NULL == devnull) {
+      printf("Open /dev/null failed!?!\n");
+      return strBuf;
     }
-    
-    if(LRG_BUF >= length)
-        sprintf(strBuf, fmt, a, b, c);
+    length = fprintf(devnull, fmt, a, b, c);
+  }
 
-    return strBuf;
+  if (LRG_BUF >= length)
+    sprintf(strBuf, fmt, a, b, c);
+
+  return strBuf;
 }
- 
+
 /*
  * find first occurance of str2 in str1 and return a pointer to it
  */
 
 #if !HAVE_STRSTR
-char           *
-strstr(str1, str2)
-     char           *str1,
-                    *str2;
+char *strstr(str1, str2) char *str1, *str2;
 {
-  char           *Sptr,
-                 *Tptr;
-  int             len = strlen(str1) - strlen(str2) + 1;
+  char *Sptr, *Tptr;
+  int len = strlen(str1) - strlen(str2) + 1;
 
   if (*str2)
     for (; len > 0; len--, str1++) {
       if (*str1 != *str2)
-		continue;
-	  
+        continue;
+
       for (Sptr = str1, Tptr = str2; *Tptr != '\0'; Sptr++, Tptr++)
-		if (*Sptr != *Tptr)
-		  break;
-	  
+        if (*Sptr != *Tptr)
+          break;
+
       if (*Tptr == '\0')
-		return str1;
+        return str1;
     }
 
   return NULL;
@@ -206,13 +176,10 @@ strstr(str1, str2)
 
 #endif
 
-char           *
-strsqtok(str)
-     char           *str;
+char *strsqtok(str) char *str;
 {
-  char           *line,
-                 *wrd;
-  static char    *saved_ptr;
+  char *line, *wrd;
+  static char *saved_ptr;
 
   if (str == NULL)
     line = saved_ptr;
@@ -226,9 +193,11 @@ strsqtok(str)
     return NULL;
   else if (*line == '\"')
 
-    for (wrd = ++line; *line != '\"' && *line; line++);
+    for (wrd = ++line; *line != '\"' && *line; line++)
+      ;
   else
-    for (wrd = line; !isspace(*line) && *line; line++);
+    for (wrd = line; !isspace(*line) && *line; line++)
+      ;
 
   if (*line == '\0')
     saved_ptr = line;
@@ -248,12 +217,9 @@ strsqtok(str)
  * WARNING: words returned by this routine are not null-termnated
  */
 
-char           *
-str_parse(buf)
-     char          **buf;
+char *str_parse(buf) char **buf;
 {
-  char           *line,
-                 *wrd;
+  char *line, *wrd;
 
   /*
    * Remember: *buf is a pointer to the string, **buf is a character
@@ -268,12 +234,13 @@ str_parse(buf)
   if (!(*line))
     return NULL;
   else if (*line == '\"') {
-    for (wrd = ++line; *line != '\"' && *line; line++);
+    for (wrd = ++line; *line != '\"' && *line; line++)
+      ;
     *line = '\0';
     line++;
-  }
-  else
-    for (wrd = line; !isspace(*line) && *line; line++);
+  } else
+    for (wrd = line; !isspace(*line) && *line; line++)
+      ;
 
   *buf = line;
   return wrd;
@@ -318,9 +285,7 @@ str_parse(buf)
 
 #if !HAVE_STRERROR
 
-char *
-strerror(err)
-     int err;
+char *strerror(err) int err;
 {
   extern char *sys_errlist[];
 
