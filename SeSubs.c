@@ -44,9 +44,9 @@ extern int      tfd;
 
 void
 toggle_flag(flag)
-     Boolean        *flag;
+    Boolean        *flag;
 {
-  *flag = !*flag;
+    *flag = !*flag;
 }
 
 /*
@@ -55,10 +55,10 @@ toggle_flag(flag)
 
 void
 show(msg)
-     char           *msg;
+    char           *msg;
 {
-  fprintf(tfp, "%s\r\n", msg);
-  fflush(tfp);
+    fprintf(tfp, "%s\r\n", msg);
+    fflush(tfp);
 }
 
 /*
@@ -67,105 +67,96 @@ show(msg)
 
 void
 showf(fmt, a, b, c)
-     char           *fmt,
-                    *a,
-                    *b,
-                    *c;
+    char           *fmt,
+    *a,
+    *b,
+    *c;
 {
-  fprintf(tfp, fmt, a, b, c);
-  fprintf(tfp, "\r\n");
+    fprintf(tfp, fmt, a, b, c);
+    fprintf(tfp, "\r\n");
 }
 
 void
 SeError(msg)
-     char           *msg;
+    char           *msg;
 {
-  char            buf[REG_BUF];
+    char            buf[REG_BUF];
 
-  sprintf(buf, "\r>> Error: %s.", msg);
-  show(buf);
+    strncpy(buf, "\r>> Error: ",REG_BUF);
+    strncat(buf, msg, REG_BUF-12);
+    buf[REG_BUF - 1] = 0; /* Null-terminate to be sure */
+    show(buf);
 }
 
 void
 SeErrorF(fmt, a, b, c)
-     char           *fmt,
-                    *a,
-                    *b,
-                    *c;
+    char           *fmt,
+    *a,
+    *b,
+    *c;
 {
-  char            buf[REG_BUF];
-
-  sprintf(buf, fmt, a, b, c);
-  SeError(buf);
+    SeError(FmtString(fmt, a, b, c));
 }
 
 void
 se_warning(msg)
-     char           *msg;
+    char           *msg;
 {
-  char            buf[REG_BUF];
+    char            buf[REG_BUF];
 
-  sprintf(buf, "\r>> Warning: %s.", msg);
-  show(buf);
+    strncpy(buf, "\r>> Warning: ",REG_BUF);
+    strncat(buf, msg, REG_BUF-14);
+    buf[REG_BUF - 1] = 0; /* Null-terminate to be sure */
+    show(buf);
 }
 
 void
 se_warningf(fmt, a, b, c)
-     char           *fmt,
-                    *a,
-                    *b,
-                    *c;
+    char           *fmt,
+    *a,
+    *b,
+    *c;
 {
-  char            buf[REG_BUF];
-
-  sprintf(buf, fmt, a, b, c);
-  se_warning(buf);
+    se_warning(FmtString(fmt, a, b, c));
 }
 
 void
 SeNotice(msg)
-     char           *msg;
+    char           *msg;
 {
-  char            buf[REG_BUF];
+    char            buf[REG_BUF];
 
-  sprintf(buf, "\r>> Notice: %s.", msg);
-  show(buf);
+    strncpy(buf, "\r>> Notice: ",REG_BUF);
+    strncat(buf, msg, REG_BUF-13);
+    buf[REG_BUF - 1] = 0; /* Null-terminate to be sure */
+    show(buf);
 }
 
 void
 SeNoticeF(fmt, a, b, c)
-     char           *fmt,
-                    *a,
-                    *b,
-                    *c;
+    char           *fmt,
+    *a,
+    *b,
+    *c;
 {
-  char            buf[REG_BUF];
-
-  sprintf(buf, fmt, a, b, c);
-  SeNotice(buf);
+    SeNotice(FmtString(fmt, a, b, c));
 }
 
 void
 SePError(msg)
-     char           *msg;
+    char           *msg;
 {
-  char            buf[REG_BUF];
-
-  sprintf(buf, "%s: %s", msg, strerror(errno));
-  SeError(buf);
+    SeError(FmtString("%s: %s",msg,strerror(errno)));
 }
 
 void
 SePErrorF(fmt, a, b, c)
-     char           *fmt,
-                    *a,
-                    *b,
-                    *c;
+    char           *fmt,
+    *a,
+    *b,
+    *c;
 {
-  char            buf[REG_BUF];
-
-  sprintf(buf, fmt, a, b, c);
-  SePError(buf);
+    SePError(FmtString(fmt,a,b,c));
 }
 
 /* ------------------------------------------------------------
@@ -179,12 +170,12 @@ SePErrorF(fmt, a, b, c)
 int
 SeFork()
 {
-  pid_t           pid;
+    pid_t           pid;
 
-  if ((pid = fork()) < 0)
-    SePError("Faild to fork process");
+    if ((pid = fork()) < 0)
+        SePError("Faild to fork process");
 
-  return pid;
+    return pid;
 }
 
 /*
@@ -193,119 +184,119 @@ SeFork()
 
 void
 ShellCommandHandler(sig, fio_p)
-     int             sig;
-     XtPointer       fio_p;
+    int             sig;
+    XtPointer       fio_p;
 {
-  void            PostExecPrep();
+    void            PostExecPrep();
                 
-  if (wait((int*)0) < 0) SePError("ShellCommand wait failed");
-  XoAppIgnoreSignal(app_con, SIGCHLD);
+    if (wait((int*)0) < 0) SePError("ShellCommand wait failed");
+    XoAppIgnoreSignal(app_con, SIGCHLD);
 
-  set_tty_mode();
-  set_modem_fio(*(int *)fio_p);
+    set_tty_mode();
+    set_modem_fio(*(int *)fio_p);
 
-  SeyonMessage("Shell Command Completed");
-  PostExecPrep();
-  inhibit_child = False;
+    SeyonMessage("Shell Command Completed");
+    PostExecPrep();
+    inhibit_child = False;
 }
 
 void
 ShellCommand(command)
-     char           *command;
+    char           *command;
 {
-  ExecShellCommand(command, 1);
+    ExecShellCommand(command, 1);
 }
 
 void
 ExecShellCommand(command, top)
-     char           *command;
-	 int             top;
+    char           *command;
+    int             top;
 {
-  static char    *shell = NULL;
-  char            cmd[REG_BUF],
-                 *scmd;
-  static int      fio=0;
-  pid_t           forkRes;
+    static char    *shell = NULL;
+    char            cmd[REG_BUF],
+        *scmd;
+    static int      fio=0;
+    pid_t           forkRes;
 
-  if (command == NULL) return;
+    if (command == NULL) return;
 
-  if (shell == NULL) {
-    shell = (char*)getenv("SHELL");
-    if (!shell) shell = "/bin/sh";
-  }
-
-  if (top) PreExecPrep();
-
-  io_set_attr(tfd, &oldmode);
-  fio = get_modem_fio();
-
-  if (top)
-	XoAppAddSignal(app_con, SIGCHLD, ShellCommandHandler, (XtPointer)&fio);
-  else signal(SIGCHLD, SIG_IGN);
-
-  forkRes = SeFork();
-  if (forkRes == 0) {
-    scmd = str_stripspc_copy(cmd, command);
-
-    show("");
-
-    if (*scmd == '$') {
-      SeNotice("Redirecting stdin/stdout");
-      mattach();				/* Attach modem to stdin/stdout */
-      scmd++;
+    if (shell == NULL) {
+        shell = (char*)getenv("SHELL");
+        if (!shell) shell = "/bin/sh";
     }
 
-    if (setuid(getuid()) < 0)
-      SePError("Failed to set effective uid");
+    if (top) PreExecPrep();
 
-    if (*scmd == CNULL) {
-      SeNotice(FmtString1("Executing the shell `%s'", shell));
-      execl(shell, shell, (char*)NULL);
-      SeError(FmtString1("Execution of the shell `%s' failed", shell));
-      exit(1);
-    }
+    io_set_attr(tfd, &oldmode);
+    fio = get_modem_fio();
+
+    if (top)
+        XoAppAddSignal(app_con, SIGCHLD, ShellCommandHandler, (XtPointer)&fio);
+    else signal(SIGCHLD, SIG_IGN);
+
+    forkRes = SeFork();
+    if (forkRes == 0) {
+        scmd = str_stripspc_copy(cmd, command);
+
+        show("");
+
+        if (*scmd == '$') {
+	  SeNotice("Redirecting stdin/stdout");
+	  mattach();				/* Attach modem to stdin/stdout */
+	  scmd++;
+        }
+
+        if (setuid(getuid()) < 0)
+	  SePError("Failed to set effective uid");
+
+        if (*scmd == CNULL) {
+	  SeNotice(FmtString1("Executing the shell `%s'", shell));
+	  execl(shell, shell, (char*)NULL);
+	  SeError(FmtString1("Execution of the shell `%s' failed", shell));
+	  exit(1);
+        }
 	
-    SeNotice(FmtString1("Executing the command `%s'", scmd));
-    execl(shell, shell, "-c", scmd, (char*)NULL);
-    SePError(FmtString1("Execution of the command `%s' failed", scmd));
-    exit(1);
-  }
-  else if (forkRes > 0) {
-	if (top) inhibit_child = True;
-	else {
+        SeNotice(FmtString1("Executing the command `%s'", scmd));
+        execl(shell, shell, "-c", scmd, (char*)NULL);
+        SePError(FmtString1("Execution of the command `%s' failed", scmd));
+        exit(1);
+    }
+    else if (forkRes > 0) {
+        if (top) inhibit_child = True;
+        else {
 	  wait((int*)0);			/* Wait for the child process to terminate */
 	  set_tty_mode();
 	  set_modem_fio(fio);
-	}
-  }  /* if (forkRes == 0)... */
+        }
+    }  /* if (forkRes == 0)... */
 }
 
 void
 PreProcessPrep()
 {
-  SuspContTerminal(TERM_SUSPEND);
-  SetKillButtonSens(True);
+    SuspContTerminal(TERM_SUSPEND);
+    SetKillButtonSens(True);
 }
 
 void
 PostProcessPrep()
 {
-  SuspContTerminal(TERM_CONTINUE);
-  SetKillButtonSens(False);
+    SuspContTerminal(TERM_CONTINUE);
+    SetKillButtonSens(False);
 }
 
 void
 PreExecPrep()
 {
-  SuspContTerminal(0);
-  w_exit_up(False);
+    SuspContTerminal(0);
+    w_exit_up(False);
 }
 
 void
 PostExecPrep()
 {
-  SuspContTerminal(1);
-  w_exit_up(True);
+    SuspContTerminal(1);
+    w_exit_up(True);
 }
 
 /*
@@ -317,33 +308,34 @@ PostExecPrep()
  */
 
 char           *
-expand_fname(fname, buffer)
-     char           *fname,
-                    *buffer;
+expand_fname(fname, buffer, size)
+    char           *fname,
+    *buffer;
+    int             size;
 {
-  char           *home,
-                 *buf,
-                  name[REG_BUF];
-  int             i;
+    char           *home,
+        *buf,
+        name[REG_BUF];
+    int             i;
 
-  str_stripspc_copy(name, fname);
-  buf = buffer;
+    str_stripspc_copy(name, fname);
+    buf = buffer;
 
-  for (i = 0; name[i]; i++) {
-    if (name[i] == '~') {
-      if ((home = (char *) getenv("HOME")) == NULL)
-	return NULL;
-      strcpy(buf, home);
-      buf += strlen(home);
+    for (i = 0; (name[i] && (buffer+REG_BUF > buf)); i++) {
+        if (name[i] == '~') {
+	  if ((home = (char *) getenv("HOME")) == NULL)
+	      return NULL;
+	  strncpy(buf, home, size);
+	  buf += strlen(home);
+        }
+        else {
+	  *buf = name[i];
+	  buf++;
+        }
     }
-    else {
-      *buf = name[i];
-      buf++;
-    }
-  }
-  *buf = '\0';
+    *buf = '\0';
 
-  return buffer;
+    return buffer;
 }
 
 /*
@@ -352,11 +344,12 @@ expand_fname(fname, buffer)
  */
 
 FILE*
-open_file(fname, directory)
-     char           *fname,
-                    *directory;
+open_file(fname, size, directory)
+    char           *fname;
+    int             size;
+    char           *directory;
 {
-  return open_file_va(fname, directory, NULL);
+    return open_file_va(fname, size, directory, NULL);
 }
 
 /*
@@ -364,91 +357,50 @@ open_file(fname, directory)
  */
 
 FILE*
-open_file_va(fname, dir1, dir2)
-     char           *fname,
-                    *dir1,
-                    *dir2;
+open_file_va(fname, size, dir1, dir2)
+    char           *fname;
+    int             size;
+    char           *dir1,
+                   *dir2;
 {
-  FILE           *fp;
-  char            name[REG_BUF],
-                  fullname[REG_BUF],
-                  buffer[REG_BUF];
+    FILE           *fp;
+    char           *fullname,
+        name[REG_BUF],
+        buffer[REG_BUF];
 
-  str_stripspc_copy(name, fname);
+    str_stripspc_copy(name, fname);
 
-  if (dir1) {
-    sprintf(fullname, "%s/%s", expand_fname(dir1, buffer), name);
-
-    if ((fp = fopen(fullname, "r")) != NULL) {
-      strcpy(fname, fullname);
-      return fp;
-    }
-
-    if (dir2) {
-      sprintf(fullname, "%s/%s", expand_fname(dir2, buffer), name);
-
-      if ((fp = fopen(fullname, "r")) != NULL) {
-		strcpy(fname, fullname);
-		return fp;
-      }
-    }
-  }	/* if (dir1)... */
-
-  if ((fp = fopen(name, "r")) != NULL) {
-    strcpy(fname, name);
-    return fp;
-  }
-
-  SeErrorF("/OFV/ Could not open the file `%s'", name, "", "");
-  if (dir1) {
-    SeNoticeF("Tried the default directory `%s'", dir1, "", "");
-    if (dir2)
-      SeNoticeF("Tried the default directory `%s'", dir2, "", "");
-  }
-  SeNotice("Tried the current directory");
-
-  return NULL;
-}
-
-/*
- * another implementation of the above using varargs, currently not used
- */
-
-/*FILE *open_file_va(args)
-	 va_list args;
-	 va_decl
-{
-  FILE *fp;
-  char *name, *dir, fullname[REG_BUF];
-  char buffer[REG_BUF];
-
-  va_start(args);
-  name = va_arg(args, char *);
-
-  if (fp = fopen(name, "r"))
-	return fp;
-
-  while(dir = va_arg(args, char *))
-	{
-	  sprintf(fullname, "%s/%s", expand_fname(SSpc(dir), buffer), name);
-
-	  if (fp = fopen(fullname, "r"))
-		return fp;
-	}
-
-  va_end(args);
-
-  if (dir = (char *) getenv("HOME")) {
-	sprintf(fullname, "%s/%s", dir, name);
-	
-	if (fp = fopen(fullname, "r"))
+    if (dir1) {
+        fullname = FmtString("%s/%s", expand_fname(dir1, buffer, REG_BUF), name, "");
+        if ((fp = fopen(fullname, "r")) != NULL) {
+	  strncpy(fname, fullname, size);
 	  return fp;
-  }
+        }
 
-  showf("<< Seyon: file '%s' not in current, default, or home directory >>",
-		name, "", "");
-  return NULL;
-}*/
+        if (dir2) {
+	  fullname = FmtString("%s/%s", expand_fname(dir2, buffer, REG_BUF), name, "");
+	  if ((fp = fopen(fullname, "r")) != NULL) {
+	      strncpy(fname, fullname, size);
+	      return fp;
+	  }
+        }
+    }	/* if (dir1)... */
+
+    if ((fp = fopen(name, "r")) != NULL) {
+        strncpy(fname, name, REG_BUF);
+        return fp;
+    }
+
+    SeErrorF("/OFV/ Could not open the file `%s'", name, "", "");
+    if (dir1) {
+        SeNoticeF("Tried the default directory `%s'", dir1, "", "");
+        if (dir2)
+	  SeNoticeF("Tried the default directory `%s'", dir2, "", "");
+    }
+    SeNotice("Tried the current directory");
+
+    return NULL;
+}
 
 /*
  * read a file into a buffer
@@ -456,28 +408,28 @@ open_file_va(fname, dir1, dir2)
 
 void
 read_file(fp, line)
-     FILE           *fp;
-     char           *line[];
+    FILE           *fp;
+    char           *line[];
 {
-  char            buffer[REG_BUF + 1];
-  int             i;
+    char            buffer[REG_BUF + 1];
+    int             i;
 
-  for (i = 0; i < MAX_ENT && fgets(buffer, REG_BUF, fp) != NULL; i++)
-    line[i] = strcpy((char *)malloc(sizeof(buffer)), SSpc(buffer));
-  line[i] = NULL;
+    for (i = 0; i < MAX_ENT && fgets(buffer, REG_BUF, fp) != NULL; i++)
+        line[i] = strcpy((char *)malloc(sizeof(buffer)), SSpc(buffer));
+    line[i] = NULL;
 }
 
 /*
- * similar to the above, but closes the file after readsing it
+ * similar to the above, but closes the file after reading it
  */
 
 void
 read_close_file(fp, line)
-     FILE           *fp;
-     char           *line[];
+    FILE           *fp;
+    char           *line[];
 {
-  read_file(fp, line);
-  fclose(fp);
+    read_file(fp, line);
+    fclose(fp);
 }
 
 /*
@@ -486,12 +438,12 @@ read_close_file(fp, line)
 
 void
 write_pipe_data(pd, data, size)
-     int            *pd;
-     char           *data;
-     int             size;
+    int            *pd;
+    char           *data;
+    int             size;
 {
-  if (write(pd[1], data, size) < 0)
-    show("<< Could not write to pipe >>");
+    if (write(pd[1], data, size) < 0)
+        show("<< Could not write to pipe >>");
 }
 
 /*
@@ -500,11 +452,11 @@ write_pipe_data(pd, data, size)
 
 void
 read_pipe_data(pd, data, size)
-     int            *pd;
-     char           *data;
-     int             size;
+    int            *pd;
+    char           *data;
+    int             size;
 {
-  read(pd[0], data, size);
+    read(pd[0], data, size);
 }
 
 /*
@@ -514,30 +466,30 @@ read_pipe_data(pd, data, size)
 void
 IdleGuard()
 {
-  struct stat     statBuf;
-  time_t          idleTime;
-  static time_t   totalIdleTime;
-  int             timeToNextCall;
+    struct stat     statBuf;
+    time_t          idleTime;
+    static time_t   totalIdleTime;
+    int             timeToNextCall;
 
-  if (qres.idleGuard && !inhibit_child) {
-    if (fstat(tfd, &statBuf) < 0) {
-      SePError("/IG/ Could not stat the tty");
-      return;
-    }
+    if (qres.idleGuard && !inhibit_child) {
+        if (fstat(tfd, &statBuf) < 0) {
+	  SePError("/IG/ Could not stat the tty");
+	  return;
+        }
 
-    if ((idleTime = time((time_t *) 0) - statBuf.st_mtime) >=
-	qres.idleGuardInterval * 0.99) {
-      MdmPutString(qres.idleGuardString);
-      timeToNextCall = qres.idleGuardInterval;
-      totalIdleTime += idleTime;
-      SeyonMessagef("Idle for %d minutes", (totalIdleTime + 30) / 60);
-    }
-    else {
-      timeToNextCall = qres.idleGuardInterval - (int)idleTime;
-      totalIdleTime = 0;
-    }
+        if ((idleTime = time((time_t *) 0) - statBuf.st_mtime) >=
+	  qres.idleGuardInterval * 0.99) {
+	  MdmPutString(qres.idleGuardString);
+	  timeToNextCall = qres.idleGuardInterval;
+	  totalIdleTime += idleTime;
+	  SeyonMessagef("Idle for %d minutes", (totalIdleTime + 30) / 60);
+        }
+        else {
+	  timeToNextCall = qres.idleGuardInterval - (int)idleTime;
+	  totalIdleTime = 0;
+        }
 
-    XtAppAddTimeOut(app_con, timeToNextCall * 1000,
+        XtAppAddTimeOut(app_con, timeToNextCall * 1000,
 		    (XtTimerCallbackProc) IdleGuard, (XtPointer) app_con);
-  }
+    }
 }

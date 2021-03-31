@@ -88,7 +88,7 @@ TopDial(widget, clientData)
 	{XMapRaised(XtDisplay(widget), XtWindow(popup)); return;}
 	 
   if (disItems[0] == NULL) {
-    strcpy(phoneFile, qres.phoneFile);
+    strncpy(phoneFile, qres.phoneFile, REG_BUF);
     if (ReadParsePhoneFile(phoneFile, disItems) < 0) return;
 
 	form = XtParent(widget);
@@ -327,7 +327,7 @@ DoManualDial(widget)
   Widget          dialog = XtParent(widget);
   char            phoneNumber[SM_BUF];
 
-  strcpy(phoneNumber, XawDialogGetValueString(dialog));
+  strncpy(phoneNumber, XawDialogGetValueString(dialog), SM_BUF);
   DestroyShell(dialog);
   ExecManualDial(XtParent(GetShell(widget)), phoneNumber);
 }
@@ -340,7 +340,7 @@ ExecManualDial(widget, phoneNumber)
   inhibit_child = True;
   manualDial = True;
 
-  strcpy(phone_number, phoneNumber);
+  strncpy(phone_number, phoneNumber, SM_BUF);
 
   dialTry = 1;
   PreProcessPrep();
@@ -441,15 +441,15 @@ GetStrField(raw, keyword, var, def)
   if ((ptr = (char*)strstr(raw, keyword)) != NULL) {
     ptr += strlen(keyword);
     if (strncmp(ptr, "CURRENT", 3)) {
-      strcpy(buf, ptr);
+      strncpy(buf, ptr, REG_BUF);
       GetWord(buf, wrd);
-      strcpy(var, wrd);
+      strncpy(var, wrd, sizeof(*var));
     }
     else
-      strcpy(var, "CURRENT");
+      strncpy(var, "CURRENT", sizeof(*var));
   }
   else
-    strcpy(var, def);
+    strncpy(var, def, sizeof(*var));
 }
 
 void
@@ -462,8 +462,8 @@ GetIField(raw, keyword, var, def)
   char            svar[TIN_BUF],
                   sdef[TIN_BUF];
 
-  sprintf(svar, "%d", *var);
-  sprintf(sdef, "%d", def);
+  sprintf(svar, "%d", *var); /* safe */
+  sprintf(sdef, "%d", def);  /* safe */
 
   GetStrField(raw, keyword, svar, sdef);
 
@@ -495,7 +495,7 @@ DialTimerHandler(dummy)
   else {
     signal(SIGALRM, SIG_DFL);
     alarm(0);
-	strcpy(dialMsg, "TIMEOUT");
+	strncpy(dialMsg, "TIMEOUT", SM_BUF);
     longjmp(dial_env, 1);
   }
 }
@@ -513,6 +513,8 @@ DialNumber()
                  *bufPtr,
                   dialString[REG_BUF];
   int             i,
+/*                  length, */
+                  length_remaining,
                   k;
 
   if (setjmp(dial_env) != 0) {
@@ -533,8 +535,8 @@ DialNumber()
   if (!manualDial) {
 
     itemName = ddItems[k]->name;
-    sprintf(dialString, "\r%s %s%s", ddItems[k]->prefix, ddItems[k]->number,
-	    ddItems[k]->suffix);
+    strncpy(dialString, FmtString("\r%s %s%s", ddItems[k]->prefix, 
+	      ddItems[k]->number, ddItems[k]->suffix), REG_BUF);
 
     if (mbaud(ddItems[k]->baud) < 0)
       se_warningf("invalid BPS value in dialing directory: %s",
@@ -551,14 +553,23 @@ DialNumber()
   }
   else {
     itemName = phone_number;
-    sprintf(dialString, "\r%s %s%s", qres.dialPrefix, phone_number,
-	    qres.dialSuffix);
+    strncpy(dialString, FmtString("\r%s %s%s", qres.dialPrefix, phone_number,
+	    qres.dialSuffix), REG_BUF);
   }
 
+  length_remaining = SM_BUF;
   if (dialTry == 1)
-    sprintf(dialMsg, "Dialing %s", itemName);
+  {
+    strncpy(dialMsg, "Dialing ", length_remaining);
+    length_remaining -= strlen("Dialing ");
+    strncat(dialMsg, itemName, length_remaining);
+  }
   else
-    sprintf(dialMsg, "Redialing:%d %s", dialTry, itemName);
+    strncpy(dialMsg, "Redialing ", length_remaining);
+    length_remaining -= strlen("Redialing ");
+    sprintf(dialMsg, "%1.1d ", dialTry);
+    length_remaining -= 2;
+    strncat(dialMsg, itemName, length_remaining);
 
   ProcRequest(SET_MESSAGE, "Setting Up...", "");
 
@@ -588,7 +599,7 @@ DialNumber()
     for (i = 0; i < 3; i++)
       if (*(bufPtr = StripSpace(qres.noConnectString[i])) && 
 		  strncmp(modemResponse, bufPtr, strlen(bufPtr)) == 0) {
-		strcpy(dialMsg, modemResponse);
+		strncpy(dialMsg, modemResponse, SM_BUF);
 		longjmp(dial_env, 1);
 	  }
   }	/* while(1)... */
@@ -600,15 +611,20 @@ ReadParsePhoneFile(fname, disItems)
      String          disItems[];
 {
   FILE           *fp;
+  FILE           *devnull;
   String          rawItems[MAX_ENT + 1];
   char           *buf,
                  *sHold,
                   disItemsBuf[REG_BUF];
+  char            filename[LRG_BUF];
   int             i,
                   n,
+                  length,
                   iHold;
 
-  if ((fp = open_file(fname, qres.defaultDirectory)) == NULL)
+  strncpy(filename, fname, REG_BUF);
+
+  if ((fp = open_file(filename, REG_BUF, qres.defaultDirectory)) == NULL)
     return -1;
 
   ReadCommentedFile(fp, rawItems);
@@ -622,11 +638,9 @@ ReadParsePhoneFile(fname, disItems)
 
     /* Find the number */
     GetWord(buf, ddItems[i]->number);
-/*    strcpy(ddItems[i]->number, GetFirstWord(buf));*/
 
     /* Find the name */
     GetWord((buf = lptr), ddItems[i]->name);
-/*    strcpy(ddItems[i]->name, GetNextWord());*/
 
     /* Find other stuff */
     GetStrField(buf, "BPS=", ddItems[i]->baud, qres.defaultBPS);
@@ -642,8 +656,20 @@ ReadParsePhoneFile(fname, disItems)
   FreeList(rawItems);
   FreeList(disItems);
 
+  /* Ick... This is horrible - using a user-provided format string
+     means we have no easy way of limiting string length. HACK HACK
+     HACK Use fprintf to output to /dev/null and count the number of
+     bytes... It would be nice if we could rely on having snprintf() */
+
+  devnull = fopen("/dev/null", "r+");
+  if(NULL == devnull)
+  {
+      printf("Open /dev/null failed!?!\n");
+      return 1;
+  }
+
   for (n = 0; n < i; n++) {
-    sprintf(disItemsBuf, qres.dialDirFormat,
+    length = fprintf(devnull, qres.dialDirFormat,
 	    ddItems[n]->name,
 	    ddItems[n]->number,
 	    strncmp((sHold = ddItems[n]->baud), "CUR", 3) ? sHold : "????",
@@ -657,10 +683,33 @@ ReadParsePhoneFile(fname, disItems)
 	    strcmp(sHold, qres.dialSuffix) ? 'S' : 'D' : '?',
 	    ddItems[n]->script);
 
-    disItemsBuf[SM_BUF - 1] = '\0';
-    disItems[n] = XtNewString(disItemsBuf);
+    if(REG_BUF >= length)
+    {
+        sprintf(disItemsBuf, qres.dialDirFormat,
+	      ddItems[n]->name,
+	      ddItems[n]->number,
+	      strncmp((sHold = ddItems[n]->baud), "CUR", 3) ? sHold : "????",
+	      (iHold = ddItems[n]->bits) == 100 ? '?' : itoa(iHold),
+	      (iHold = ddItems[n]->parity) ? (iHold == 1 ? 'O' :
+				        (iHold == 2 ? 'E' : '?')) : 'N',
+	      (iHold = ddItems[n]->stopBits) == 100 ? '?' : itoa(iHold),
+	      strncmp((sHold = ddItems[n]->prefix), "CUR", 3) ?
+	      strcmp(sHold, qres.dialPrefix) ? 'P' : 'D' : '?',
+	      strncmp((sHold = ddItems[n]->suffix), "CUR", 3) ?
+	      strcmp(sHold, qres.dialSuffix) ? 'S' : 'D' : '?',
+	      ddItems[n]->script);
+        disItemsBuf[SM_BUF - 1] = '\0';
+        disItems[n] = XtNewString(disItemsBuf);
+    }
+    else
+    {
+        printf("ReadParsePhoneFile: attempted overrun: %s\n",ddItems[n]->name);
+        fclose(devnull);
+        return 1;
+    }
   }
   disItems[n] = NULL;
+  fclose(devnull);
 
   return 0;
 }

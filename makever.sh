@@ -48,9 +48,9 @@ echo "#define COMPILE_TIME \"`date +%T`\"" >> version.h
 echo "#define VERSION \"$VERSION\"" >> version.h
 echo "#define REVISION \"$REVISION\"" >> version.h
 
-echo "#ifdef IS_MAIN" >> version.h
-echo "static char version[] = \"\$Revision: $VERSION.$REVISION \$\";"\
-     >> version.h
-echo "#endif" >> version.h
+#echo "#ifdef IS_MAIN" >> version.h
+#echo "static char version[] = \"\$Revision: $VERSION.$REVISION \$\";"\
+#     >> version.h
+#echo "#endif" >> version.h
 
 echo "Machine type is $machine, OS name is $system"

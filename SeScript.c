@@ -99,8 +99,8 @@ do_script(scriptFileName)
   if (qres.scriptDirectory) scriptDir = qres.scriptDirectory;
   else scriptDir = qres.defaultDirectory;
   
-  strcpy(buf, scriptFileName);
-  if ((scriptFP = open_file(buf, scriptDir)) == NULL)
+  strncpy(buf, scriptFileName, REG_BUF);
+  if ((scriptFP = open_file(buf, REG_BUF, scriptDir)) == NULL)
     return False;
   
   exec_close_script(scriptFP);
@@ -109,31 +109,33 @@ do_script(scriptFileName)
 
 void
 exec_close_script(script_fp)
-     FILE           *script_fp;
+    FILE           *script_fp;
 {
-  if_flag = 0;
-  echo_flag = False;
-  captflag = False;
-  tty_flag = True;
-  eof_flag = 0;
+    if_flag = 0;
+    echo_flag = False;
+    captflag = False;
+    tty_flag = True;
+    eof_flag = 0;
 
-  if (linkflag == 2)
+    if (linkflag == 2)
+        linkflag = 0;
+
+    while (!eof_flag)
+        get_line(script_fp);
+
+    fclose(script_fp);
+    if (captflag)
+        fclose(cf);
+
+    eof_flag = 0;
+    /* No buffer length problem here! */
+    /* But why do this??? */
+    lptr = strcpy(line, "");
+    k_when();
+
     linkflag = 0;
 
-  while (!eof_flag)
-    get_line(script_fp);
-
-  fclose(script_fp);
-  if (captflag)
-    fclose(cf);
-
-  eof_flag = 0;
-  lptr = strcpy(line, "");
-  k_when();
-
-  linkflag = 0;
-
-  return;
+    return;
 }
 
 static char     wf[MAX_LINE];
@@ -201,7 +203,7 @@ k_waitfor()
 
 
   GETTEST_ARG("waitfor");
-  strcpy(wf, word);
+  strncpy(wf, word, MAX_LINE);
 
   GET_ARG();
 
@@ -330,7 +332,7 @@ k_goto(script_fp)
     return;
   }
 
-  strcpy(label, word);
+  strncpy(label, word, WBSIZE);
 
   rewind(script_fp);
   while (!found) {
@@ -359,7 +361,7 @@ k_goto(script_fp)
   if_flag = 0;		       /* reset IF flag */
 }
 
-static          if_negate = 0;
+static  int        if_negate = 0;
 
 static int
 if_test(cond)

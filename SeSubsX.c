@@ -69,7 +69,8 @@ UpdateStatusBox(clientData)
 
   if (onlineTime != oldOnlineTime) {
 	oldOnlineTime = onlineTime;
-	sprintf(buf, "%02d:%02d", onlineTime / 60, onlineTime % 60);
+	/* Buffer is easily big enough */
+	sprintf(buf, "%02ld:%02ld", onlineTime / 60, onlineTime % 60);
 	SeSetLabel(statusWidget[0], buf);
   }
 
@@ -90,6 +91,7 @@ FunMessage()
     msg = qres.funMessages[msg_index++];
     if (msg == NULL) {
       msg_index = 0;
+      /* Buffer is easily big enough */
       sprintf(vermsg, "Welcome to Seyon version %s.%s", VERSION, REVISION);
       msg = vermsg;
     }
@@ -170,7 +172,8 @@ write_child_info(pd, action, msg)
 
   procRequest.action = action;
 
-  if (msg) strcpy(procRequest.msg, msg);
+  if (msg) 
+      strncpy(procRequest.msg, msg, 80);
   else *procRequest.msg = '\0';
 
   write_pipe_data(pd, &procRequest, sizeof(procRequest));
@@ -185,8 +188,8 @@ ProcRequest(action, msg, arg)
   struct _procRequest procRequest;
 
   procRequest.action = action;
-  strcpy(procRequest.msg, msg);
-  strcpy(procRequest.arg, arg);
+  strncpy(procRequest.msg, msg, 80);
+  strncpy(procRequest.arg, arg, 90);
 
   write_pipe_data(child_pipe, &procRequest, sizeof(procRequest));
 }
@@ -200,10 +203,7 @@ writef_child_info(pd, action, fmt, a, b, c)
                     *b,
                     *c;
 {
-  char            buffer[SM_BUF];
-
-  sprintf(buffer, fmt, a, b, c);
-  write_child_info(pd, action, buffer);
+  write_child_info(pd, action, FmtString(fmt,a,b,c));
 }
 
 void
@@ -221,10 +221,7 @@ SeyonMessagef(fmt, a, b, c)
                      b,
                      c;
 {
-  char            buf[REG_BUF];
-
-  sprintf(buf, fmt, a, b, c);
-  SeyonMessage(buf);
+  SeyonMessage(FmtString(fmt,a,b,c));
 }
 
 Boolean

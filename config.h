@@ -302,7 +302,7 @@ extern char *getenv();
  * HDB uucp does) rather than in binary form as other uucp prgrams do
  */
 #ifndef LF_USE_ASCII_PID
-#define LF_USE_ASCII_PID    NO
+#define LF_USE_ASCII_PID    YES
 #endif
 
 /* 
@@ -319,7 +319,7 @@ extern char *getenv();
  */
 
 #ifndef LF_PATH
-#define LF_PATH             "/usr/spool/uucp"
+#define LF_PATH             "/var/lock"
 #endif
 
 /* 

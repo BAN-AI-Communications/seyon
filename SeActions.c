@@ -27,6 +27,7 @@
 /* SeDecl.h includes stdio.h */
 #include "SeDecl.h"
 #include "version.h"
+#include "config.h"
 
 #define CheckNumParam(num) {if (*numParam != num) \
   SimpleError("Wrong Number of Parameters");}
@@ -233,7 +234,7 @@ OpenWindowAction(widget, event, param, numParam)
 	 Cardinal*       numParam;
 {
   int             IconifyShell();
-  Widget          dirWidget;
+/*  Widget          dirWidget; */
   static String   termWindowId = NULL;
   int             i;
 
@@ -311,10 +312,18 @@ SetAction(widget, event, param, numParam)
 	 Cardinal*       numParam;
 {
   void            s_set();
+  int             length;
+  int             length_remaining;
 
   ErrorIfBusy();
   CheckNumParam(2);
-  sprintf((lptr = line), "%s %s", param[0], param[1]);
+
+  length_remaining = WBSIZE;
+  length = 1 + strlen(param[0]) + strlen(param[1]);
+  if(length_remaining > length)
+      sprintf((lptr = line), "%s %s", param[0], param[1]);
+  else
+      printf("SetAction: string buffer would have overrun: %s %s\n",param[0], param[1]);
   eof_flag = 0;
   s_set();
 }
@@ -371,7 +380,7 @@ DispatchActions(intData, stringData, widget)
                       prevActionAsync = False,
                       startup = True;
   static Widget       actionWidget;
-  static String       actionStack;
+  static String       actionStack = "";
 
   void                (*actionProc)();
   static char         actionName[SM_BUF],
@@ -385,6 +394,9 @@ DispatchActions(intData, stringData, widget)
 	void          (*actionProc)();
 	Boolean       async;
   };
+
+  /* A string containing a script of actions to perform at startup. */
+  String              startScript;
 
   static struct _actionTable actionTable[] = {
     {"Beep", BeepAction, False},
@@ -412,12 +424,12 @@ DispatchActions(intData, stringData, widget)
   switch (intData) {
 
   case ACTION_NEW_ACTION:
-	strcpy(actionName, stringData);
+	strncpy(actionName, stringData, sizeof(actionName));
 	numArgs = 0;
 	return;
 
   case ACTION_NEW_ARG:
-	strcpy((argsArray[numArgs] = args[numArgs]), stringData);
+	strncpy((argsArray[numArgs] = args[numArgs]), stringData, SM_BUF);
 	numArgs++;
 	return;
 
@@ -460,10 +472,12 @@ DispatchActions(intData, stringData, widget)
 	XtFree(actionStack);
 
 	if (startup) {
-	  startup = False;
-	  ParseThis(FmtString("Message(\"Welcome to Seyon version %s.%s\"); %s",
-						  VERSION, REVISION, "RestartTerminal();"), 
-				DispatchActions);
+        startup = False;
+        startScript
+            = XtNewString( FmtString("Message(\"Welcome to Seyon version %s.%s\"); %s",
+                                     VERSION, REVISION, "RestartTerminal();"));
+        ParseThis(startScript, DispatchActions);
+        XtFree(startScript);
 	}
 	  
 	return;

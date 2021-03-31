@@ -7,6 +7,8 @@
 ! * statement of rights and permissions for this program.
 ! * 
 
+#include "/etc/X11/seyon/Seyon-modem"
+
 *.title: Seyon Command Center
 *.iconName: Seyon
 
@@ -259,31 +261,6 @@
 *statusBox.rng.label: RNG
 
 !
-! Quick Keys
-!
-
-*quickKeyBox.Command.font: 6x10
-
-*quickKey1.visible: on
-*quickKey2.visible: on
-*quickKey3.visible: on
-*quickKey4.visible: on
-*quickKey5.visible: on
-
-!*quickKey1.action: DialEntries(1);
-!*quickKey2.action: DialEntries(3);
-!*quickKey3.action: FileTransfer(2, ou*);
-!*quickKey4.action: DivertFile(/tmp/lo);
-!*quickKey5.action: Hangup(); Beep(); 
-!RunScript(test1); Echo(ll);
-
-*quickKey1.label: Athena
-*quickKey2.label: Ch1
-*quickKey3.label: UpMail
-*quickKey4.label: DivMsg
-*quickKey5.label: Local
-
-!
 ! Fun messages. Send me more please.
 !
 
@@ -302,6 +279,7 @@
 	"Have something funny? send it!" \
 	"I've fallen and I can't get up!"
 
++*showFunMessages: off
 *notImplemented*title: Seyon Feature
 *notImplemented.dialog.label: \
 This feature is not yet implemented\n\

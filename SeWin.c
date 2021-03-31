@@ -376,7 +376,7 @@ GetValueDispatchProc(valueWidget)
 {
   Widget          dialog = XtParent(valueWidget);
 
-  strcpy(getValueDefValue, XawDialogGetValueString(dialog));
+  strncpy(getValueDefValue, XawDialogGetValueString(dialog), REG_BUF);
   DestroyShell(dialog);
 
   (*getValueExecProc)(XtParent(GetShell(valueWidget)), getValueDefValue);
@@ -744,10 +744,7 @@ SePopupMsgf(parent, fmt, a, b, c)
                      b,
                      c;
 {
-  char            buf[REG_BUF];
-
-  sprintf(buf, fmt, a, b, c);
-  SePopupMsg(parent, buf);
+  SePopupMsg(parent, FmtString(fmt,a,b,c));
 }
 
 Widget
@@ -772,20 +769,16 @@ SePopupNotice(parent, title, call_back, msg)
 }
 
 void
-SePopupNoticeF(parent, title, call_back, fmt, a, b, c, d)
+SePopupNoticeF(parent, title, call_back, fmt, a, b, c)
      Widget          parent;
      String          title;
      void            (*call_back) ();
      String          fmt,
                      a,
                      b,
-                     c,
-                     d;
+                     c;
 {
-  char            buf[REG_BUF];
-
-  sprintf(buf, fmt, a, b, c);
-  SePopupNotice(parent, title, call_back, buf);
+  SePopupNotice(parent, title, call_back, FmtString(fmt,a,b,c));
 }
 
 /*
@@ -917,10 +910,7 @@ SetStatusMessagef(fmt, a, b, c)
                      b,
                      c;
 {
-  char            buffer[REG_BUF];
-
-  sprintf(buffer, fmt, a, b, c);
-  SetStatusMessage(buffer);
+  SetStatusMessage(FmtString(fmt,a,b,c));
 }
 
 /*---------------------------------------------------------------------------+

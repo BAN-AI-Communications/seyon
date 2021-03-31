@@ -16,6 +16,9 @@
 
 #include "seyon.h"
 #include "SeDecl.h"
+#if HAVE_TERMIOS
+#include <termios.h>
+#endif
 
 extern int      param_pipe[2];
 
@@ -82,6 +85,13 @@ static struct _setRadio setRadio[] =
   {"baud", {"300", "1200", "2400", "4800", "9600", "19200", "38400",
 #if USE_NONSTD_BAUD
     "57600", "115200",
+#else
+#ifdef B57600
+    "57600",
+#endif
+#ifdef B115200
+    "115200",
+#endif
 #endif
     NULL}, 1, MenuSetGetBaud},
   {"bits", {"5", "6", "7", "8", NULL}, 1, MenuSetGetCSize},
@@ -189,7 +199,7 @@ SetGetValue(widget, client_data)
   struct _setValue *vptr;
 
   vptr = set_value;
-  strcpy(vptr->value, modem_port);
+  strncpy(vptr->value, modem_port, SM_BUF);
   vptr++;
 
   curValObjPtr = (vptr = (struct _setValue *)client_data);

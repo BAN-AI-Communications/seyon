@@ -10,7 +10,7 @@
  * This file contains routines for Seyon's terminal. The main routine is
  * terminal(), which reads characters from the terminal and sends them to the
  * port. That routine also forks a child process that reads characters from
- * the port and writes them to the temrinal. Once the parent receives SIGTERM
+ * the port and writes them to the terminal. Once the parent receives SIGTERM
  * (which should be sent by the grand parent), it kills the child and exits.
  */
 

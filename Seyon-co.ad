@@ -13,26 +13,30 @@
 *foreground: black
 *borderColor: white
 
+*background: blue
+*foreground: black
+*borderColor: lightBlue
+
 *Command.background: lightBlue
-*Scrollbar.background: darkSeaGreen
-*Toggle.background: darkOliveGreen
-*Toggle.foreground: darkTurquoise
-*List.background: grey
-*XfwfMultiList.background: grey
-*Text*background: grey
-*Text*Scrollbar.background: darkSeaGreen
+*Scrollbar.background: cyan
+*Toggle.background: cyan
+*Toggle.foreground: black
+*List.background: tan
+*XfwfMultiList.background: tan
+*Text*background: tan
+*Text*Scrollbar.background: cyan
 
 *ok.background: green
-*cancel.background: tomato
+*cancel.background: red
 *dismiss.background: orange
-*hangup.background: orange
-*exit.background: tomato
-*kill.background: tomato
+*hangup.background: red
+*exit.background: red
+*kill.background: red
 
-*about*msg.background: grey
-*about*pic.background: grey
+*about*msg.background: tan
+*about*pic.background: tan
 
-*messageBox.message.background: grey
+*messageBox.message.background: tan
 
-*quickKeyBox.Command.background: darkOliveGreen
-*quickKeyBox.Command.foreground: darkTurquoise
+*quickKeyBox.Command.background: orange
+*quickKeyBox.Command.foreground: black

@@ -106,28 +106,26 @@ PopupError(name, parent)
 
 #ifdef notdef
 void
-SePopupWarningF(parent, fmt, a, b, c, d)
+SePopupWarningF(parent, fmt, a, b, c)
      Widget          parent;
      String          fmt,
                      a,
                      b,
-                     c,
-                     d;
+                     c;
 {
   SePopupNoticeF(parent, 0, "Seyon Warning", DestroyParentPopup,
-		 fmt, a, b, c, d);
+		 fmt, a, b, c);
 }
 
 void
-SePopupInitWarningF(parent, fmt, a, b, c, d)
+SePopupInitWarningF(parent, fmt, a, b, c)
      Widget          parent;
      String          fmt,
                      a,
                      b,
-                     c,
-                     d;
+                     c;
 {
   SePopupNoticeF(parent, 0, "Seyon Initialization Warning",
-		 DestroyParentPopup, fmt, a, b, c, d);
+		 DestroyParentPopup, fmt, a, b, c);
 }
 #endif

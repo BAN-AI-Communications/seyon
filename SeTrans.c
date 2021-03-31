@@ -50,7 +50,7 @@ TopTransfer(widget, clientData)
   ErrorIfBusy();
 
   if (disItems[0] == NULL) {
-    strcpy(protocolsFile, qres.protocolsFile);
+    strncpy(protocolsFile, qres.protocolsFile, REG_BUF);
     if (ReadParseProtFile(protocolsFile, disItems) < 0)
       return;
   }
@@ -80,39 +80,47 @@ char            lastUploadFile[REG_BUF];
 
 void
 DoTransfer(widget, clientData, callData)
-     Widget          widget;
-     XtPointer       clientData,
-                     callData;
+    Widget          widget;
+    XtPointer       clientData,
+    callData;
 {
-  XfwfMultiListReturnStruct *item;
-  Widget          popup;
-  String*         actionData = (String*)clientData;
-  char            fullCommand[LRG_BUF];
+    XfwfMultiListReturnStruct *item;
+    Widget          popup;
+    String*         actionData = (String*)clientData;
+    char            fullCommand[LRG_BUF];
+    int             length_remaining;
 
-  if (clientData)
-	{if ((transCurItemIndex = atoi(actionData[0]) - 1) < 0 ||  
-		 transCurItemIndex > MAX_ENT - 1)
-	   SimpleError("Invalid Entry Number");}
-  else {
-	if ((item = XfwfMultiListGetHighlighted(mlw))->num_selected == 0)
+    if (clientData)
+    {if ((transCurItemIndex = atoi(actionData[0]) - 1) < 0 ||  
+         transCurItemIndex > MAX_ENT - 1)
+        SimpleError("Invalid Entry Number");}
+    else {
+        if ((item = XfwfMultiListGetHighlighted(mlw))->num_selected == 0)
 	  SimpleError("No Item Selected");
-	transCurItemIndex =  item->selected_items[0];
-  }
+        transCurItemIndex =  item->selected_items[0];
+    }
   
-  strcpy(fullCommand, protItems[transCurItemIndex]->command);
+    strncpy(fullCommand, protItems[transCurItemIndex]->command, LRG_BUF);
 
-  if (protItems[transCurItemIndex]->reqName)
-	if (actionData == NULL ||  actionData[1] == NULL) {
+    if (protItems[transCurItemIndex]->reqName)
+    {
+        if (actionData == NULL ||  actionData[1] == NULL) 
+        {
 	  popup = GetShell(PopupDialogGetValue("upload", widget, exec_upload, 
-										   NULL, lastUploadFile));
+				         NULL, lastUploadFile));
 	  PopupCentered(popup, (clientData) ? XtParent(GetShell(widget)) : widget);
 	  return;
-	}
-	else
-	  strcat(strcat(fullCommand, " "), actionData[1]);
-  
-  DestroyShell(widget);
-  ShellCommand(fullCommand);
+        }
+        else
+        {	  
+	  length_remaining = LRG_BUF - strlen(fullCommand);
+	  strncat(fullCommand, " ", length_remaining);
+	  length_remaining -= 1;
+	  strncat(fullCommand, actionData[1], length_remaining);
+        }
+    }
+    DestroyShell(widget);
+    ShellCommand(fullCommand);
 }
 
 void
@@ -132,11 +140,11 @@ exec_upload(widget)
      Widget          widget;
 {
   Widget          dialog = XtParent(widget);
-  static char     cmd[REG_BUF];
+  static char    *cmd;
 
-  strcpy(lastUploadFile, XawDialogGetValueString(dialog));
-  sprintf(cmd, "%s %s", protItems[transCurItemIndex]->command,
-	  lastUploadFile);
+  strncpy(lastUploadFile, XawDialogGetValueString(dialog), REG_BUF);
+  cmd = FmtString("%s %s", protItems[transCurItemIndex]->command,
+	  lastUploadFile, "");
 
   DestroyShell(XtParent(GetShell(widget)));
   ShellCommand(cmd);

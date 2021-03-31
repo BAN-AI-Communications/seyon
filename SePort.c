@@ -50,7 +50,7 @@
 #ifdef linux
 #include <linux/serial.h>
 #include <sys/ioctl.h>
-#include <linux/fs.h>
+/* #include <linux/fs.h> */
 #include <linux/tty.h>
 #endif
 #endif
@@ -126,20 +126,30 @@ send_break()
 
 void
 MdmPutString(s)
-     char           *s;
+    char           *s;
 {
-  char            c;
+    char            c;
 
-  usleep(MDELAY);
-  for (; (c = *s); s++) {
-    if (*s == '^' && *(s + 1))
-      if (*(++s) == '^') c = *s;
-      else c = *s & 0x1f;
-
-    if (c == '~') sleep(1);
-    else send_tbyte(c);
     usleep(MDELAY);
-  }
+    for (; (c = *s); s++) 
+    {
+        if (*s == '^' && *(s + 1))
+        {
+	  if (*(++s) == '^') 
+	  {
+	      c = *s;
+	  }
+	  else 
+	  {
+	      c = *s & 0x1f;
+	  }
+        }
+        if (c == '~') 
+	  sleep(1);
+        else 
+	  send_tbyte(c);
+        usleep(MDELAY);
+    }
 }
 
 void
@@ -149,10 +159,7 @@ mprintf(fmt, a, b, c)
                     *b,
                     *c;
 {
-  char            buf[REG_BUF];
-
-  sprintf(buf, fmt, a, b, c);
-  MdmPutString(buf);
+    MdmPutString(FmtString(fmt,a,b,c));
 }
 
 void
@@ -223,7 +230,7 @@ GetModemStat(newModem)
 	 int             newModem;
 {
   static Boolean  useModemControl = True;
-  int             retStat;
+  int             retStat = 0;
 
   if (newModem) useModemControl = True;
 
@@ -349,11 +356,11 @@ xc_setflow()
 
 char           *
 mport(s)			/* get/set port string */
-     char           *s;
+    char           *s;
 {
-  if (s != NULL)
-    strcpy(modem_port, s);
-  return (modem_port);
+    if (s != NULL)
+        strncpy(modem_port, s, sizeof(modem_port));
+    return (modem_port);
 }
 
 int
@@ -649,6 +656,17 @@ mbaud(s)
       ser_io.flags |= ASYNC_SPD_VHI;
       break;
 #endif
+#else
+#ifdef B57600
+    case 57600:
+      baudrate = B57600;
+      break;
+#endif
+#ifdef B115200
+    case 115200:
+      baudrate = B115200;
+      break;
+#endif
 #endif
     default:
       return (-1);
@@ -701,6 +719,14 @@ mbaud(s)
 #endif
 #endif
       return 38400;
+#ifdef B57600
+  case B57600:
+    return 57600;
+#endif
+#ifdef B115200
+  case B115200:
+    return 115200;
+#endif
   }
 
   SeError("Consistency error in baud rate");
@@ -821,7 +847,7 @@ ShowOpenModemErrMsg(modemName, retStatus)
 					   modemName, "", ""));
 	break;
   default:
-	SeError(FmtString("Unknown Error While Openeong Modem ``%s''", 
+	SeError(FmtString("Unknown Error While Opening Modem ``%s''", 
 					  modemName, "", ""));
 	break;
   }
@@ -945,16 +971,13 @@ sendbyte(ch)
 }
 
 void
-sendf_slowly(format, a, b, c)
-     char           *format,
+sendf_slowly(fmt, a, b, c)
+     char           *fmt,
                     *a,
                     *b,
                     *c;
 {
-  char            buffer[SM_BUF];
-
-  sprintf(buffer, format, a, b, c);
-  send_slowly(buffer);
+  send_slowly(FmtString(fmt,a,b,c));
 }
 
 void
@@ -988,7 +1011,7 @@ int
 LockModem(modem)
 	 String modem;
 {
-  strcpy(modem_port, modem);
+  strncpy(modem_port, modem, REG_BUF);
   return lock_tty();
 }
 
@@ -1003,50 +1026,82 @@ UnlockModem(modem)
 int
 lock_tty()
 {
-  int             lfd;
-  pid_t           pid,
-                  lckpid;
-  char           *modemname;
+    int             lfd;
+    pid_t           pid,
+        lckpid;
+    char           *modemname;
 #if LF_USE_ASCII_PID
-  char            pidstr[20],
-                  lckpidstr[20];
-  int             nb;
+    char            pidstr[20],
+        lckpidstr[20];
+    int             nb;
 #endif
 #if LF_USE_DEV_NUMBERS
-  struct stat  mbuf;
+    struct stat  mbuf;
 #endif
 
-  /* Get our PID, and initialize the filename strings */
-  pid = getpid();
+    /* Get our PID, and initialize the filename strings */
+    pid = getpid();
 
 #if !LF_USE_DEV_NUMBERS
-  modemname = strrchr(modem_port, '/');
-  sprintf(lckf, "%s/%s%s", LF_PATH, LF_PREFIX, 
-		  (modemname ? (modemname + 1) : modem_port));
+    modemname = strrchr(modem_port, '/');
+    if(modemname)
+    {
+        if( SM_BUF > (1 + strlen(LF_PATH) + strlen(LF_PREFIX) + strlen(modemname)))
+	  sprintf(lckf, "%s/%s%s", LF_PATH, LF_PREFIX, (modemname + 1));
+        else
+        {
+	  SePErrorF("Buffer too small for lock filename in lock_tty(): %s", modemname, "", "");
+	  return -1;
+        }
+    }
+    else
+    {
+        if( SM_BUF > (1 + strlen(LF_PATH) + strlen(LF_PREFIX) + strlen(modem_port)))
+	  sprintf(lckf, "%s/%s%s", LF_PATH, LF_PREFIX, (modem_port));
+        else
+        {
+	  SePErrorF("Buffer too small for lock filename in lock_tty(): %s", modem_port, "", "");
+	  return -1;
+        }
+    }
+
 #else
-  if(stat(modem_port, &mbuf) < 0) {
-	SePErrorF("could not stat modem port %s", modem_port, "", "");
-	return -1;
-  }
-  sprintf(lckf,"%s/%s%03u.%03u.%03u", LF_PATH, LF_PREFIX, major(mbuf.st_dev),
-		  major(mbuf.st_rdev), minor(mbuf.st_rdev));
+    if(stat(modem_port, &mbuf) < 0) {
+        SePErrorF("could not stat modem port %s", modem_port, "", "");
+        return -1;
+    }
+    if( SM_BUF > (10 + strlen(LF_PATH) + strlen(LF_PREFIX)))
+        sprintf(lckf,"%s/%s%03u.%03u.%03u", LF_PATH, LF_PREFIX, major(mbuf.st_dev),
+	      major(mbuf.st_rdev), minor(mbuf.st_rdev));
+    else
+    {
+        SePErrorF("Buffer too small for lock filename in lock_tty():", "", "", "");
+        return -1;
+    }
 #endif /* LF_USE_DEV_NUMBERS */
 
-  sprintf(ltmp, "%s/%s%d", LF_PATH, "LTMP.", pid);
-  /* Create the LTMP.<pid> file and scribble our PID in it */
-  unlink(ltmp);
-  if ((lfd = creat(ltmp, 0644)) == -1) {
-    SePErrorF("Could not create temporary lock file %s", ltmp, "", "");
-    return -1;
-  }
+    if( SM_BUF > (11 + strlen(LF_PATH)))
+        sprintf(ltmp, "%s/%s%d", LF_PATH, "LTMP.", pid);
+    else
+    {
+        SePErrorF("Buffer too small for ltmp filename in lock_tty():", "", "", "");
+        return -1;
+    }
+    /* Create the LTMP.<pid> file and scribble our PID in it */
+    unlink(ltmp);
+    if ((lfd = creat(ltmp, 0644)) == -1) {
+        SePErrorF("Could not create temporary lock file %s", ltmp, "", "");
+        return -1;
+    }
 
 #if LF_USE_ASCII_PID
-  sprintf(pidstr, "%10d\n", pid);
-  write(lfd, pidstr, 11);
+    /* pidstr is easily large enough */
+    sprintf(pidstr, "%10d\n", pid);
+    write(lfd, pidstr, 11);
 #else
-  write(lfd, (char*)&pid, sizeof(pid));
+    write(lfd, (char*)&pid, sizeof(pid));
 #endif
-  close(lfd);
+    close(lfd);
 
   /*
    * Attempt to link directly - if it works, we're done.

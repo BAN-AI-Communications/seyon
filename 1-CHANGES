@@ -12,7 +12,6 @@ Version 2.20c:
 Rolled in some obvious bug fixes from the Debian version of 2.14c:
     * Fixed typo in Seyon.ad: s/replcae/replace
     * Added #include <linux/serial.h> to SePort.c for Linux
-    * Minor changes to ExecShellCommand; used to crash, should no more.
     * Now under GPL (see 1-COPYING for details), new maintainer.
 
 Versions up to 2.20b:

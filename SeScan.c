@@ -95,8 +95,8 @@ enum SC_STATE {
   SC_OUTSIDE,
 };
 
-static ScanState = SC_OUTSIDE;
-static ScanDelim = 0;	/* Current string delimiter */
+static int ScanState = SC_OUTSIDE;
+static int ScanDelim = 0;	/* Current string delimiter */
 
 void NEW_STATE(st)
 	 int st;
@@ -290,8 +290,8 @@ GetFirstWord(line)
 #ifdef TEST
 main()
 {
-  scSetInputBuf("Just to see if we'\\'re \\n\\033 able to distinguish' words and strings
-\"Also 'quotes' inside strings\" and 'strs \"inside quotes\"'
+  scSetInputBuf("Just to see if we'\\'re \\n\\033 able to distinguish' words and strings\n\
+\"Also 'quotes' inside strings\" and 'strs \"inside quotes\"'\n\
 Not to forget ^S and ^q control ^ chars");
 
   while (lGetWord() != 0);

@@ -66,7 +66,6 @@ extern int      open_modem(),
 extern FILE    *open_file(),
                *open_file_va();
 extern void     send_break(),
-                usleep(),
                 show(),
                 showf(),
                 SeyonMessage(),

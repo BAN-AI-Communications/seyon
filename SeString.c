@@ -21,12 +21,13 @@ char           *str_strip_lead_end_space(),
 
 char
 itoa(num)
-     int             num;
+    int             num;
 {
-  char            buf[TIN_BUF];
+    char            buf[TIN_BUF];
 
-  sprintf(buf, "%d", num);
-  return buf[0];
+    /* Buffer is safely big enough */
+    sprintf(buf, "%d", num);
+    return buf[0];
 }
 
 /*
@@ -99,8 +100,15 @@ str_stripspc_copy(dest, source)
   char            buffer[REG_BUF],
                  *bufptr;
 
-  strcpy(buffer, source);
+  strncpy(buffer, source, REG_BUF);
+
+  /* Null-terminate, as expected by str_strip_lead_end_space(). */
+  buffer[REG_BUF-1] = '\0';
+
   bufptr = str_strip_lead_end_space(buffer);
+
+  /* Must fit, as we can only have removed things from the original
+     string */
   return strcpy(dest, bufptr);
 }
 
@@ -127,14 +135,43 @@ StripSpace(str)
   return strBuf;
 }
 
+/* Note that the the (char *) data structure returned by FmtString()
+   is invalidated on subsequent calls, and that the function is not
+   re-entrant.  Take care that the pointer returned is not held for
+   use across calls. */
 char*
 FmtString(fmt, a, b, c)
-	 char *fmt, *a, *b, *c;
+    char *fmt, *a, *b, *c;
 {
-  static char strBuf[LRG_BUF];
+    static char     strBuf[LRG_BUF];
+    static FILE    *devnull=NULL;
+    int             length = 0;
 
-  sprintf(strBuf, fmt, a, b, c);
-  return strBuf;
+    /* Clear the buffer as it highlights errors elsewhere, such as
+       simultaneous use of the static string or re-entry into this
+       function. */
+    memset(strBuf, 0, LRG_BUF);
+
+    /* Ick... This is horrible - using a user-provided format string
+       means we have no easy way of limiting string length. HACK HACK
+       HACK Use fprintf to output to /dev/null and count the number of
+       bytes... It would be nice if we could rely on having snprintf() */
+
+    if(NULL == devnull)
+    {
+        devnull = fopen("/dev/null", "r+");
+        if(NULL == devnull)
+        {
+	  printf("Open /dev/null failed!?!\n");
+	  return strBuf;
+        }
+        length = fprintf(devnull, fmt, a, b, c);
+    }
+    
+    if(LRG_BUF >= length)
+        sprintf(strBuf, fmt, a, b, c);
+
+    return strBuf;
 }
  
 /*
@@ -188,6 +225,7 @@ strsqtok(str)
   if (*line == '\0')
     return NULL;
   else if (*line == '\"')
+
     for (wrd = ++line; *line != '\"' && *line; line++);
   else
     for (wrd = line; !isspace(*line) && *line; line++);
@@ -245,38 +283,38 @@ str_parse(buf)
  * this routine is not currently used, and I'm not if it works
  */
 
-char           *
-get_word(str, word)
-     char           *str,
-                    *word;
-{
-  char           *wrd,
-                  c;
+/* char           * */
+/* get_word(str, word) */
+/*      char           *str, */
+/*                     *word; */
+/* { */
+/*   char           *wrd, */
+/*                   c; */
 
-  while (isspace(*str) && *str)
-    str++;
+/*   while (isspace(*str) && *str) */
+/*     str++; */
 
-  if (!(*str))
-    word[0] = '\0';
+/*   if (!(*str)) */
+/*     word[0] = '\0'; */
 
-  else if (*str == '\"') {
-    for (wrd = ++str; *str != '\"' && *str; str++);
-    *str = '\0';
-    strcpy(word, wrd);
-    *str = '\"';
-    str++;
-  }
+/*   else if (*str == '\"') { */
+/*     for (wrd = ++str; *str != '\"' && *str; str++); */
+/*     *str = '\0'; */
+/*     strcpy(word, wrd); */
+/*     *str = '\"'; */
+/*     str++; */
+/*   } */
 
-  else {
-    for (wrd = str; !isspace(*str) && *str; str++);
-    c = *str;
-    *str = '\0';
-    strcpy(word, wrd);
-    *str = c;
-  }
+/*   else { */
+/*     for (wrd = str; !isspace(*str) && *str; str++); */
+/*     c = *str; */
+/*     *str = '\0'; */
+/*     strcpy(word, wrd); */
+/*     *str = c; */
+/*   } */
 
-  return str;
-}
+/*   return str; */
+/* } */
 
 #if !HAVE_STRERROR
 
