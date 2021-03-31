@@ -3,7 +3,7 @@
 # Sometimes hostname is broken and exit with nonzero even if it
 # succeeds, so this approach is not used.
 
-#host=`hostname || uname -n || echo host` 
+#host=`hostname || uname -n || echo host`
 #if [ "$USER" != "" ]; then user=$USER
 #elif [ "$LOGNAME" != "" ]; then user=$LOGNAME
 #elif [ "$LOGNAME" != "" ]; then user=$LOGNAME
@@ -13,20 +13,20 @@
 VERSION="2"
 REVISION="20c"
 
-host=`hostname`
-if [ "$host" = "" ]; then host=`uname -n`; fi
+host=$(hostname)
+if [ "$host" = "" ]; then host=$(uname -n); fi
 if [ "$host" = "" ]; then host=$HOST; fi
 if [ "$host" = "" ]; then host="unknown"; fi
 
 user=$USER
 if [ "$user" = "" ]; then user=$LOGNAME; fi
-if [ "$user" = "" ]; then user=`logname`; fi
+if [ "$user" = "" ]; then user=$(logname); fi
 if [ "$user" = "" ]; then user="unknown"; fi
 
-system=`uname -s`
+system=$(uname -s)
 if [ "$system" = "" ]; then system="unknown"; fi
 
-machine=`uname -m`
+machine=$(uname -m)
 if [ "$machine" = "" ]; then machine=$MACHINE; fi
 if [ "$machine" = "" ]; then machine=$HOSTTYPE; fi
 if [ "$machine" = "" ]; then machine=$hosttype; fi
