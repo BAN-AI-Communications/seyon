@@ -2,12 +2,12 @@
 /*---------------------------------------------------------------------------+
 | External parser interface
 +---------------------------------------------------------------------------*/
-extern void SignalBeginFunction(char *);
-extern void SignalArg(char *);
+extern void SignalBeginFunction();
+extern void SignalArg();
 extern void SignalEndFunction();
 extern void ParseThis();
 
-extern void yyerror(char *);
+extern void yyerror();
 
 /*---------------------------------------------------------------------------+
 | Control and escape characters
@@ -15,5 +15,5 @@ extern void yyerror(char *);
 #define CTRL_CHAR '^'
 #define BACK_CHAR '\\'
 
-extern void scSetInputBuffer(char *);
+extern void scSetInputBuffer();
 extern int yyparse();

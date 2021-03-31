@@ -7,6 +7,16 @@
  * statement of rights and permissions for this program.
  */
 
+/*                               -*- Mode: C -*- 
+ * SeInit.c --- Initialization routines
+ * Author          : Muhammad M. Saggaf
+ * Created On      : sometime in 1992
+ * Last Modified By: system admin
+ * Last Modified On: Fri Jun  4 16:17:39 1993
+ * Update Count    : 8
+ * Status          : Mostly OK, needs some cleaning up
+ */
+
 #include <X11/Intrinsic.h>
 #include <X11/StringDefs.h>
 #include <X11/Shell.h>
@@ -17,6 +27,7 @@
 
 #include "seyon.h"
 #include "SeDecl.h"
+#include "version.h"
 
 #ifndef HELPFILE
 #define HELPFILE "/usr/lib/X11/seyon.help"
@@ -496,6 +507,8 @@ GetResources()
 	   offset(hangupConfirm), XtRImmediate, (XtPointer) True},
     {"exitConfirm", "ExitConfirm", XtRBoolean, sizeof(Boolean),
 	   offset(exitConfirm), XtRImmediate, (XtPointer) True},
+    {"neverBeep", "NeverBeep", XtRBoolean, sizeof(Boolean),
+	   offset(neverBeep), XtRImmediate, (XtPointer)False},
 
     {"defaultDirectory", "DefaultDirectory", XtRString, sizeof(String),
 	   offset(defaultDirectory), XtRString, (XtPointer) "~/.seyon"},

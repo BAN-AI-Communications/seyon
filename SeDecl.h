@@ -6,6 +6,16 @@
  * statement of rights and permissions for this program.
  */
 
+/*                               -*- Mode: C -*- 
+ * SeDecl.h --- Declarations header file
+ * Author          : Muhammad M. Saggaf
+ * Created On      : sometime in 1992
+ * Last Modified By: system admin
+ * Last Modified On: Wed Jun  9 20:07:26 1993
+ * Update Count    : 10
+ * Status          : Mostly OK, needs some cleaning up
+ */
+
 #include <stdio.h>
 #include <X11/Intrinsic.h>
 
@@ -95,6 +105,7 @@ extern void     send_break(),
                 cancel_dial(),
                 SeBeep(),
                 Beep(),
+                FancyBell(),
                 SeSetViewportDimFromMultiList(),
                 get_dial_info(),
                 TopDial(),
@@ -156,6 +167,7 @@ extern void     send_break(),
                 w_kill_up(),
                 PreProcessPrep(),
                 PostProcessPrep(),
+                PreExecPrep(),
                 SetKillButtonSens(),
 
                 ReadCommentedFile(),
@@ -224,9 +236,6 @@ extern struct sgttyb oldmode,
  * defined constants
  */
 
-#define VERSION "2.1"
-#define REVISION "4b"
-
 #define SUSPEND_TERM              18
 #define CONTINUE_TERM             19
 #define START_TERM                20
@@ -282,6 +291,8 @@ extern struct sgttyb oldmode,
 #define MDM_DCD   0x040
 #define MDM_RNG   0x080
 #define MDM_DSR   0x100
+
+#define CNULL ('\0')
 
 /*
  * macros
@@ -366,6 +377,7 @@ struct QueryResources {
   String          modemHangupString;
   Boolean         hangupConfirm;
   Boolean         exitConfirm;
+  Boolean         neverBeep;
 
   String          defaultDirectory;
   String          scriptDirectory;

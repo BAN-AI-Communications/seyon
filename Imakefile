@@ -44,6 +44,7 @@ SpecialObjectRule(SeInit.o,SeInit.c,$(HELPFILE))
 
 InstallAppDefaults(Seyon)
 InstallAppDefaultsLong(Seyon-co,Seyon-color)
+InstallAppDefaultsLong(Seyon,Seyon)
 InstallNonExecFile(seyon.help,$(LIBDIR))
 
 install::

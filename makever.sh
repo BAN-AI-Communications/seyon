@@ -10,6 +10,9 @@
 #else user="user"
 #fi
 
+VERSION="2"
+REVISION="20c"
+
 host=`hostname`
 if [ "$host" = "" ]; then host=`uname -n`; fi
 if [ "$host" = "" ]; then host=$HOST; fi
@@ -21,8 +24,7 @@ if [ "$user" = "" ]; then user=`logname`; fi
 if [ "$user" = "" ]; then user="unknown"; fi
 
 system=`uname -s`
-if [ "$machine" = "" ]; then machine=$MACHINE; fi
-if [ "$machine" = "" ]; then machine="unknown"; fi
+if [ "$system" = "" ]; then system="unknown"; fi
 
 machine=`uname -m`
 if [ "$machine" = "" ]; then machine=$MACHINE; fi
@@ -42,3 +44,13 @@ echo "#define COMPILE_OSNAME \"$system\"" >> version.h
 echo "#define COMPILE_HOSTTYPE \"$machine\"" >> version.h
 echo "#define COMPILE_DATE \"`date +%D`\"" >> version.h
 echo "#define COMPILE_TIME \"`date +%T`\"" >> version.h
+
+echo "#define VERSION \"$VERSION\"" >> version.h
+echo "#define REVISION \"$REVISION\"" >> version.h
+
+echo "#ifdef IS_MAIN" >> version.h
+echo "static char version[] = \"\$Revision: $VERSION.$REVISION \$\";"\
+     >> version.h
+echo "#endif" >> version.h
+
+echo "Machine type is $machine, OS name is $system"

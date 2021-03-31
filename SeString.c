@@ -86,7 +86,7 @@ str_strip_end_space(str)
 {
   int             i;
 
-  for (i = strlen(str) - 1; i>0 && isspace(str[i]); i--);
+  for (i = strlen(str) - 1; isspace(str[i]) && i; i--);
   str[++i] = '\0';
 
   return str;
@@ -113,7 +113,7 @@ str_strip_end_char(str)
   int             length;
 
   length = strlen(str);
-  if(length>0) str[length - 1] = '\0';
+  str[length - 1] = '\0';
 
   return str;
 }

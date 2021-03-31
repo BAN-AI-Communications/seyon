@@ -7,6 +7,16 @@
  * statement of rights and permissions for this program.
  */
 
+/*                               -*- Mode: C -*- 
+ * SePort.c --- Modem port I/O routines
+ * Author          : Muhammad M. Saggaf
+ * Created On      : sometime in 1992
+ * Last Modified By: system admin
+ * Last Modified On: Mon Jun 28 19:25:32 1993
+ * Update Count    : 10
+ * Status          : Mostly OK, needs some cleaning up
+ */
+
 #include "config.h"
 
 #include <signal.h>
@@ -39,6 +49,7 @@
 
 #if USE_NONSTD_BAUD
 #ifdef linux
+#include <linux/serial.h>
 #include <sys/ioctl.h>
 #include <linux/fs.h>
 #include <linux/tty.h>
@@ -217,7 +228,7 @@ GetModemStat(newModem)
 
   if (newModem) useModemControl = True;
 
-  if (useModemControl && (retStat = IoGetModemStat(mfd)) < 0) {
+  if (useModemControl && ((retStat = IoGetModemStat(mfd)) < 0)) {
 	SeErrorF("Could not get control line status for device %s", 
 			 modem_port, "", "");
 	SeNotice("Disabling status toggles for that device");
@@ -1063,7 +1074,7 @@ relink:
 #endif
 
       lockPid = (pid_t) lckpid;
-      if (kill(lckpid, 0) == 0) {
+      if (kill(lckpid, 0) == 0 || errno != ESRCH) {
 		SeErrorF("Device %s is locked by process %d", modem_port, lckpid, "");
 		unlink(ltmp);
 		return -1;

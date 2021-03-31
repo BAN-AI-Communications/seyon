@@ -8,6 +8,16 @@
  *
  */
 
+/*                               -*- Mode: C -*- 
+ * config.h --- Configuration header file
+ * Author          : Muhammad M. Saggaf
+ * Created On      : sometime in 1992
+ * Last Modified By: system admin
+ * Last Modified On: Fri Jun  4 20:10:51 1993
+ * Update Count    : 9
+ * Status          : Mostly OK, needs some cleaning up
+ */
+
 #ifndef SEYON_CONFIG_H
 #define SEYON_CONFIG_H
 
@@ -348,8 +358,8 @@ extern char *getenv();
 #define HAVE_SGTTYB         NO
 #endif
 
-#if !defined(SIGCLD) && defined(SIGCHLD)
-#define SIGCLD SIGCHLD
+#if !defined(SIGCHLD) && defined(SIGCLD)
+#define SIGCHLD SIGCLD
 #endif
 
 #define NMSIZE  256		/* file name buffer size */

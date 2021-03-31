@@ -52,6 +52,9 @@
  */
 
 #include <stdio.h>
+#ifndef NOSTDHDRS
+#include <stdlib.h>
+#endif
 #include <ctype.h>
 
 #include <X11/IntrinsicP.h>
@@ -84,7 +87,7 @@ extern void XawInitializeWidgetSet();
 #define min(a,b)		((a) < (b) ? (a) : (b))
 #define XtStrlen(s)		((s) ? strlen(s) : 0)
 
-#define	TypeAlloc(t,n)		(t *)XtMalloc(sizeof(t) * n)
+#define	TypeAlloc(t,n)		(t *)malloc(sizeof(t) * n)
 #define	StrCopy(s)		strcpy(TypeAlloc(char,strlen(s)+1),s)
 #define	StrCopyRetLength(s,lp)	strcpy(TypeAlloc(char,(*lp=(strlen(s)+1))),s)
 
@@ -590,12 +593,12 @@ XfwfMultiListWidget mlw;
 	{
 		for (i = 0; i < MultiListNumItems(mlw); i++)
 		{
-			XtFree(MultiListItemString(MultiListNthItem(mlw,i)));
+			free(MultiListItemString(MultiListNthItem(mlw,i)));
 		}
-		XtFree((char *)MultiListItemArray(mlw));
+		free((char *)MultiListItemArray(mlw));
 	}
 	if (MultiListSelArray(mlw) != NULL)
-	    XtFree((char *)MultiListSelArray(mlw));
+	    free((char *)MultiListSelArray(mlw));
 	MultiListSelArray(mlw) = NULL;
 	MultiListNumSelected(mlw) = 0;
 	MultiListItemArray(mlw) = NULL;
@@ -1042,7 +1045,6 @@ int row,column;
 			bg_gc = MultiListGrayGC(mlw);
 		    else
 			bg_gc = MultiListEraseGC(mlw);
-		XFillRectangle(XtDisplay(mlw),XtWindow(mlw),bg_gc,ul_x,ul_y,w,h);
 	}
 	    else
 	{
@@ -1074,8 +1076,10 @@ int row,column;
 				fg_gc = MultiListDrawGC(mlw);
 			}
 		}
-		XFillRectangle(XtDisplay(mlw),XtWindow(mlw),bg_gc,ul_x,ul_y,w,h);
-
+	}
+	XFillRectangle(XtDisplay(mlw),XtWindow(mlw),bg_gc,ul_x,ul_y,w,h);
+	if (has_item == True)
+	{
 		text_h = min(FontH(MultiListFont(mlw)) +
 			     (int)MultiListRowSpace(mlw),(int)MultiListRowHeight(mlw));
 		str_x = ul_x + MultiListColumnSpace(mlw) / 2;
@@ -1425,7 +1429,7 @@ Cardinal *num_params;
 				item_index));
 			byte_count = byte_count + strlen(string) + 1;
 		}
-		buffer = (char *)XtMalloc(byte_count);
+		buffer = (char *)malloc(byte_count);
 		buffer[0] = '\0';
 		for (i = 0; i < MultiListNumSelected(mlw); i++)
 		{
@@ -1436,7 +1440,7 @@ Cardinal *num_params;
 			strcat(buffer,string);
 		}
 		XStoreBytes(XtDisplay(mlw),buffer,byte_count);
-		XtFree(buffer);
+		free(buffer);
 	}
 
 	ret_value.action = MultiListMostRecentAct(mlw);
@@ -1585,25 +1589,12 @@ XfwfMultiListWidget mlw;
 	XfwfMultiListItem *item;
 
 	for (i = 0; i < MultiListNumItems(mlw); i++)
-	{                
-#ifdef DEBUG
-  showf("=M= pos 1 %d", i);
-#endif
+	{
 		item = MultiListNthItem(mlw,i);
 		if (MultiListItemHighlighted(item))
-			{XfwfMultiListUnhighlightItem(mlw,i); 
-#ifdef DEBUG
-showf("=M= pos 2 %d", i);
-#endif
-}
+			XfwfMultiListUnhighlightItem(mlw,i);
 	}
-#ifdef DEBUG
-	show("=M= pos 3");
-#endif
-	MultiListNumSelected(mlw) = 0; 	
-#ifdef DEBUG
-show("=M= pos 4");
-#endif
+	MultiListNumSelected(mlw) = 0;
 } /* End XfwfMultiListUnhighlightAll */
 
 

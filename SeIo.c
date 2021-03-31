@@ -21,7 +21,7 @@
 #endif
 #endif
 
-#if HAVE_SGTTY
+#if HAVE_SGTTYB
 #include <sys/file.h>
 #endif
 #if HAVE_MODEM_CONTROL && defined(HPUX)
@@ -317,7 +317,7 @@ IoGetModemStat(fd)
 #ifdef MCTS
   if (rawStat & MCTS) retStat |= MDM_CTS;
 #endif
-#ifdef MRNG
+#ifdef MRI
   if (rawStat & MRI) retStat |= MDM_RNG;
 #endif
 #endif /* HPUX */

@@ -66,11 +66,10 @@
               the 2nd (after X11R5) most used public software on our
               site." -- Egan.
 
-  HARDWARE :  HP 9000/300, HP 9000/750, HP 340
+  HARDWARE :  HP 9000/750, HP 340
   OS       :  HP-UX 8.0
-  GUI      :  X11R4, X11R4, ?
-  REP. BY  :  Scott Blachowicz <scott@statsci.com>
-              rob@cad4.lbl.gov (Robert J. McNamara)
+  GUI      :  X11R4, ?
+  REP. BY  :  rob@cad4.lbl.gov (Robert J. McNamara)
 			  dlemoin@xobu.nswc.navy.mil (Donald J. Lemoine)
   NOTES    :  DJL plans to convert Xaw to Motif
 

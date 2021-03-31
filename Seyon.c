@@ -7,10 +7,19 @@
  * statement of rights and permissions for this program.
  */
 
-#include <signal.h>
+/*                               -*- Mode: C -*- 
+ * Seyon.c --- Main module
+ * Author          : Muhammad M. Saggaf
+ * Created On      : sometime in 1992
+ * Last Modified By: system admin
+ * Last Modified On: Wed Jun  9 20:07:26 1993
+ * Update Count    : 11
+ * Status          : Mostly OK, needs some cleaning up
+ */
 
 #include <X11/Intrinsic.h>
 #include <X11/StringDefs.h>
+#include <signal.h>
 
 #include "seyon.h"
 #include "SeDecl.h"
@@ -35,8 +44,8 @@ struct sgttyb   newmode,
 
 #define SEYON_EMU_NAME    "seyon-emu"
 
+#define IS_MAIN
 #include "version.h"
-static char     version[] = "$Revision: 2.14b $";
 
 extern Widget   CreateCommandCenter();
 extern void     SetIcon(),
@@ -70,8 +79,7 @@ main(argc, argv)
   int             OpenModem();
   void            DispatchActions(),
                   GetParameters(),
-                  ShowOpenModemErrMsg(),
-                  exit();
+                  ShowOpenModemErrMsg();
 
   char           *arg[REG_BUF], termEmu[REG_BUF];
   int             sepIndex, i, n, retStatus;
@@ -245,7 +253,7 @@ main(argc, argv)
 
 	ShowOpenModemErrMsg(curModem, retStatus);
 	if (retStatus != ERR_MDM_NOMODEM)
-	  show(FmtString("Modem ``%s'' is Unavailable.\n", curModem, "", ""));
+	  show(FmtString("Modem `%s' is Unavailable.\n", curModem, "", ""));
 	curModem = GetNextWord();
   } while (curModem[0] != '\0');
 
@@ -255,7 +263,7 @@ main(argc, argv)
 	goto MainLoop;
   }
 
-  show(FmtString("Modem ``%s'' is Available.\n", curModem, "", ""));
+  show(FmtString("Modem `%s' is Available.\n", curModem, "", ""));
 
   /* ---------------------------------------------------------------------- */
 
@@ -357,6 +365,7 @@ do_exit(rc)
   CloseModem();
 
   XtDestroyApplicationContext(XtWidgetToApplicationContext(topLevel));
+/*  XCloseDisplay(XtDisplay(topLevel));*/
   exit(rc);
 }
 

@@ -16,7 +16,8 @@ static unsigned parseBufLen;
 static unsigned parseBufNextCh;
 static char* 	parseBuf;
 
-void scSetInputBuffer(char *line) 
+void scSetInputBuffer(line)
+	 char *line ;
 {
   assert(line != 0);
   parseBufNextCh 	= 0;
@@ -35,7 +36,9 @@ int scGetChar() {
     return EOF;
 }
 
-void scUngetChar(int c) {
+void scUngetChar(c)
+	 int c;
+{
   if (parseBufNextCh > 0)
     parseBuf[--parseBufNextCh] = c;
 }
@@ -55,7 +58,9 @@ static char *strBuf = 0;
 static unsigned strBufSize = 0;
 static unsigned strBufNextCh = 0;
 
-static void _growBuf(unsigned size) {
+static void _growBuf(size)
+	 unsigned size;
+{
   if (strBuf == 0)
     strBuf = (char *)malloc(strBufSize = size + GROW_SIZE);
   else if (strBufSize < (strBufNextCh + size + 1)) {
@@ -68,7 +73,9 @@ static void _startWord() {
   strBufNextCh = 0;
 }
 
-static void _addCh(int ch) {
+static void _addCh(ch)
+	 int ch;
+{
   _growBuf(1);
   strBuf[strBufNextCh++] = ch;
 }
@@ -91,7 +98,9 @@ enum SC_STATE {
 static ScanState = SC_OUTSIDE;
 static ScanDelim = 0;	/* Current string delimiter */
 
-void NEW_STATE(int st) {
+void NEW_STATE(st)
+	 int st;
+{
 
 #ifdef TEST
   static char* state_names[] = { "InWord", "InStr", "Out", "NONE" };
@@ -106,7 +115,9 @@ void NEW_STATE(int st) {
 #define C_SEP ';'
 #define C_STR '"'
 
-int cType(int c) {
+int cType(c)
+	 int c;
+{
   if (isspace(c)) return C_SPACE;
   switch (c) {
   case CTRL_CHAR: case BACK_CHAR: return C_ESC;
@@ -116,7 +127,7 @@ int cType(int c) {
   }
 }
 
-int doEsc(int c);
+int doEsc();
 
 /*---------------------------------------------------------------------------+
 | scNextWord breaks lines into sequences of words
@@ -127,7 +138,9 @@ int doEsc(int c);
 |
 | Returns: input token type (usually a representative char)
 +---------------------------------------------------------------------------*/
-int scNextWord(int recognize_seps, char **wd)
+int scNextWord(recognize_seps, wd)
+	 int recognize_seps; 
+	 char **wd;
 {
   int c;
 
@@ -220,7 +233,9 @@ static char special[26] =
 /*---------------------------------------------------------------------------+
 | doEsc - process esc (\) and control (^) sequences
 +---------------------------------------------------------------------------*/
-int doEsc(int escChar) {
+int doEsc(escChar)
+	 int escChar;
+{
 
   int     c = scGetChar();
 

@@ -1,3 +1,44 @@
+Seyon 2.20b and above are released under the GNU General Public
+License by kind permission of the author and original maintainer of
+seyon, Muhammad M. Saggaf. I contacted him by snail mail to ask him to
+open up the code and here is his response:
+
+======================================================================
+
+I received your letter today (yes, I know it took a long time, it took a
+trip half-way around the world and then back to my current address in the
+U.S.). I share your view about license for Seyon, I think it is too
+restrictive, especially that I'm not actively maintaining it. The purpose
+behind that restriction was to prevent incompatible versions, really, but I
+don't think it was the correct way of doing that. You have my permission to
+modify the license (e.g. the GPL is just fine) and distribute the package
+with the new license.
+
+My very best wishes,
+
+-- M. Saggaf
+   msaggaf@erl.mit.edu
+
+======================================================================
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+See the file COPYING for full details of the GPL.
+
+And here is the original license:
 
 ======================================================================
 
@@ -8,7 +49,7 @@
   and is not made part of any program either in whole or in part and
   that this copyright notice is included with Seyon. Permission is
   also granted to modify the source as long as the modified source is
-  not distributed.
+  not distributed without prior consent of the author.
 
 ======================================================================
 

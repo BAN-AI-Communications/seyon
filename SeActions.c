@@ -7,16 +7,27 @@
  * statement of rights and permissions for this program.
  */
 
+/*                               -*- Mode: C -*- 
+ * SeActions.c --- Actions
+ * Author          : Muhammad M. Saggaf
+ * Created On      : sometime in 1992
+ * Last Modified By: system admin
+ * Last Modified On: Wed Jun  9 19:49:36 1993
+ * Update Count    : 10
+ * Status          : Mostly OK, needs some cleaning up
+ */
+
+#include <X11/Intrinsic.h>
+#include <X11/StringDefs.h>
+#include <X11/Xaw/Command.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 #include <math.h>
-#include <X11/Intrinsic.h>
-#include <X11/StringDefs.h>
-#include <X11/Xaw/Command.h>
 
 /* SeDecl.h includes stdio.h */
 #include "SeDecl.h"
+#include "version.h"
 
 #define CheckNumParam(num) {if (*numParam != num) \
   SimpleError("Wrong Number of Parameters");}
@@ -228,12 +239,15 @@ OpenWindowAction(widget, event, param, numParam)
   int             i;
 
   for (i = 0; i < *numParam; i++) {
-	if (strcmp(param[i], "Main") == 0) XtMapWidget(GetShell(widget));
-
+	if (strcmp(param[i], "Main") == 0) 
+	  XMapRaised(XtDisplay(widget), XtWindow(GetShell(widget)));
+	
 	else if (strcmp(param[i], "Dial") == 0)
-	  if ((dirWidget = XtNameToWidget(dialWidget, "directory")))
+	  TopDial(dialWidget, NULL);
+
+	/*	  if ((dirWidget = XtNameToWidget(dialWidget, "directory")))
 		{XtPopup(dirWidget, XtGrabNone); XtMapWidget(dirWidget);}
-	  else TopDial(dialWidget, NULL);
+		else TopDial(dialWidget, NULL);*/
 
 	else if (strcmp(param[i], "Term") == 0) {
 	  if (termWindowId == NULL) termWindowId = (String)getenv("WINDOWID");
@@ -448,7 +462,7 @@ DispatchActions(intData, stringData, widget)
 
 	if (startup) {
 	  startup = False;
-	  ParseThis(FmtString("Message(\"Welcome to Seyon version %s%s\"); %s",
+	  ParseThis(FmtString("Message(\"Welcome to Seyon version %s.%s\"); %s",
 						  VERSION, REVISION, "RestartTerminal();"), 
 				DispatchActions);
 	}

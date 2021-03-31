@@ -25,11 +25,30 @@
 
 ---------
 8) fix the alarm stuff dial<->trminp
-9) fix the error popups stuff
+=9) fix the error popups stuff
 11) fix sigalram stuff in sedial
 13) action KillShellCommand()
 14) invalid WINDOWID
-*15) fix setport->restart->zombie
+=*15) fix setport->restart->zombie
 =16) fix (needed?) setbaud->restart_needed
 =17) fix restore-> set bad file number
+
+18) discard online: dial aborted
+
+=19) invetigate rafal's bug
+
+=20) qres.neverBeep
+
+=21) openwin + already open -> raise
+
+=22) restore xset settings
+
+*23) fix bug about -dial -ent 1 (no terminal after connect)
+
+24) save/resore _modem_ settings whenexecuting commands
+
+
+25) can send to remote while script running
+
+26) optional HUPCL (drop drt on excit, hangup on exit)
 

@@ -20,7 +20,7 @@
 "*XfwfMultiList.shadeSurplus: off",
 "*XfwfMultiList.defaultColumns: 1",
 "*XfwfMultiList.verticaList: true",
-"*XfwfMultiList.maxSelectable: 5",
+"*XfwfMultiList.maxSelectable: 100",
 "*XfwfMultiList.Translations: #replcae \\n\
 	<Btn1Down>(2): Select() Notify() \\n\
 	<Btn1Down>: Toggle() \\n\
@@ -290,7 +290,7 @@ Suggested action:\\n\
 * recompile Seyon with the flag\\n\
   HAVE_MODEM_CONTROL\\n\
   set to NO",
-"*errReadError.label: >> Unable read from the modem or tty\\n\\n\
+"*errReadError.label: >> Unable to read from the modem or tty\\n\\n\
 A read error has occured. Seyon\\n\
 will disable the terminal process.\\n\
 You can restart it by clicking\\n\

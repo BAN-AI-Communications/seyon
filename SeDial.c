@@ -67,6 +67,8 @@ int             dialTime,
 jmp_buf         dial_env;
 XfwfMultiListWidget mlw;
 
+#define BUGGY_MULTILIST_WIDGET 1
+
 /*---------------------------------------------------------------------------+
 | TopDial - the top routine for the dialing directory.
 +---------------------------------------------------------------------------*/
@@ -78,18 +80,14 @@ TopDial(widget, clientData)
 {
   void            EditFile();
 
-  Widget          form, mBox, uBox, lBox, view, list;
-  static Widget   popup;
-  static char     phoneFile[REG_BUF];
-  static String   disItems[MAX_ENT+1] = {NULL};
-
-#ifdef DEBUG
-  XSynchronize(XtDisplay(widget), True);
-#endif
+  static Widget          popup, view, list;
+  Widget                 form, mBox, uBox, lBox;
+  static char            phoneFile[REG_BUF];
+  static String          disItems[MAX_ENT+1] = {NULL};
 
   if (clientData == NULL && dialDirUp)
-	SimpleError("Directory is Already Open");
-
+	{XMapRaised(XtDisplay(widget), XtWindow(popup)); return;}
+	 
   if (disItems[0] == NULL) {
     strcpy(phoneFile, qres.phoneFile);
     if (ReadParsePhoneFile(phoneFile, disItems) < 0) return;
@@ -98,7 +96,8 @@ TopDial(widget, clientData)
 	popup = SeAddPopupWG("directory", widget, form, form, 0,
 						 SeWidgetHeight(form), True, True);
 	mBox = AddPaned("mBox", popup);
-	uBox = AddBox("uBox", mBox);
+/*	uBox = AddBox("uBox", mBox);*/
+	uBox = SeAddForm("uBox", mBox);
 	lBox = AddBox("lBox", mBox);
 	
 	view = XtCreateManagedWidget("view", viewportWidgetClass, uBox, NULL, 0);
@@ -118,6 +117,20 @@ TopDial(widget, clientData)
 
 	XtRealizeWidget(popup);
   }
+
+#if BUGGY_MULTILIST_WIDGET
+  else {
+	XtDestroyWidget(list);
+
+	list = XtVaCreateManagedWidget("list", xfwfMultiListWidgetClass,
+								   view, XtNlist, disItems, NULL);
+	mlw = (XfwfMultiListWidget)list;
+/*	SeSetViewportDimFromMultiList(view, list, 10);*/
+	XtAddCallback(list, XtNcallback, DoDial, NULL);
+
+	XtRealizeWidget(popup);
+  }
+#endif
 
   if (clientData == NULL) {
 	XtPopup(popup, XtGrabNone);
@@ -190,12 +203,12 @@ DialHandler(
   switch (WEXITSTATUS(status)) {
 #endif
   case 0:
-    SeyonMessage("Connected to Remote Host");
+	if (manualDial) SeyonMessage("Connected");
+	else SeyonMessage(FmtString1("Connected to %s", 
+								 ddItems[ddCurItemIndex]->name));
 	UpdateStatusBox(NULL);
 	DispatchActions(ACTION_DISPATCH, qres.postConnectAction, genericWidget);
-#ifdef DEBUG
-	XSynchronize(XtDisplay(dialWidget), False);
-#endif
+
 	if ((dirWidget = XtNameToWidget(dialWidget, "directory"))) {
 	  RemoveCurrentItem();
 	  if (ddItems[ddCurItemIndex]->script[0] && !manualDial) {

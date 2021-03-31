@@ -7,7 +7,15 @@
  * statement of rights and permissions for this program.
  */
 
-#include <setjmp.h>
+/*                               -*- Mode: C -*- 
+ * SeWin.c --- Windows/widgets routines
+ * Author          : Muhammad M. Saggaf
+ * Created On      : sometime in 1992
+ * Last Modified By: system admin
+ * Last Modified On: Sat Jun  5 16:57:06 1993
+ * Update Count    : 9
+ * Status          : Mostly OK, needs some cleaning up
+ */
 
 #include <X11/Intrinsic.h>
 #include <X11/StringDefs.h>
@@ -22,6 +30,7 @@
 #include <X11/Xaw/Dialog.h>
 #include <X11/Xaw/Form.h>
 #include <X11/Xaw/Paned.h>
+#include <setjmp.h>
 
 #include "seyon.h"
 #include "SeDecl.h"
@@ -920,23 +929,33 @@ SetStatusMessagef(fmt, a, b, c)
 +---------------------------------------------------------------------------*/
 
 void
-Beep()
+FancyBell(widget)
+	 Widget          widget;
 {
-  XKeyboardControl kb;
-  Display          *display = XtDisplay(topLevel);
-  int              pitch[3]    = {200, 400, 500},
-                   duration[3] = { 50, 100, 100},
-                   i;
+  Display                   *display = XtDisplay(widget);
+  XKeyboardControl          keyboardControl;
+  XKeyboardState            keyboardState;
+  static int                pitch[3] = {200, 400, 500},
+                            duration[3] = {50, 100, 100};
+  int                       i;
+
+  XGetKeyboardControl(display, &keyboardState);
 
   for (i = 0; i < 3; i++) {
-	kb.bell_pitch = pitch[i];
-	kb.bell_duration = duration[i];
-	XChangeKeyboardControl(display, KBBellPitch | KBBellDuration, &kb);
+	keyboardControl.bell_pitch = pitch[i];
+	keyboardControl.bell_duration = duration[i];
+	XChangeKeyboardControl(display, KBBellPitch | KBBellDuration, 
+						   &keyboardControl);
   
 	XBell(display, 100);
 	XFlush(display);
 	usleep(100000L);
   }
+
+  keyboardControl.bell_pitch = keyboardState.bell_pitch;
+  keyboardControl.bell_duration = keyboardState.bell_duration;
+  XChangeKeyboardControl(display, KBBellPitch | KBBellDuration, 
+						 &keyboardControl);
 }
 
 /*---------------------------------------------------------------------------+

@@ -1,3 +1,27 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;; -*- Mode: Indented-Text -*- ;;;;;;;;;;;;;;;;;;;;;;;;
+;; 1-CHANGES --- Change log
+;; Author          : Muhammad M. Saggaf
+;; Created On      : sometime in 1992
+;; Last Modified By: Steve McIntyre <stevem@chiark.greenend.org.uk>
+;; Last Modified On: Sun May 09 21:38:30 1999
+;; Update Count    : 5
+;; Status          : quick and dirty, lots of typos
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+Version 2.20c: 
+Rolled in some obvious bug fixes from the Debian version of 2.14c:
+    * Fixed typo in Seyon.ad: s/replcae/replace
+    * Added #include <linux/serial.h> to SePort.c for Linux
+    * Minor changes to ExecShellCommand; used to crash, should no more.
+    * Now under GPL (see 1-COPYING for details), new maintainer.
+
+Versions up to 2.20b:
+fixed nasty bug?, neverBeep, restore xset settings, fix seScan and
+parse for non-ansi compilers, no more dir already open (map -deicon
+-raise), open win does raise if already open, all commands are now
+executed by /bin/sh instead of the loin shell,  now does not remove
+lock file if owned by another uid and alive (Rob Janssen
+rob@pe1chl.ampr.org), 
 
 Version 2.14c:
     * Fixed bug in SeStrings.c which caused crashes when compiled with -O

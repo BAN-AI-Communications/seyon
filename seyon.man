@@ -442,9 +442,11 @@ The name of the protocols file. This file tells Seyon what file transfer
 protocols are available. The user will be promted with a list based on
 this file when file transfer is to be initiated.
 .I Default value: protocols
+
 .TP
-.BI quickKeyX
+.BI quickKey?
 Refer to the section entitled \fISeQuickKeys\fP below.
+
 .TP
 .BI rtsctsFlowControl " (boolean)"
 Whether Seyon should turn on RTS/CTS hardware flow control. Make sure
@@ -495,7 +497,7 @@ bits are used for each character.
 Whether Seyon should turn on XON/XOFF software flow control.
 .I Default value: off
 
-.SH SEQUCKKEYS
+.SH SEQUICKKEYS
 
 Seyon allows the user to have custom buttons, called SeQuickKeys (z
 quickies), to which actions can be attached. SeQuickKeys provide a
@@ -545,7 +547,8 @@ designate asynchronoous actions. Brackets designate optional
 arguments.
 
 .TP
-.BI  Beep ();
+.BI 
+Beep ();
 Rings the bell making a short beep.
 
 .TP
@@ -991,7 +994,7 @@ the copyright owner provided that in all above cases Seyon is intact
 and is not made part of any program either in whole or in part and
 that this copyright notice is included with Seyon. Permission is also
 granted to modify the source as long as the modified source is not
-distributed.
+distributed without prior consent of the author.
 
 .SH BUGS
 

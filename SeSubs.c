@@ -7,6 +7,16 @@
  * statement of rights and permissions for this program.
  */
 
+/*                               -*- Mode: C -*- 
+ * SeSubs.c --- Misc subroutines
+ * Author          : Muhammad M. Saggaf
+ * Created On      : sometime in 1992
+ * Last Modified By: system admin
+ * Last Modified On: Wed Jun  9 20:07:26 1993
+ * Update Count    : 11
+ * Status          : Mostly OK, needs some cleaning up
+ */
+
 #include "config.h"
 
 #include <unistd.h>
@@ -49,6 +59,7 @@ show(msg)
      char           *msg;
 {
   fprintf(tfp, "%s\r\n", msg);
+  fflush(tfp);
 }
 
 /*
@@ -211,11 +222,10 @@ ExecShellCommand(command, top)
      char           *command;
 	 int             top;
 {
-  void            PreExecPrep();
   static char    *shell = NULL;
   char            cmd[REG_BUF],
                  *scmd;
-  static int      fio;
+  static int      fio=0;
   pid_t           forkRes;
 
   if (command == NULL) return;
@@ -232,8 +242,7 @@ ExecShellCommand(command, top)
 
   if (top)
 	XoAppAddSignal(app_con, SIGCHLD, ShellCommandHandler, (XtPointer)&fio);
-  else
-	signal(SIGCHLD, SIG_IGN);
+  else signal(SIGCHLD, SIG_IGN);
 
   forkRes = SeFork();
   if (forkRes == 0) {
@@ -250,16 +259,16 @@ ExecShellCommand(command, top)
     if (setuid(getuid()) < 0)
       SePError("Failed to set effective uid");
 
-    if (*scmd == '\0') {
-      SeNotice(FmtString1("Executing the shell ``%s''", shell));
+    if (*scmd == CNULL) {
+      SeNotice(FmtString1("Executing the shell `%s'", shell));
       execl(shell, shell, (char*)NULL);
-      SeError(FmtString1("Execution of the shell ``%s'' failed", shell));
+      SeError(FmtString1("Execution of the shell `%s' failed", shell));
       exit(1);
     }
 	
-    SeNotice(FmtString1("Executing the command ``%s''", scmd));
+    SeNotice(FmtString1("Executing the command `%s'", scmd));
     execl(shell, shell, "-c", scmd, (char*)NULL);
-    SePError(FmtString1("Execution of the command ``%s'' failed", scmd));
+    SePError(FmtString1("Execution of the command `%s' failed", scmd));
     exit(1);
   }
   else if (forkRes > 0) {
@@ -267,7 +276,7 @@ ExecShellCommand(command, top)
 	else {
 	  wait((int*)0);			/* Wait for the child process to terminate */
 	  set_tty_mode();
-	  set_modem_fio(*(int *)fio);
+	  set_modem_fio(fio);
 	}
   }  /* if (forkRes == 0)... */
 }

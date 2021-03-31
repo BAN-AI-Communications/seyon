@@ -7,18 +7,34 @@
  * statement of rights and permissions for this program.
  */
 
-#include <time.h>
+/*                               -*- Mode: C -*- 
+ * SeSubsX.c --- Various X-based routines
+ * Author          : Muhammad M. Saggaf
+ * Created On      : sometime in 1992
+ * Last Modified By: system admin
+ * Last Modified On: Thu Jun 17 22:26:07 1993
+ * Update Count    : 11
+ * Status          : Mostly OK, needs some cleaning up
+ */
 
 #include <X11/Intrinsic.h>
 #include <X11/StringDefs.h>
+#include <time.h>
 
 #include "seyon.h"
 #include "SeDecl.h"
+#include "version.h"
 
 extern char    *strsqtok();
 extern int      GetModemStat();
 
 int             seyon_message_up = 0;
+
+void
+Beep()
+{
+  if (!qres.neverBeep) FancyBell(topLevel);
+}
 
 void
 UpdateStatusBox(clientData)
@@ -75,7 +91,7 @@ FunMessage()
     msg = qres.funMessages[msg_index++];
     if (msg == NULL) {
       msg_index = 0;
-      sprintf(vermsg, "Welcome to Seyon version %s%s", VERSION, REVISION);
+      sprintf(vermsg, "Welcome to Seyon version %s.%s", VERSION, REVISION);
       msg = vermsg;
     }
 
