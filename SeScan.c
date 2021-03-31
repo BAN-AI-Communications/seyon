@@ -322,6 +322,7 @@ int doEsc(escChar) int escChar;
 +---------------------------------------------------------------------------*/
 int yylex() {
   int state = scNextWord(1, &yylval.sval);
+
   return state;
 }
 

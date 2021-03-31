@@ -118,11 +118,10 @@ void MdmPutString(s) char *s;
   usleep(MDELAY);
   for (; (c = *s); s++) {
     if (*s == '^' && *(s + 1)) {
-      if (*(++s) == '^') {
+      if (*(++s) == '^')
         c = *s;
-      } else {
+      else
         c = *s & 0x1f;
-      }
     }
     if (c == '~')
       sleep(1);
@@ -201,10 +200,10 @@ int GetModemStat(newModem) int newModem;
     PopupError("errModemControl", NULL);
   }
 
-  return (useModemControl ? retStat : 0);
+  return useModemControl ? retStat : 0;
 }
 
-int Online() { return ((GetModemStat(0) & MDM_DCD) ? 1 : 0); }
+int Online() { return (GetModemStat(0) & MDM_DCD) ? 1 : 0; }
 
 void cancel_dial(verbose) int verbose;
 {
@@ -302,7 +301,7 @@ char *mport(s) /* get/set port string */
 {
   if (s != NULL)
     strncpy(modem_port, s, sizeof(modem_port));
-  return (modem_port);
+  return modem_port;
 }
 
 int MdmSetGetBaud(baudIndex) int baudIndex;
@@ -599,7 +598,7 @@ long mbaud(s) char *s;
 #endif
 #endif
     default:
-      return (-1);
+      return -1;
     }
     io_set_speed(&pmode, baudrate);
     if (mfd != -1) {
@@ -621,17 +620,17 @@ long mbaud(s) char *s;
 
   switch (io_get_speed(&pmode)) {
   case B300:
-    return (300);
+    return 300;
   case B1200:
-    return (1200);
+    return 1200;
   case B2400:
-    return (2400);
+    return 2400;
   case B4800:
-    return (4800);
+    return 4800;
   case B9600:
-    return (9600);
+    return 9600;
   case B19200:
-    return (19200);
+    return 19200;
   case B38400:
 #if USE_NONSTD_BAUD
 #ifdef linux
@@ -797,6 +796,7 @@ int CloseModem() {
  */
 void mattach() {
   extern int dup2();
+
   /*
    * attach standard i/o to port
    */
@@ -845,6 +845,7 @@ int waitTime;
 
 void MdmPurge() {
   char c;
+
   while (MdmTimedReadChar(&c, 1) >= 0)
     ;
 }
@@ -911,6 +912,7 @@ int lock_tty() {
   int lfd;
   pid_t pid, lckpid;
   char *modemname;
+
 #if LF_USE_ASCII_PID
   char pidstr[20], lckpidstr[20];
   int nb;

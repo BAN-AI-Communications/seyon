@@ -248,13 +248,12 @@ XtPointer *converter_data;
 
   fromStr = (String)fromVal->addr;
   /*  buf = XtMalloc((strlen(fromStr)+1) * sizeof(char));
-    strcpy(buf, fromStr);*/
+     strcpy(buf, fromStr);*/
   buf = fromStr;
 
-  if ((strArr[0] = strsqtok(buf)) == NULL) {
+  if ((strArr[0] = strsqtok(buf)) == NULL)
     /*      XtFree(buf);*/
     done(NULL, String *);
-  }
 
   for (n = 1; n < XtNumber(strArr); n++)
     if ((strArr[n] = strsqtok(NULL)) == NULL)

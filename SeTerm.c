@@ -208,7 +208,7 @@ void PortToTty() {
 
     } /* for... */
   }   /* while(1)... */
-  /*NOT REACHED*/
+      /*NOT REACHED*/
 }
 
 /*
@@ -219,8 +219,8 @@ void send_tbyte(c) int c;
 {
   switch (c) {
 
-    /*Translate new line to carriage return if newline translation mode is
-      in effect*/
+  /*Translate new line to carriage return if newline translation mode is
+     in effect*/
   case '\n':
     switch (newlineTrMode) {
     case 2:
@@ -233,7 +233,7 @@ void send_tbyte(c) int c;
     }
     break;
 
-    /*Translate backspace to delete if del translation mode is in effect*/
+  /*Translate backspace to delete if del translation mode is in effect*/
   case 0x08:
     if (qres.backspaceTranslation)
       c = 0x7f;
@@ -244,12 +244,11 @@ void send_tbyte(c) int c;
   }
 
   /*Send ESC before the character if meta key is pressed with the  character
-    and the meta key translation mode is on*/
+     and the meta key translation mode is on*/
   if (qres.metaKeyTranslation && (c & 0x80)) {
     sendbyte('\033');
     sendbyte(c);
   }
-
   /*Send the character to the port*/
   else
     sendbyte(c);

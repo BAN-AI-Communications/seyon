@@ -13,7 +13,7 @@
         using some features of the old interface may need to be changed.
         Hope the changes don't make people's lives too miserable.
 
- ****************************************************************************/
+****************************************************************************/
 
 /*
  * Author:
@@ -59,45 +59,44 @@
 
       R E S O U R C E    D E S C R I P T I O N S    A N D    N O T E S
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 /*
 
- Name                Class              RepType         Default Value
- ----                -----              -------         -------------
- background          Background         Pixel           XtDefaultBackground
- border              BorderColor        Pixel           XtDefaultForeground
- borderWidth         BorderWidth        Dimension       1
- callback            Callback           XtCallbackList  NULL                *1
- columnWidth         Width              Dimension       0                   *9
- columnSpacing       Spacing            Dimension       8
- cursor              Cursor             Cursor          left_ptr
- defaultColumns      Columns            int             1                   *2
- destroyCallback     Callback           Pointer         NULL
- font                Font               XFontStruct*    XtDefaultFont
- forceColumns        Columns            Boolean         False               *2
- foreground          Foreground         Pixel           XtDefaultForeground
- height              Height             Dimension       0                   *3
- highlightBackground HBackground        Pixel           XtDefaultForeground *4
- highlightForeground HForeground        Pixel           XtDefaultBackground *4
- insensitiveBorder   Insensitive        Pixmap          Gray
- list                List               String *        NULL                *5
- longest             Longest            int             0                   *6
- mappedWhenManaged   MappedWhenManaged  Boolean         True
- maxSelectable       Value              int             1                   *7
- numberStrings       NumberStrings      int             0                   *5
- pasteBuffer         Boolean            Boolean         False
- rowHeight           Height             Dimension       0                   *9
- rowSpacing          Spacing            Dimension       2
- sensitive           Sensitive          Boolean         True
- sensitiveArray      List               Boolean *       NULL                *8
- shadeSurplus        Boolean            Boolean         True                *10
- verticalList        Boolean            Boolean         False
- width               Width              Dimension       0
- x                   Position           Position        0
- y                   Position           Position        0
+   Name                Class              RepType         Default Value
+   ----                -----              -------         -------------
+   background          Background         Pixel           XtDefaultBackground
+   border              BorderColor        Pixel           XtDefaultForeground
+   borderWidth         BorderWidth        Dimension       1
+   callback            Callback           XtCallbackList  NULL                *1
+   columnWidth         Width              Dimension       0                   *9
+   columnSpacing       Spacing            Dimension       8
+   cursor              Cursor             Cursor          left_ptr
+   defaultColumns      Columns            int             1                   *2
+   destroyCallback     Callback           Pointer         NULL
+   font                Font               XFontStruct*    XtDefaultFont
+   forceColumns        Columns            Boolean         False               *2
+   foreground          Foreground         Pixel           XtDefaultForeground
+   height              Height             Dimension       0                   *3
+   highlightBackground HBackground        Pixel           XtDefaultForeground *4
+   highlightForeground HForeground        Pixel           XtDefaultBackground *4
+   insensitiveBorder   Insensitive        Pixmap          Gray
+   list                List               String *        NULL                *5
+   longest             Longest            int             0                   *6
+   mappedWhenManaged   MappedWhenManaged  Boolean         True
+   maxSelectable       Value              int             1                   *7
+   numberStrings       NumberStrings      int             0                   *5
+   pasteBuffer         Boolean            Boolean         False
+   rowHeight           Height             Dimension       0                   *9
+   rowSpacing          Spacing            Dimension       2
+   sensitive           Sensitive          Boolean         True
+   sensitiveArray      List               Boolean *       NULL                *8
+   shadeSurplus        Boolean            Boolean         True *10 verticalList
+ Boolean            Boolean         False width               Width Dimension 0
+   x                   Position           Position        0
+   y                   Position           Position        0
 
- *1 -  The callback functions are called whenever a highlight or unhighlight
+ * 1 -  The callback functions are called whenever a highlight or unhighlight
        takes place.  More precisely, a callback occurs whenever the Notify()
        action is triggered.  By default, this occurs when the mouse button is
        lifted after a selection or deselection occurred.  The callback returns
@@ -105,7 +104,7 @@
        fields describing the selection state.  The most important fields
        indicate the total number of items selected, and a list of those items.
 
- *2 -  The defaultColumns resource is used in two cases.  If forceColumns
+ * 2 -  The defaultColumns resource is used in two cases.  If forceColumns
        is true, the widget will set the number of columns to the value of
        default columns.  If the widget width is unconstrained by the parent
        widgets, the defaultColumns is also used to determine the number of
@@ -113,17 +112,17 @@
        will be calcultaed based on the current width and will be changed to
        an appropriate value.
 
- *3 -  If the width or height is set to zero (0), which is the default case,
+ * 3 -  If the width or height is set to zero (0), which is the default case,
        then the widget will calculate the size of that dimension to be just
        large enough to hold the contents of the widget.
 
- *4 -  The highlightForeground and highlightBackground colors specify the
+ * 4 -  The highlightForeground and highlightBackground colors specify the
        colors used to highlight the text (foreground) and the surrounding
        background space of a list item when it is selected (highlighted).
        The default is the reverse of the default foreground and background
        colors.
 
- *5 -  The list resource is an array of strings (char * array) which tell
+ * 5 -  The list resource is an array of strings (char * array) which tell
        the names of each item of the list.  The number of elements of this
        array are indicated by the resource numberStrings.  If numberStrings
        is set to 0 (the default), then the MultiList widget will count the
@@ -134,17 +133,17 @@
        widgets copies the strings internally, so the user can free the list
        storage after setting it.
 
- *6 -  This resource represent the longest string in pixels.  If this
+ * 6 -  This resource represent the longest string in pixels.  If this
        resource is zero (0), which is the default and probably the value
        most people should use, the longest string length is calculated
        and the resource is updated.
 
- *7 -  The maxSelectable resource indicates the maximum number of items
+ * 7 -  The maxSelectable resource indicates the maximum number of items
        which can be selected at any one time.  In the original Athena
        widget, you could have at most one item selected at a time.  In
        this widget, you can choose how many will be selected at a time.
 
- *8 -  Each item in the MultiList can be made insensitive, so it is printed in
+ * 8 -  Each item in the MultiList can be made insensitive, so it is printed in
        gray shading and can not be highlighted.  This can be done by
        setting the sensitivity list, which is an array of Booleans which
        indicate whether or not the corresponding item is sensitive (can be
@@ -154,21 +153,21 @@
        resource to NULL after it has been set, so the user cannot read the
        old list back.
 
- *9 -  These values are intended for reading only.  They indicate the pixel
+ * 9 -  These values are intended for reading only.  They indicate the pixel
        width/height of the column/row.
 
- *10 - If the list height is made larger than the sum of the list entry
+ * 10 - If the list height is made larger than the sum of the list entry
        heights, the surplus space is shaded in the background color if
        shadeSurplus is False, or in a gray stipple pattern if shadeSurplus
        is True.
 
-*/
+ */
 
 /*---------------------------------------------------------------------------*
 
                     S T R I N G    D E F I N I T I O N S
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 #ifndef XtCList
 #define XtCList "List"
@@ -244,7 +243,7 @@ typedef struct _XfwfMultiListRec *XfwfMultiListWidget;
 
                      R E T U R N    S T R U C T U R E
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 #define XfwfMultiListActionNothing 0
 #define XfwfMultiListActionHighlight 1
@@ -264,7 +263,7 @@ typedef struct _XfwfMultiListReturnStruct {
 
                      U T I L I T Y    R O U T I N E S
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 #if (!NeedFunctionPrototypes)
 

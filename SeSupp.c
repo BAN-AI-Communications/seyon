@@ -11,7 +11,7 @@
 
     2.2         lg      Now uses /dev/tty instead of stdin/stdout
     2.2         lg      Added command parser
-*/
+ */
 
 #include <signal.h>
 
@@ -41,8 +41,8 @@ void sendstr(p) /* send a string to the port */
 int mklow(c) int c;
 {
   if (isupper(c))
-    return (tolower(c));
-  return (c);
+    return tolower(c);
+  return c;
 }
 
 /*
@@ -195,10 +195,9 @@ void seyon_getline(fp) FILE *fp;
   }
 
   l = strlen(line); /* Purge newline if found */
-  if (l--) {
+  if (l--)
     if (line[l] == '\n')
       line[l] = '\0';
-  }
 }
 
 void set_tty_mode() { io_set_attr(tfd, &newmode); }

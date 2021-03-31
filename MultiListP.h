@@ -13,7 +13,7 @@
         using some features of the old interface may need to be changed.
         Hope the changes don't make people's lives too miserable.
 
- ****************************************************************************/
+****************************************************************************/
 
 /*
  * Author:
@@ -60,7 +60,7 @@
 
       L O C A L    D A T A    S T R U C T U R E    D E F I N I T I O N S
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 typedef struct {
   Boolean sensitive;
@@ -72,7 +72,7 @@ typedef struct {
 
      W I D G E T    D A T A    S T R U C T U R E    D E F I N I T I O N S
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 typedef struct {
   int foo;
@@ -133,7 +133,7 @@ typedef struct _XfwfMultiListRec {
 
           D A T A    S T R U C T U R E    A C C E S S    M A C R O S
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 #define MultiListItemSensitive(i) ((i)->sensitive)
 #define MultiListItemHighlighted(i) ((i)->highlighted)

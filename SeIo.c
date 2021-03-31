@@ -244,7 +244,7 @@ int IoGetModemStat(fd) int fd;
                  2) put the resource:
                          Seyon.ignoreModemDCD: on
                         in your ~/.Xresources file
-                        */
+   */
 
 #if HAVE_MODEM_CONTROL
 #ifndef HPUX

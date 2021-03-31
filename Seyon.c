@@ -63,6 +63,7 @@ int main(int argc, char *argv[]) {
 
   char *arg[REG_BUF], termEmu[REG_BUF];
   int sepIndex, i, n, length, retStatus;
+
 #ifdef HAVE_FAS
   char large_string[LRG_BUF];
 #endif

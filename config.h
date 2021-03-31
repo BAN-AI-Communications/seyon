@@ -274,9 +274,9 @@ extern char *getenv();
 
 /* Uncomment if you don't have strchr and strrchr */
 /*
-#define strchr  index
-#define strrchr rindex
-*/
+ #define strchr  index
+ #define strrchr rindex
+ */
 
 /*
  * ----------------------------------------

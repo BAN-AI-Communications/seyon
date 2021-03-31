@@ -256,10 +256,10 @@ void usleep(usec) unsigned long usec;
 #if !HAVE_DUP2
 int dup2(oldfd, newfd) int oldfd, newfd;
 {
-  if (fcntl(oldfd, F_GETFL, 0) == -1)    /* Valid file descriptor? */
-    return (-1);                         /* No, return an error. */
-  close(newfd);                          /* Ensure newfd is closed */
-  return (fcntl(oldfd, F_DUPFD, newfd)); /* Dup oldfd into newfd */
+  if (fcntl(oldfd, F_GETFL, 0) == -1)  /* Valid file descriptor? */
+    return -1;                         /* No, return an error. */
+  close(newfd);                        /* Ensure newfd is closed */
+  return fcntl(oldfd, F_DUPFD, newfd); /* Dup oldfd into newfd */
 }
 
 #endif /* HAVE_DUP2  Thanks to Bill Allie CIS: 76703,2061 */

@@ -410,7 +410,7 @@ Widget GetShell(widget) Widget widget;
   while ((widget != NULL) && !XtIsShell(widget))
     widget = XtParent(widget);
 
-  return (widget);
+  return widget;
 }
 
 int IconifyShell(widget) Widget widget;

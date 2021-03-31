@@ -62,9 +62,7 @@ Cardinal *numParam;
     if (strcmp(param[i], "Dial") == 0) {
       if ((dirWidget = XtNameToWidget(dialWidget, "directory")))
         DismissDirectory(dirWidget);
-    }
-
-    else
+    } else
       SimpleErrorF("Invalid Parameter `%s'", param[i], "", "");
   } /* for... */
 }
@@ -155,9 +153,7 @@ Cardinal *numParam;
     else if (strcmp(param[i], "Dial") == 0) {
       if ((dirWidget = XtNameToWidget(dialWidget, "directory")))
         IconifyShell(dirWidget);
-    }
-
-    else if (strcmp(param[i], "Term") == 0) {
+    } else if (strcmp(param[i], "Term") == 0) {
       if (termWindowId == NULL)
         termWindowId = (String)getenv("WINDOWID");
       if (termWindowId)
@@ -169,7 +165,6 @@ Cardinal *numParam;
         SimpleError("WINDOWID not Found");
       }
     } /* if strcmp Term... */
-
     else
       SimpleErrorF("Invalid Parameter `%s'", param[i], "", "");
   } /* for... */
@@ -247,7 +242,6 @@ Cardinal *numParam;
         SimpleError("WINDOWID not Found");
       }
     } /* if strcmp Term... */
-
     else
       SimpleErrorF("Invalid Parameter `%s'", param[i], "", "");
   } /* for... */

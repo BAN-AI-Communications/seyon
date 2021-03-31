@@ -139,10 +139,9 @@ void get_line(script_fp) FILE *script_fp;
   if (word[strlen(word) - 1] == ':') /* Ignore labels */
     return;
 
-  if (if_flag == -1) {
+  if (if_flag == -1)
     if (strcmp(word, "else") && strcmp(word, "endif"))
       return;
-  }
 
   for (i = 0; kw[i].keyword != NULL; i++)
     if (strcmp(kw[i].keyword, word) == 0) {

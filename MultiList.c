@@ -14,7 +14,7 @@
         using some features of the old interface may need to be changed.
         Hope the changes don't make people's lives too miserable.
 
- ****************************************************************************/
+****************************************************************************/
 
 /*
  * Author:
@@ -66,7 +66,7 @@
 
           D E C L A R A T I O N S    A N D    D E F I N I T I O N S
 
- *===========================================================================*/
+*===========================================================================*/
 
 Pixmap XmuCreateStippledPixmap();
 extern void XawInitializeWidgetSet();
@@ -101,7 +101,7 @@ extern void XawInitializeWidgetSet();
 
         I N T E R N A L    P R O C E D U R E    D E C L A R A T I O N S
 
- *===========================================================================*/
+*===========================================================================*/
 
 #if (!NeedFunctionPrototypes)
 
@@ -181,7 +181,7 @@ static void Notify(XfwfMultiListWidget mlw, XEvent *event, String *params,
 
               R E S O U R C E    I N I T I A L I Z A T I O N
 
- *===========================================================================*/
+*===========================================================================*/
 
 static XtResource resources[] = {
     {XtNwidth, XtCWidth, XtRDimension, sizeof(Dimension),
@@ -240,7 +240,7 @@ static XtResource resources[] = {
 
         A C T I O N    A N D    T R A N S L A T I O N    T A B L E S
 
- *===========================================================================*/
+*===========================================================================*/
 
 static char defaultTranslations[] =
     "       Shift <Btn1Down>:                       Toggle()\n\
@@ -258,7 +258,7 @@ static XtActionsRec actions[] = {
 
                     C L A S S    A L L O C A T I O N
 
- *===========================================================================*/
+*===========================================================================*/
 
 XfwfMultiListClassRec xfwfMultiListClassRec = {
     {/* superclass           */ (WidgetClass)SUPERCLASS,
@@ -301,7 +301,7 @@ WidgetClass xfwfMultiListWidgetClass = (WidgetClass)&xfwfMultiListClassRec;
 
                        T O O L K I T    M E T H O D S
 
- *===========================================================================*/
+*===========================================================================*/
 
 /*---------------------------------------------------------------------------*
 
@@ -311,7 +311,7 @@ WidgetClass xfwfMultiListWidgetClass = (WidgetClass)&xfwfMultiListClassRec;
         the widget instance.  The hook to this routine is in the
         initialize part of the core part of the class.
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 /* ARGSUSED */
 static void Initialize(request, new) Widget request, new;
@@ -331,7 +331,7 @@ static void Initialize(request, new) Widget request, new;
         This routine redraws the MultiList widget <mlw> based on the exposure
         region requested in <event>.
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 /* ARGSUSED */
 static void Redisplay(mlw, event, rectangle_union) XfwfMultiListWidget mlw;
@@ -362,11 +362,9 @@ Region rectangle_union;
     PixelToRowColumn(mlw, x2, y2, &lr_row, &lr_col);
     lr_row = min(lr_row, MultiListNumRows(mlw) - 1);
     lr_col = min(lr_col, MultiListNumCols(mlw) - 1);
-    for (col = ul_col; col <= lr_col; col++) {
-      for (row = ul_row; row <= lr_row; row++) {
+    for (col = ul_col; col <= lr_col; col++)
+      for (row = ul_row; row <= lr_row; row++)
         RedrawRowColumn(mlw, row, col);
-      }
-    }
   }
 } /* End Redisplay */
 
@@ -379,7 +377,7 @@ Region rectangle_union;
         our preference through <our_idea> and return the information
         to the parent.
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 static XtGeometryResult PreferredGeometry(mlw, parent_idea,
                                           our_idea) XfwfMultiListWidget mlw;
@@ -403,7 +401,7 @@ XtWidgetGeometry *parent_idea, *our_idea;
 
   our_idea->request_mode = 0;
   if (!parent_wants_w && !parent_wants_h)
-    return (XtGeometryYes);
+    return XtGeometryYes;
 
   we_changed_size = Layout(mlw, !parent_wants_w, !parent_wants_h, &nw, &nh);
   our_idea->request_mode |= (CWWidth | CWHeight);
@@ -411,9 +409,9 @@ XtWidgetGeometry *parent_idea, *our_idea;
   our_idea->height = nh;
 
   if (we_changed_size)
-    return (XtGeometryAlmost);
+    return XtGeometryAlmost;
   else
-    return (XtGeometryYes);
+    return XtGeometryYes;
 } /* End PreferredGeometry */
 
 /*---------------------------------------------------------------------------*
@@ -423,7 +421,7 @@ XtWidgetGeometry *parent_idea, *our_idea;
         This function is called when the widget is being resized.  It
         recalculates the layout of the widget.
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 static void Resize(mlw) XfwfMultiListWidget mlw;
 {
@@ -444,7 +442,7 @@ static void Resize(mlw) XfwfMultiListWidget mlw;
         is the new resulting widget with the requested changes and with all
         superclass changes already made.
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 /*ARGSUSED*/
 static Boolean SetValues(cpl, rpl, npl) XfwfMultiListWidget cpl, rpl, npl;
@@ -473,15 +471,13 @@ static Boolean SetValues(cpl, rpl, npl) XfwfMultiListWidget cpl, rpl, npl;
   /* Changes That Require Redraw */
 
   if ((MultiListSensitive(cpl) != MultiListSensitive(npl)) ||
-      (MultiListAncesSensitive(cpl) != MultiListAncesSensitive(npl))) {
+      (MultiListAncesSensitive(cpl) != MultiListAncesSensitive(npl)))
     redraw = True;
-  }
 
   /* Changes That Require Selection Changes */
 
-  if ((MultiListMaxSelectable(cpl) != MultiListMaxSelectable(npl))) {
+  if ((MultiListMaxSelectable(cpl) != MultiListMaxSelectable(npl)))
     XtWarning("Dynamic change to maxSelectable unimplemented");
-  }
 
   /* Changes That Require Data Initialization */
 
@@ -519,21 +515,20 @@ static Boolean SetValues(cpl, rpl, npl) XfwfMultiListWidget cpl, rpl, npl;
     MultiListRowHeight(npl) = MultiListRowHeight(cpl);
   }
 
-  if (recalc) {
+  if (recalc)
     RecalcCoords(npl, !MultiListWidth(npl), !MultiListHeight(npl));
-  }
 
   if (!XtIsRealized((Widget)cpl))
-    return (False);
+    return False;
   else
-    return (redraw);
+    return redraw;
 } /* End SetValues */
 
 /*===========================================================================*
 
                   D A T A    I N I T I A L I Z A T I O N
 
- *===========================================================================*/
+*===========================================================================*/
 
 /*---------------------------------------------------------------------------*
 
@@ -544,17 +539,15 @@ static Boolean SetValues(cpl, rpl, npl) XfwfMultiListWidget cpl, rpl, npl;
         calling InitializeNewData() to rebuild the internal item
         array from new user specified arrays.
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 static void DestroyOldData(mlw) XfwfMultiListWidget mlw;
 {
   int i;
 
-  if (MultiListItemArray(mlw) != NULL) /* Free Old List */
-  {
-    for (i = 0; i < MultiListNumItems(mlw); i++) {
+  if (MultiListItemArray(mlw) != NULL) { /* Free Old List */
+    for (i = 0; i < MultiListNumItems(mlw); i++)
       free(MultiListItemString(MultiListNthItem(mlw, i)));
-    }
     free((char *)MultiListItemArray(mlw));
   }
   if (MultiListSelArray(mlw) != NULL)
@@ -581,7 +574,7 @@ static void DestroyOldData(mlw) XfwfMultiListWidget mlw;
         fields will all be set to NULL, and the widget will not reference
         them again.
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 static void InitializeNewData(mlw) XfwfMultiListWidget mlw;
 {
@@ -593,31 +586,27 @@ static void InitializeNewData(mlw) XfwfMultiListWidget mlw;
   if (string_array == NULL)
     MultiListNumItems(mlw) = 0;
 
-  if (MultiListNumItems(mlw) == 0) /* Count Elements */
-  {
-    if (string_array == NULL) /* No elements */
-    {
+  if (MultiListNumItems(mlw) == 0) { /* Count Elements */
+    if (string_array == NULL)        /* No elements */
       MultiListNumItems(mlw) = 0;
-    } else {
+    else {
       for (i = 0; string_array[i] != NULL; i++)
         ;
       MultiListNumItems(mlw) = i;
     }
   }
   if (MultiListNumItems(mlw) == 0) /* No Items */
-  {
     MultiListItemArray(mlw) = NULL;
-  } else {
+  else {
     MultiListItemArray(mlw) =
         TypeAlloc(XfwfMultiListItem, MultiListNumItems(mlw));
     for (i = 0; i < MultiListNumItems(mlw); i++) {
       item = MultiListNthItem(mlw, i);
       if (MultiListSensitiveArray(mlw) == NULL ||
-          (MultiListSensitiveArray(mlw)[i] == True)) {
+          (MultiListSensitiveArray(mlw)[i] == True))
         MultiListItemSensitive(item) = True;
-      } else {
+      else
         MultiListItemSensitive(item) = False;
-      }
       MultiListItemString(item) = StrCopy(string_array[i]);
       MultiListItemHighlighted(item) = False;
     }
@@ -643,7 +632,7 @@ static void InitializeNewData(mlw) XfwfMultiListWidget mlw;
         in the widget.  Any previous GCs are assumed to have already been
         destroyed.
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 static void CreateNewGCs(mlw) XfwfMultiListWidget mlw;
 {
@@ -680,7 +669,7 @@ static void CreateNewGCs(mlw) XfwfMultiListWidget mlw;
 
         L A Y O U T    A N D    G E O M E T R Y    M A N A G E M E N T
 
- *===========================================================================*/
+*===========================================================================*/
 
 /*---------------------------------------------------------------------------*
 
@@ -694,7 +683,7 @@ static void CreateNewGCs(mlw) XfwfMultiListWidget mlw;
 
         This routine requires that the internal list data be initialized.
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 #if NeedFunctionPrototypes
 static void RecalcCoords(XfwfMultiListWidget mlw, Boolean width_changeable,
@@ -718,9 +707,8 @@ Boolean width_changeable, height_changeable;
       MultiListLongest(mlw) = max(MultiListLongest(mlw), text_width);
     }
   }
-  if (Layout(mlw, width_changeable, height_changeable, &width, &height)) {
+  if (Layout(mlw, width_changeable, height_changeable, &width, &height))
     NegotiateSizeChange(mlw, width, height);
-  }
 } /* End RecalcCoords */
 
 /*---------------------------------------------------------------------------*
@@ -732,7 +720,7 @@ Boolean width_changeable, height_changeable;
         to try to change the size.  The resulting size is not necessarily
         the requested size.
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 #if NeedFunctionPrototypes
 static void NegotiateSizeChange(XfwfMultiListWidget mlw, Dimension width,
@@ -797,7 +785,7 @@ Dimension width, height;
         <w_ptr> and <h_ptr> pointers.  False is returned if no size
         change was done, True is returned otherwise.
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 #if NeedFunctionPrototypes
 static Boolean Layout(XfwfMultiListWidget mlw, Boolean w_changeable,
@@ -828,14 +816,13 @@ Dimension *w_ptr, *h_ptr;
     if (w_changeable) {
       *w_ptr = MultiListNumCols(mlw) * MultiListColWidth(mlw);
       size_changed = True;
-    } else {
+    } else
       MultiListColWidth(mlw) = *w_ptr / (Dimension)MultiListNumCols(mlw);
-    }
     if (h_changeable) {
       *h_ptr = MultiListNumRows(mlw) * MultiListRowHeight(mlw);
       size_changed = True;
     }
-    return (size_changed);
+    return size_changed;
   }
 
   /*
@@ -853,7 +840,7 @@ Dimension *w_ptr, *h_ptr;
           (MultiListNumItems(mlw) - 1) / MultiListNumCols(mlw) + 1;
     *w_ptr = MultiListNumCols(mlw) * MultiListColWidth(mlw);
     *h_ptr = MultiListNumRows(mlw) * MultiListRowHeight(mlw);
-    return (True);
+    return True;
   }
 
   /*
@@ -873,7 +860,7 @@ Dimension *w_ptr, *h_ptr;
       *h_ptr = MultiListNumRows(mlw) * MultiListRowHeight(mlw);
       size_changed = True;
     }
-    return (size_changed);
+    return size_changed;
   }
 
   /*
@@ -887,14 +874,14 @@ Dimension *w_ptr, *h_ptr;
   MultiListNumCols(mlw) =
       (MultiListNumItems(mlw) - 1) / MultiListNumRows(mlw) + 1;
   *w_ptr = MultiListNumCols(mlw) * MultiListColWidth(mlw);
-  return (True);
+  return True;
 } /* End Layout */
 
 /*===========================================================================*
 
                     R E D R A W    R O U T I N E S
 
- *===========================================================================*/
+*===========================================================================*/
 
 /*---------------------------------------------------------------------------*
 
@@ -903,7 +890,7 @@ Dimension *w_ptr, *h_ptr;
         This routine simple calls Redisplay to redraw the entire
         MultiList widget <mlw>.
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 static void RedrawAll(mlw) XfwfMultiListWidget mlw;
 { Redisplay(mlw, NULL, NULL); } /* End RedrawAll */
@@ -915,16 +902,15 @@ static void RedrawAll(mlw) XfwfMultiListWidget mlw;
         This routine redraws the item with index <item_index> in the
         MultiList widget <mlw>.  If the item number is bad, nothing is drawn.
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 static void RedrawItem(mlw, item_index) XfwfMultiListWidget mlw;
 int item_index;
 {
   int row, column;
 
-  if (ItemToRowColumn(mlw, item_index, &row, &column)) {
+  if (ItemToRowColumn(mlw, item_index, &row, &column))
     RedrawRowColumn(mlw, row, column);
-  }
 } /* End RedrawItem */
 
 /*---------------------------------------------------------------------------*
@@ -936,7 +922,7 @@ int item_index;
         outside the widget, nothing is drawn.  If the position is empty,
         blank space is drawn.
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 static void RedrawRowColumn(mlw, row, column) XfwfMultiListWidget mlw;
 int row, column;
@@ -950,8 +936,7 @@ int row, column;
   has_item = RowColumnToItem(mlw, row, column, &item_index);
   RowColumnToPixels(mlw, row, column, &ul_x, &ul_y, &w, &h);
 
-  if (has_item == False) /* No Item */
-  {
+  if (has_item == False) { /* No Item */
     if (MultiListShadeSurplus(mlw))
       bg_gc = MultiListGrayGC(mlw);
     else
@@ -959,25 +944,19 @@ int row, column;
   } else {
     item = MultiListNthItem(mlw, item_index);
     if ((!MultiListSensitive(mlw)) ||
-        (!MultiListItemSensitive(item))) /* Insensitive */
-    {
-      if (MultiListItemHighlighted(item)) /* Selected */
-      {
+        (!MultiListItemSensitive(item))) {  /* Insensitive */
+      if (MultiListItemHighlighted(item)) { /* Selected */
         bg_gc = MultiListGrayGC(mlw);
         fg_gc = MultiListEraseGC(mlw);
-      } else /* !Selected */
-      {
+      } else { /* !Selected */
         bg_gc = MultiListEraseGC(mlw);
         fg_gc = MultiListGrayGC(mlw);
       }
-    } else /* Sensitive */
-    {
-      if (MultiListItemHighlighted(item)) /* Selected */
-      {
+    } else {                                /* Sensitive */
+      if (MultiListItemHighlighted(item)) { /* Selected */
         bg_gc = MultiListHighlightBackGC(mlw);
         fg_gc = MultiListHighlightForeGC(mlw);
-      } else /* !Selected */
-      {
+      } else { /* !Selected */
         bg_gc = MultiListEraseGC(mlw);
         fg_gc = MultiListDrawGC(mlw);
       }
@@ -999,7 +978,7 @@ int row, column;
 
                I T E M    L O C A T I O N    R O U T I N E S
 
- *===========================================================================*/
+*===========================================================================*/
 
 /*---------------------------------------------------------------------------*
 
@@ -1015,7 +994,7 @@ int row, column;
         row & columns numbers, but will correspond to the row & column
         of the item, if an item was actually there.
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 static void PixelToRowColumn(mlw, x, y, row_ptr,
                              column_ptr) XfwfMultiListWidget mlw;
@@ -1032,7 +1011,7 @@ int x, y, *row_ptr, *column_ptr;
         This routine takes a row/column coordinate <row>,<col> and
         converts it into the bounding pixel rectangle which is returned.
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 static void RowColumnToPixels(mlw, row, col, x_ptr, y_ptr, w_ptr,
                               h_ptr) XfwfMultiListWidget mlw;
@@ -1054,7 +1033,7 @@ int row, col, *x_ptr, *y_ptr, *w_ptr, *h_ptr;
         item index is placed through <item_ptr>.  If there is no item at
         this location, False is returned, else True is returned.
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 static Boolean RowColumnToItem(mlw, row, column,
                                item_ptr) XfwfMultiListWidget mlw;
@@ -1063,9 +1042,8 @@ int row, column, *item_ptr;
   register int x_stride, y_stride;
 
   if (row < 0 || row >= MultiListNumRows(mlw) || column < 0 ||
-      column >= MultiListNumCols(mlw)) {
-    return (False);
-  }
+      column >= MultiListNumCols(mlw))
+    return False;
   if (MultiListRowMajor(mlw)) {
     x_stride = 1;
     y_stride = MultiListNumCols(mlw);
@@ -1075,9 +1053,9 @@ int row, column, *item_ptr;
   }
   *item_ptr = row * y_stride + column * x_stride;
   if (*item_ptr >= MultiListNumItems(mlw))
-    return (False);
+    return False;
   else
-    return (True);
+    return True;
 } /* End RowColumnToItem */
 
 /*---------------------------------------------------------------------------*
@@ -1090,15 +1068,14 @@ int row, column, *item_ptr;
         corespond to a valid item, False is returned, else True is
         returned.
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 static Boolean ItemToRowColumn(mlw, item_index, row_ptr,
                                column_ptr) XfwfMultiListWidget mlw;
 int item_index, *row_ptr, *column_ptr;
 {
-  if (item_index < 0 || item_index >= MultiListNumItems(mlw)) {
-    return (False);
-  }
+  if (item_index < 0 || item_index >= MultiListNumItems(mlw))
+    return False;
   if (MultiListRowMajor(mlw)) {
     *row_ptr = item_index / MultiListNumCols(mlw);
     *column_ptr = item_index % MultiListNumCols(mlw);
@@ -1106,14 +1083,14 @@ int item_index, *row_ptr, *column_ptr;
     *row_ptr = item_index % MultiListNumRows(mlw);
     *column_ptr = item_index / MultiListNumRows(mlw);
   }
-  return (True);
+  return True;
 } /* End ItemToRowColumn */
 
 /*===========================================================================*
 
                 E V E N T    A C T I O N    H A N D L E R S
 
- *===========================================================================*/
+*===========================================================================*/
 
 /*---------------------------------------------------------------------------*
 
@@ -1129,7 +1106,7 @@ int item_index, *row_ptr, *column_ptr;
         The MultiListMostRecentAct(mlw) variable will be set to
         XfwfMultiListActionHighlight, in case the selection region is extended.
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 /* ARGSUSED */
 static void Select(mlw, event, params, num_params) XfwfMultiListWidget mlw;
@@ -1147,9 +1124,9 @@ Cardinal *num_params;
   MultiListMostRecentAct(mlw) = XfwfMultiListActionHighlight;
   status = RowColumnToItem(mlw, row, column, &item_index);
   if ((status == False) ||
-      (!MultiListItemSensitive(MultiListNthItem(mlw, item_index)))) {
+      (!MultiListItemSensitive(MultiListNthItem(mlw, item_index))))
     MultiListMostRecentItem(mlw) = -1;
-  } else {
+  else {
     MultiListMostRecentItem(mlw) = item_index;
     XfwfMultiListHighlightItem(mlw, item_index);
   }
@@ -1167,7 +1144,7 @@ Cardinal *num_params;
         XfwfMultiListActionUnhighlight, in case the deselection region is
         extended.
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 /* ARGSUSED */
 static void Unselect(mlw, event, params, num_params) XfwfMultiListWidget mlw;
@@ -1210,7 +1187,7 @@ Cardinal *num_params;
         MultiListMostRecentItem(mlw) is set to the index of the item clicked
         on if the item is selected, or -1 if it is unselected.
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 /* ARGSUSED */
 static void Toggle(mlw, event, params, num_params) XfwfMultiListWidget mlw;
@@ -1246,7 +1223,7 @@ Cardinal *num_params;
         if items are to be selected or unselected.  This routine performs
         select or unselect actions on each item it is called on.
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 /* ARGSUSED */
 static void Extend(mlw, event, params, num_params) XfwfMultiListWidget mlw;
@@ -1284,7 +1261,7 @@ Cardinal *num_params;
         text item is selected, all the selected items are placed in the X
         cut buffer (buf(0)) separated by newlines.
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 /* ARGSUSED */
 static void Notify(mlw, event, params, num_params) XfwfMultiListWidget mlw;
@@ -1333,7 +1310,7 @@ Cardinal *num_params;
 
         U S E R    C A L L A B L E    U T I L I T Y    R O U T I N E S
 
- *===========================================================================*/
+*===========================================================================*/
 
 /*---------------------------------------------------------------------------*
 
@@ -1348,7 +1325,7 @@ Cardinal *num_params;
         current item.  If the clicked on item is not sensitive, or if the
         click is not on an item, False is returned, else True is returned.
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 Boolean XfwfMultiListHighlightItem(mlw, item_index) XfwfMultiListWidget mlw;
 int item_index;
@@ -1356,25 +1333,24 @@ int item_index;
   XfwfMultiListItem *item;
 
   if (MultiListMaxSelectable(mlw) == 0)
-    return (False);
+    return False;
   if (item_index < 0 || item_index >= MultiListNumItems(mlw)) {
     MultiListMostRecentItem(mlw) = -1;
-    return (False);
+    return False;
   }
   item = MultiListNthItem(mlw, item_index);
   if (MultiListItemSensitive(item) == False)
-    return (False);
+    return False;
   MultiListMostRecentItem(mlw) = item_index;
   if (MultiListItemHighlighted(item) == True)
-    return (True);
-  if (MultiListNumSelected(mlw) == MultiListMaxSelectable(mlw)) {
+    return True;
+  if (MultiListNumSelected(mlw) == MultiListMaxSelectable(mlw))
     XfwfMultiListUnhighlightItem(mlw, MultiListSelArray(mlw)[0]);
-  }
   MultiListItemHighlighted(item) = True;
   MultiListSelArray(mlw)[MultiListNumSelected(mlw)] = item_index;
   ++MultiListNumSelected(mlw);
   RedrawItem(mlw, item_index);
-  return (True);
+  return True;
 } /* End XfwfMultiListHighlightItem */
 
 /*---------------------------------------------------------------------------*
@@ -1385,7 +1361,7 @@ int item_index;
         widget <mlw>, up to the maximum number of allowed highlightable
         items;
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 void XfwfMultiListHighlightAll(mlw) XfwfMultiListWidget mlw;
 {
@@ -1419,7 +1395,7 @@ void XfwfMultiListHighlightAll(mlw) XfwfMultiListWidget mlw;
         selected item, then nothing will happen.  Otherwise, the item
         is unselected and the selection array and count are updated.
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 void XfwfMultiListUnhighlightItem(mlw, item_index) XfwfMultiListWidget mlw;
 int item_index;
@@ -1452,7 +1428,7 @@ int item_index;
 
         This routine unhighlights all items in the MultiList widget <mlw>.
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 void XfwfMultiListUnhighlightAll(mlw) XfwfMultiListWidget mlw;
 {
@@ -1476,7 +1452,7 @@ void XfwfMultiListUnhighlightAll(mlw) XfwfMultiListWidget mlw;
         highlighted.  The action performed by the toggle is returned
         (XfwfMultiListActionHighlight or XfwfMultiListActionUnhighlight).
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 int XfwfMultiListToggleItem(mlw, item_index) XfwfMultiListWidget mlw;
 int item_index;
@@ -1484,18 +1460,18 @@ int item_index;
   XfwfMultiListItem *item;
 
   if (MultiListMaxSelectable(mlw) == 0)
-    return (XfwfMultiListActionNothing);
+    return XfwfMultiListActionNothing;
   if (item_index < 0 || item_index >= MultiListNumItems(mlw))
-    return (XfwfMultiListActionNothing);
+    return XfwfMultiListActionNothing;
   item = MultiListNthItem(mlw, item_index);
   if (MultiListItemSensitive(item) == False)
-    return (XfwfMultiListActionNothing);
+    return XfwfMultiListActionNothing;
   if (MultiListItemHighlighted(item)) {
     XfwfMultiListUnhighlightItem(mlw, item_index);
-    return (XfwfMultiListActionUnhighlight);
+    return XfwfMultiListActionUnhighlight;
   } else {
     XfwfMultiListHighlightItem(mlw, item_index);
-    return (XfwfMultiListActionHighlight);
+    return XfwfMultiListActionHighlight;
   }
 } /* End XfwfMultiListToggleItem */
 
@@ -1509,7 +1485,7 @@ int item_index;
         is set to MULTILIST_ACTION_STATUS, and the item_index and string
         fields are invalid.
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 XfwfMultiListReturnStruct *
     XfwfMultiListGetHighlighted(mlw) XfwfMultiListWidget mlw;
@@ -1528,7 +1504,7 @@ XfwfMultiListReturnStruct *
   }
   ret_value.num_selected = MultiListNumSelected(mlw);
   ret_value.selected_items = MultiListSelArray(mlw);
-  return (&ret_value);
+  return &ret_value;
 } /* End XfwfMultiListGetHighlighted */
 
 /*---------------------------------------------------------------------------*
@@ -1539,7 +1515,7 @@ XfwfMultiListReturnStruct *
         is highlighted and returns True or False depending.  If
         <item_index> is invalid, False is returned.
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 Boolean XfwfMultiListIsHighlighted(mlw, item_index) XfwfMultiListWidget mlw;
 int item_index;
@@ -1547,9 +1523,9 @@ int item_index;
   XfwfMultiListItem *item;
 
   if (item_index < 0 || item_index >= MultiListNumItems(mlw))
-    return (False);
+    return False;
   item = MultiListNthItem(mlw, item_index);
-  return (MultiListItemHighlighted(item));
+  return MultiListItemHighlighted(item);
 } /* End XfwfMultiListIsHighlighted */
 
 /*---------------------------------------------------------------------------*
@@ -1561,7 +1537,7 @@ int item_index;
         via the pointers <str_ptr>, <h_ptr> and <s_ptr>.  If the item
         index is invalid, False is returned, else True is returned.
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 Boolean XfwfMultiListGetItemInfo(mlw, item_index, str_ptr, h_ptr,
                                  s_ptr) XfwfMultiListWidget mlw;
@@ -1572,12 +1548,12 @@ Boolean *h_ptr, *s_ptr;
   XfwfMultiListItem *item;
 
   if (item_index < 0 || item_index >= MultiListNumItems(mlw))
-    return (False);
+    return False;
   item = MultiListNthItem(mlw, item_index);
   *str_ptr = MultiListItemString(item);
   *h_ptr = MultiListItemHighlighted(item);
   *s_ptr = MultiListItemSensitive(item);
-  return (True);
+  return True;
 } /* End XfwfMultiListGetItemInfo */
 
 /*---------------------------------------------------------------------------*
@@ -1589,7 +1565,7 @@ Boolean *h_ptr, *s_ptr;
         MultiList widget <mlw>.  If <resize> is True, the MultiList widget will
         try to resize itself.
 
- *---------------------------------------------------------------------------*/
+*---------------------------------------------------------------------------*/
 
 #if NeedFunctionPrototypes
 void XfwfMultiListSetNewData(XfwfMultiListWidget mlw, String *list, int nitems,
