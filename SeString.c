@@ -1,4 +1,3 @@
-
 /*
  * This file is part of the Seyon, Copyright (c) 1992-1993 by Muhammad M.
  * Saggaf. All rights reserved.
