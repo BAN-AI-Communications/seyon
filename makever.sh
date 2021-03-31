@@ -38,12 +38,8 @@ if [ "$machine" = "" ]; then machine="unknown"; fi
 #host=`hostname`; host=${host:-${`uname -n`:-"host"}}
 #user=${USER:-${LOGNAME:-${`logname`:-"user"}}}
 
-echo "#define COMPILE_BY \"$user\"" > version.h
-echo "#define COMPILE_HOST \"$host\"" >> version.h
 echo "#define COMPILE_OSNAME \"$system\"" >> version.h
 echo "#define COMPILE_HOSTTYPE \"$machine\"" >> version.h
-echo "#define COMPILE_DATE \"`date +%D`\"" >> version.h
-echo "#define COMPILE_TIME \"`date +%T`\"" >> version.h
 
 echo "#define VERSION \"$VERSION\"" >> version.h
 echo "#define REVISION \"$REVISION\"" >> version.h

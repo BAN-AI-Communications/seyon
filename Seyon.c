@@ -224,9 +224,8 @@ main(int argc, char *argv[])
 
     printf("\r\n%s %s\r\n", "Seyon Copyright (c) 1992-1993 Muhammad M. Saggaf.",
 	 "All rights reserved.");
-    printf("\rVersion %s rev. %s %s-%s %s@%s %s %s.\r\n\n", VERSION, REVISION, 
-	 COMPILE_HOSTTYPE, COMPILE_OSNAME, COMPILE_BY, COMPILE_HOST,
-	 COMPILE_DATE, COMPILE_TIME);
+    printf("\rVersion %s rev. %s %s-%s.\r\n\n", VERSION, REVISION,
+	 COMPILE_HOSTTYPE, COMPILE_OSNAME);
 
     if ((tfp = fopen("/dev/tty", "r+")) == NULL) {
         PopupInitError("errTtyAccess", exit);
