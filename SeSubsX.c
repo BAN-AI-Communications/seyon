@@ -202,7 +202,7 @@ Boolean read_seyon_file(name, line) char *name, *line[];
 {
   FILE *fp;
 
-  if ((fp = open_file(name, qres.defaultDirectory)) == NULL)
+  if ((fp = open_file(name, 0, qres.defaultDirectory)) == NULL)
     return False;
 
   ReadCommentedFile(fp, line);

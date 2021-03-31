@@ -155,7 +155,7 @@ String disItems[];
   char *buf, reqName[10];
   int i, n;
 
-  if ((fp = open_file(fname, qres.defaultDirectory)) == NULL)
+  if ((fp = open_file(fname, REG_BUF, qres.defaultDirectory)) == NULL)
     return -1;
 
   ReadCommentedFile(fp, rawItems);
