@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
 # Sometimes hostname is broken and exit with nonzero even if it
 # succeeds, so this approach is not used.
