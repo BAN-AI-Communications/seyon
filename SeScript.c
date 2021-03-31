@@ -146,7 +146,7 @@ get_line(script_fp)
 {
   int             i;
 
-  getline(script_fp);
+  seyon_getline(script_fp);
 
   if (eof_flag)
     return;
@@ -336,7 +336,7 @@ k_goto(script_fp)
 
   rewind(script_fp);
   while (!found) {
-    getline(script_fp);
+    seyon_getline(script_fp);
     if (eof_flag)
       break;
 

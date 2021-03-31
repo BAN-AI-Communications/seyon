@@ -27,7 +27,7 @@ char            line[WBSIZE];	/* Input line */
 char            word[WBSIZE];	/* Parsed word */
 char           *wptr,
                *lptr;		/* Word and line pointers */
-int             eof_flag = 0;	/* Indicates EOF during getline() processing */
+int             eof_flag = 0;	/* Indicates EOF during seyon_getline() processing */
 
 void
 sendstr(p)			/* send a string to the port */
@@ -198,7 +198,7 @@ lc_word(ptr)
  */
 
 void
-getline(fp)
+seyon_getline(fp)
      FILE           *fp;
 {
   int             l;
