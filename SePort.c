@@ -22,6 +22,7 @@
 #include <fcntl.h>
 #include <limits.h>
 #include <signal.h>
+#include <ttylock.h>
 
 #include <X11/Intrinsic.h>
 
@@ -898,13 +899,25 @@ pid_t lockPid;
 
 int LockModem(modem) String modem;
 {
-  strncpy(modem_port, modem, REG_BUF);
-  return lock_tty();
+int res = ttylock(modem);
+if(res)
+{
+  SePErrorF("Modem locked: PID %d\n", res);
+  return 1;
+}
+else
+  return 0;
 }
 
 int UnlockModem(modem) String modem;
 {
-  unlock_tty();
+int res = ttyunlock(modem);
+if(res)
+{
+  SePErrorF("Modem unlocked: PID %d\n", res);
+  return 1;
+}
+else
   return 0;
 }
 

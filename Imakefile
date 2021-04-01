@@ -4,14 +4,14 @@
 
 /*
  * Never edit any of the rest of this file unless you really really
- * know what you're doing. The rest of this file should normally not
+ * know what you are doing. The rest of this file should normally not
  * be touched at all.
  */
 
 DEPLIBS = 
 LOCAL_LIBRARIES = XawClientLibs
 
-/* SYS_LIBRARIES = -lm */
+SYS_LIBRARIES = -lm -llockdev
 
 SRCS  = Seyon.c SeActions.c SeScan.c SeDial.c SeErr.c SeGeneric.c \
 		SeInit.c SeIo.c SeMisc.c SeParse.c SePort.c SeScript.c \

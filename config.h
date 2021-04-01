@@ -89,6 +89,7 @@
 #define HAVE_STRSTR YES
 #define HAVE_STRERROR YES
 #define HAVE_USLEEP YES
+#define USE_NONSTD_BAUD YES
 #endif
 
 #ifdef SVR4
