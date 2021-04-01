@@ -125,7 +125,7 @@ warranty. I disclaim all warranties with regard to this software,
 including all warranties of merchantability and fitness. In no
 event shall the author be liable for any damages resulting from
 the use of this program.
- 
+
 ## Copyright
 
 Seyon is Copyright (c) of Muhammad M. Saggaf. Seyon is not
