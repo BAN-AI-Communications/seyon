@@ -404,3 +404,8 @@ void s_exit() {
   show("I'm rated PG-34!!");
   do_exit(0);
 }
+
+void set_tty_mode() { io_set_attr(tfd, &newmode); }
+ 
+void restore_orig_mode() { io_set_attr(tfd, &oldmode); }
+

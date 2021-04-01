@@ -30,7 +30,8 @@ typedef void (*XoSignalCallbackProc)(
 
 typedef struct _xo_signal_data_ {
   XoSignalCallbackProc handler; /* function to execute */
-  XtPointer client_data;        /* data to pass */
+  //XtPointer client_data;        /* data to pass */
+  void* client_data;        /* data to pass */
 } _XoSignalData;
 
 extern XoSignalCallbackProc XoAppAddSignal(

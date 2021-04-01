@@ -199,7 +199,3 @@ void seyon_getline(fp) FILE *fp;
     if (line[l] == '\n')
       line[l] = '\0';
 }
-
-void set_tty_mode() { io_set_attr(tfd, &newmode); }
-
-void restore_orig_mode() { io_set_attr(tfd, &oldmode); }
