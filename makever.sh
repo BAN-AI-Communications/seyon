@@ -3,7 +3,7 @@
 # Sometimes hostname is broken and exit with nonzero even if it
 # succeeds, so this approach is not used.
 
-#host=`hostname || uname -n || echo host`
+#host=`hostname || uname -n || printf '%s\n' host`
 #if [ "$USER" != "" ]; then user=$USER
 #elif [ "$LOGNAME" != "" ]; then user=$LOGNAME
 #elif [ "$LOGNAME" != "" ]; then user=$LOGNAME
@@ -11,7 +11,7 @@
 #fi
 
 VERSION="2"
-REVISION="20c"
+REVISION="20c-jhj"
 
 host=$(hostname)
 if [ "$host" = "" ]; then host=$(uname -n); fi
@@ -38,15 +38,15 @@ if [ "$machine" = "" ]; then machine="unknown"; fi
 #host=`hostname`; host=${host:-${`uname -n`:-"host"}}
 #user=${USER:-${LOGNAME:-${`logname`:-"user"}}}
 
-echo "#define COMPILE_OSNAME \"$system\"" >> version.h
-echo "#define COMPILE_HOSTTYPE \"$machine\"" >> version.h
+printf '%s\n' "#define COMPILE_OSNAME \"$system\"" >> version.h
+printf '%s\n' "#define COMPILE_HOSTTYPE \"$machine\"" >> version.h
 
-echo "#define VERSION \"$VERSION\"" >> version.h
-echo "#define REVISION \"$REVISION\"" >> version.h
+printf '%s\n' "#define VERSION \"$VERSION\"" >> version.h
+printf '%s\n' "#define REVISION \"$REVISION\"" >> version.h
 
-#echo "#ifdef IS_MAIN" >> version.h
-#echo "static char version[] = \"\$Revision: $VERSION.$REVISION \$\";"\
+#printf '%s\n' "#ifdef IS_MAIN" >> version.h
+#printf '%s\n' "static char version[] = \"\$Revision: $VERSION.$REVISION \$\";"\
 #     >> version.h
-#echo "#endif" >> version.h
+#printf '%s\n' "#endif" >> version.h
 
-echo "Machine type is $machine, OS name is $system"
+printf '%s\n' "Machine type is $machine, OS name is $system"
