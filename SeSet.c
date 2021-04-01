@@ -65,10 +65,7 @@ static struct _setToggle set_toggle[] = {
 
 static struct _setRadio setRadio[] = {
     {"baud",
-     {"300", "1200", "2400", "4800", "9600", "19200", "38400",
-#if USE_NONSTD_BAUD
-      "57600", "115200",
-#else
+     {"300", "1200", "2400", "4800", "9600", "19200", "38400", "57600", "115200",
 #ifdef B57600
       "57600",
 #endif

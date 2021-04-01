@@ -89,7 +89,6 @@
 #define HAVE_STRSTR YES
 #define HAVE_STRERROR YES
 #define HAVE_USLEEP YES
-#define USE_NONSTD_BAUD YES
 #endif
 
 #ifdef SVR4
@@ -333,17 +332,6 @@ extern char *getenv();
 #define LF_PREFIX "LK."
 #endif
 #endif /* LF_PREFIX */
-
-/*
- * Wether you want to use speeds not supported by termios/termio
- * (57600 and 115200 bps). This option is currently available to
- * linux only (you need kernel 0.99.3+) since it is O/S-dependent.
- */
-#ifdef linux
-#ifndef USE_NONSTD_BAUD
-#define USE_NONSTD_BAUD NO
-#endif
-#endif /* linux */
 
 /*
  * ----------------------------------------
