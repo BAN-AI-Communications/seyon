@@ -57,7 +57,7 @@ install::
 */
 
 clean::
-	rm -f version.h y.tab.* SeParse.c Seyon.ad.h
+	rm -f version.h y.tab.* SeParse.c Seyon.ad.h Makefile
 
 Seyon.c: Seyon.ad.h version.h
 
