@@ -27,7 +27,7 @@ struct _protItem {
 };
 
 struct _protItem *protItems[MAX_ENT];
-XfwfMultiListWidget mlw;
+extern XfwfMultiListWidget mlw;
 int transCurItemIndex;
 
 void TopTransfer(widget, clientData) Widget widget;
