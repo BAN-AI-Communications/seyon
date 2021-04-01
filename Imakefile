@@ -56,6 +56,8 @@ install::
 	done;
 */
 
+Makefiles:: SeScan.o version.h y.tab.h y.tab.c SeParse.c Seyon.ad.h Seyon.c
+
 clean::
 	rm -f version.h y.tab.* SeParse.c Seyon.ad.h Makefile
 
