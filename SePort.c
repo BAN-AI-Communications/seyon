@@ -298,8 +298,9 @@ char *mport(s) /* get/set port string */
 
 int MdmSetGetBaud(baudIndex) int baudIndex;
 {
-  static char *baud[] = {"0",     "300",   "1200",  "2400",   "4800", "9600",
-                         "19200", "38400", "57600", "115200", "230400", "460800", NULL};
+  static char *baud[] = {"0",      "300",    "1200",  "2400",  "4800",
+                         "9600",   "19200",  "38400", "57600", "115200",
+                         "230400", "460800", NULL};
   long retBaud;
 
   if (baudIndex != -1)
@@ -548,26 +549,25 @@ long mbaud(s) char *s;
       break;
     case 38400:
       baudrate = B38400;
-	  break;
+      break;
     case 57600:
       baudrate = B57600;
       break;
     case 115200:
       baudrate = B115200;
       break;
-	case 230400:
-	  baudrate = B230400;
-	  break;
+    case 230400:
+      baudrate = B230400;
+      break;
     case 460800:
-	  baudrate = B460800;
-	  break;
+      baudrate = B460800;
+      break;
     default:
       return -1;
     }
     io_set_speed(&pmode, baudrate);
-    if (mfd != -1) {
+    if (mfd != -1)
       io_set_attr(mfd, &pmode);
-    }
   }
 
   if (mfd != -1)
@@ -587,15 +587,15 @@ long mbaud(s) char *s;
   case B19200:
     return 19200;
   case B38400:
-      return 38400;
+    return 38400;
   case B57600:
     return 57600;
   case B115200:
     return 115200;
   case B230400:
-	return 230400;
+    return 230400;
   case B460800:
-	return 460800;
+    return 460800;
   }
 
   SeError("Consistency error in baud rate");
@@ -838,26 +838,22 @@ pid_t lockPid;
 
 int LockModem(modem) String modem;
 {
-int res = ttylock(modem);
-if(res)
-{
-  SePErrorF("Modem locked: PID %d\n", res);
-  return 1;
-}
-else
-  return 0;
+  int res = ttylock(modem);
+  if (res) {
+    SePErrorF("Modem locked: PID %d\n", res);
+    return 1;
+  } else
+    return 0;
 }
 
 int UnlockModem(modem) String modem;
 {
-int res = ttyunlock(modem);
-if(res)
-{
-  SePErrorF("Modem unlocked: PID %d\n", res);
-  return 1;
-}
-else
-  return 0;
+  int res = ttyunlock(modem);
+  if (res) {
+    SePErrorF("Modem unlocked: PID %d\n", res);
+    return 1;
+  } else
+    return 0;
 }
 
 int lock_tty() {

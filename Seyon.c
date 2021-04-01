@@ -406,6 +406,5 @@ void s_exit() {
 }
 
 void set_tty_mode() { io_set_attr(tfd, &newmode); }
- 
-void restore_orig_mode() { io_set_attr(tfd, &oldmode); }
 
+void restore_orig_mode() { io_set_attr(tfd, &oldmode); }
