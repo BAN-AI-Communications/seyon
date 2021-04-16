@@ -1,5 +1,7 @@
 # Seyon
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/9b574fb373a2474ead1165b5c732940a)](https://app.codacy.com/gh/BAN-AI-Communications/seyon?utm_source=github.com&utm_medium=referral&utm_content=BAN-AI-Communications/seyon&utm_campaign=Badge_Grade_Settings)
+
 Seyon is a complete full-featured telecommunications package for the X Window
 System.
 
