@@ -6,7 +6,7 @@ the X Window System.
 ## Introduction
 
 Seyon is a complete full-featured telecommunications package for
-the X Window System.  Some of its features are:
+the X Window System. Some of its features are:
 
 Dialing directory that supports an unlimited number of entries.
 The directory is fully mouse-driven and features call progress
