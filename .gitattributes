@@ -1,3 +1,5 @@
 config.h linguist-vendored
 /config.h linguist-vendored
 .man linguist-vendored
+*.man linguist-vendored
+/seyon.man linguist-vendored
